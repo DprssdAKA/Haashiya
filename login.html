@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lughoh Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="login-card">
+    <h2>!مرحبا</h2>
+    <p class="subtitle">يُرجَى تسجيل الدخول باستخدام البيانات المزوَّدة لك</p>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" placeholder="أدخل اسم المستخدم" required>
+      </div>
+
+      <div class="input-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+      </div>
+
+      <button type="submit" class="login-btn">Log In</button>
+      <div id="message" class="message"></div>
+    </form>
+  </div>
+
+  <script>
+    // Define the list of allowed usernames and passwords here
+    const allowedUsers = {
+      "Alif": "123",
+      "sarah": "secret2026",
+      "john": "welcome456"
+    };
+
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevent default page refresh
+
+      const usernameInput = document.getElementById('username').value.trim().toLowerCase();
+      const passwordInput = document.getElementById('password').value;
+
+      // Check if username exists and password matches
+      if (allowedUsers[usernameInput] && allowedUsers[usernameInput] === passwordInput) {
+        messageDiv.className = "message success";
+        messageDiv.textContent = "Login successful! Redirecting...";
+
+        // Redirect to your main page after 1.5 seconds
+        setTimeout(() => {
+          // Replace 'dashboard.html' with the page you want your friends to see
+          window.location.href = "dashboard.html"; 
+        }, 1500);
+
+      } else {
+        messageDiv.className = "message error";
+        messageDiv.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة. يُرجَى المحاولة مرة أخرى";
+      }
+    });
+  </script>
+
+</body>
+</html>
