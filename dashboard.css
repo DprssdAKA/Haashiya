@@ -1,7 +1,7 @@
 /* --- RESET & BODY --- */
 body {
   margin: 0;
-  padding: 0; /* Removed padding: 20px so hero can stretch 100% full width */
+  padding: 0;
   background-color: #f0f6ff;
   font-family: 'IBM Plex Sans Arabic', 'Work Sans', system-ui, -apple-system, sans-serif;
   direction: rtl;
@@ -87,7 +87,7 @@ input, button, select, textarea {
 /* --- HERO BANNER (100% FULL BLEED) --- */
 .hero-banner {
   width: 100%;
-  background-image: url('libraryhero_v1.png');
+  background-image: url('assets/images/web/libraryhero_v1.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -209,7 +209,7 @@ input, button, select, textarea {
 .library-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 20px; /* Moved content margin/padding here */
+  padding: 30px 20px;
   direction: rtl;
 }
 
@@ -231,9 +231,9 @@ input, button, select, textarea {
 .cat-btn {
   padding: 8px 16px;
   border-radius: 6px;
-  border: 1px solid #e8f0fe;  /* Thin blue border */
-  background-color: #ffffff; /* White background */
-  color: #3b82f6;            /* Blue text */
+  border: 1px solid #e8f0fe;
+  background-color: #ffffff;
+  color: #3b82f6;
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
@@ -249,7 +249,7 @@ input, button, select, textarea {
 
 /* Selected Active State */
 .cat-btn.active {
-  background-color: #0056b3; /* Darker solid blue */
+  background-color: #0056b3;
   color: #ffffff;
   border-color: #0056b3;
   box-shadow: none;
@@ -500,7 +500,6 @@ input, button, select, textarea {
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 35px;
-  /* Soft, broad drop shadow matching the mockup */
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
   border: 1px solid #ffffff;
   direction: rtl;
@@ -545,7 +544,7 @@ input, button, select, textarea {
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff;
-  border: 1px solid #e0e8f5; /* Thin blue border */
+  border: 1px solid #e0e8f5;
   border-radius: 16px;
   padding: 16px 20px;
   margin-bottom: 14px;
@@ -601,7 +600,6 @@ input, button, select, textarea {
   gap: 12px;
   padding-right: 22px;
   margin-right: 12px;
-  /* Made thicker and darker blue-gray so it's clearly visible */
   border-right: 2px solid #e2ebd8; 
 }
 
@@ -609,7 +607,7 @@ input, button, select, textarea {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background-color: #0d1b2a; /* Deep navy blue */
+  background-color: #0d1b2a;
   color: #ffffff;
   border: none;
   display: flex;

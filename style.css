@@ -10,7 +10,8 @@ body {
   justify-content: flex-start; /* Aligns card to the right side in RTL */
   align-items: center;
   min-height: 100vh;
-  background-image: url('loginbg_pc_v2.png');
+  /* Updated Desktop PNG path */
+  background-image: url('assets/images/web/loginbg_pc_v2.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -28,58 +29,50 @@ body.fade-out {
 /* --- LOGIN CARD POSITIONED WITH RIGHT GAP --- */
 .login-card {
   background: #ffffff;
-  padding: 40px 32px;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  padding: 24px 28px;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
   width: 100%;
-  max-width: 420px;
+  max-width: 390px;
   text-align: right;
-  
-  /* Guarantees clean gap from the right window edge */
-  margin-right: 15vw; 
-  
+  margin-right: 15vw;
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .login-card h2 {
   color: #0f172a;
-  font-size: 1.7rem;
+  font-size: 1.45rem;
   font-weight: 800;
-  margin-bottom: 6px;
-  text-align: right;
+  margin-bottom: 4px;
 }
 
 .subtitle {
   color: #64748b;
-  font-size: 0.88rem;
-  text-align: right;
-  margin-bottom: 24px;
-  line-height: 1.5;
+  font-size: 0.82rem;
+  margin-bottom: 16px;
 }
 
 .input-group {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: #1e293b;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
 .input-group input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  font-size: 0.92rem;
-  text-align: right;
+  font-size: 0.88rem;
   background-color: #f8fafc;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .input-group input:focus {
@@ -90,15 +83,15 @@ body.fade-out {
 
 .login-btn {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
+  margin-top: 4px;
   background-color: #1565c0;
   color: #ffffff;
   border: none;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .login-btn:hover {
@@ -128,12 +121,11 @@ body.fade-out {
 .back-home-link {
   display: block;
   text-align: center;
-  margin-top: 22px;
+  margin-top: 10px;
   color: #64748b;
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  transition: color 0.2s ease;
 }
 
 .back-home-link:hover {
@@ -157,34 +149,70 @@ body.fade-out {
   }
 }
 
-@media screen and (max-width: 600px) {
-  body {
-    justify-content: center;
-  }
-  .login-card {
-    margin-right: 0;
-    width: 90%;
-  }
-}
-
 /* --- MOBILE SPECIFIC BACKGROUND & LAYOUT --- */
 @media screen and (max-width: 600px) {
   body {
-    /* Switch to mobile portrait background image */
-    background-image: url('loginbg_v1.png');
+    /* Updated Mobile PNG path */
+    background-image: url('assets/images/web/loginbg_v1.png');
     background-position: center top;
     
-    /* Center the login card vertically and horizontally */
     justify-content: center;
     align-items: center;
     padding: 20px 16px;
   }
 
   .login-card {
-    /* Reset desktop offset margin */
     margin-right: 0;
     width: 100%;
     max-width: 360px;
-    padding: 30px 22px;
+    padding: 24px 20px;
   }
+}
+
+/* --- SIGN UP PROMPT STYLES --- 
+.signup-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.signup-link {
+  color: #1565c0;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.signup-link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+*/
+.forgot-pass {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.reset-pass-link {
+  color: #1565c0;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.reset-pass-link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
 }

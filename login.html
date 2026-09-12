@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسجيل الدخول - المكتبة الرقمية</title>
 
-  <link rel="icon" type="image/png" href="haashiya_logo.png">
+  <link rel="icon" type="image/png" href="assets/images/web/haashiya_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body class="login-page">
 
@@ -33,7 +32,19 @@
       <div id="message" class="message"></div>
     </form>
 
-    <a href="index.html" class="back-home-link" onclick="smoothNavigate(event, 'index.html')">&rarr; العودة للرئيسية</a>
+   <!-- <div class="signup-prompt">
+      <span>ليس لديك حساب؟</span>
+      <a href="signup.html" class="signup-link" onclick="smoothNavigate(event, 'signup.html')">إنشاء حساب جديد</a>
+    </div> -->
+
+    <div class="forgot-pass">
+      <span>نسيت كلمة المرور؟</span>
+      <a href="#" class="reset-pass-link">إعادة تعيين كلمة المرور</a>
+    </div>
+
+    <a href="index.html#educational-materials" class="back-home-link" onclick="smoothNavigate(event, 'index.html#educational-materials')">
+      &rarr; العودة للرئيسية
+    </a>
   </div>
 
   <script>
@@ -60,7 +71,7 @@
         setTimeout(() => {
           document.body.classList.add('fade-out');
           setTimeout(() => {
-            window.location.href = "index.html"; // Redirects to main library page
+            window.location.href = "index.html";
           }, 300);
         }, 1200);
 
