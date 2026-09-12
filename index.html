@@ -81,7 +81,7 @@
       <!-- Horizontal Book List Container -->
       <div class="book-list-container">
   
-        <!-- Book Row Item 1 -->
+        <!-- Book Row Item 1: Balagha -->
         <div class="book-row-card" data-category="balagha">
           <div class="book-row-right">
             <img src="badee3tareekh.png" alt="علم البديع" class="book-row-cover">
@@ -93,12 +93,12 @@
           </div>
   
           <div class="book-row-actions">
-            <button class="action-icon-btn" title="قراءة" onclick="openModal('badee3tareekh.png', 'علم البديع دراسة تاريخية وفنية', 'badee3tareekh.pdf')">
+            <a href="badee3tareekh.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-            </button>
+            </a>
             <a href="badee3tareekh.pdf" download class="action-icon-btn" title="تحميل">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -109,7 +109,7 @@
           </div>
         </div>
   
-        <!-- Book Row Item 2 -->
+        <!-- Book Row Item 2: Balagha -->
         <div class="book-row-card" data-category="balagha">
           <div class="book-row-right">
             <img src="badee3_1.png" alt="البديع في ضوء أساليب القرآن" class="book-row-cover">
@@ -121,12 +121,12 @@
           </div>
   
           <div class="book-row-actions">
-            <button class="action-icon-btn" title="قراءة" onclick="openModal('badee3_1.png', 'البديع في ضوء أساليب القرآن', 'badee3asaleeb.pdf')">
+            <a href="badee3asaleeb.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-            </button>
+            </a>
             <a href="badee3asaleeb.pdf" download class="action-icon-btn" title="تحميل">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -137,6 +137,7 @@
           </div>
         </div>
 
+        <!-- Book Row Item 3: Qira'ah -->
         <div class="book-row-card" data-category="qiraah">
           <div class="book-row-right">
             <img src="maharat.png" alt="المهارات اللغوية" class="book-row-cover">
@@ -148,12 +149,12 @@
           </div>
   
           <div class="book-row-actions">
-            <button class="action-icon-btn" title="قراءة" onclick="openModal('maharat.png', 'المهارات اللغوية', 'maharatlughawya.pdf')">
+            <a href="maharatlughawya.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-            </button>
+            </a>
             <a href="maharatlughawya.pdf" download class="action-icon-btn" title="تحميل">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -175,64 +176,18 @@
       </div>
   
       <div class="book-list-container">
-        <!-- General library row items... -->
+        <!-- General library row items go here -->
       </div>
     </section>
   
   </main>
 
-  <!-- Modal Popup -->
-  <div id="bookModal" class="modal-overlay">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      
-      <div id="modalInfo">
-        <img id="modalCover" src="" alt="Selected Book Cover">
-        <h2 id="modalTitle"></h2>
-        
-        <div class="modal-actions">
-          <a id="readBtn" href="#" target="_blank" class="btn read-btn">قراءة مباشرة</a>
-          <a id="downloadBtn" href="#" download class="btn download-btn">تحميل الكتاب</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    let activeCategory = 'balagha'; // Set default to match active HTML tab
-
-    function openModal(imageSrc, titleText, pdfLink) {
-      document.getElementById('modalCover').src = imageSrc;
-      document.getElementById('modalTitle').textContent = titleText;
-      
-      const isAndroid = /Android/i.test(navigator.userAgent);
-
-      if (isAndroid) {
-        const fullPdfUrl = window.location.origin + '/' + pdfLink;
-        document.getElementById('readBtn').href = `https://docs.google.com/viewer?url=${encodeURIComponent(fullPdfUrl)}&embedded=true`;
-      } else {
-        document.getElementById('readBtn').href = pdfLink;
-      }
-
-      document.getElementById('downloadBtn').href = pdfLink;
-      document.getElementById('bookModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('bookModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-      const modal = document.getElementById('bookModal');
-      if (event.target === modal) {
-        closeModal();
-      }
-    }
+    let activeCategory = 'balagha';
 
     function filterCategory(categoryKey, btnElement) {
       activeCategory = categoryKey;
 
-      // Highlight clicked category button
       document.querySelectorAll('.category-buttons .cat-btn').forEach(btn => btn.classList.remove('active'));
       btnElement.classList.add('active');
 
@@ -260,7 +215,6 @@
       });
     }
 
-    // Run filter once on page initial load
     document.addEventListener('DOMContentLoaded', filterBooks);
   </script>
 </body>
