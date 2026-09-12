@@ -7,10 +7,9 @@
 
 body {
   display: flex;
-  justify-content: flex-start; /* Aligns card to the right side in RTL */
+  justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
-  /* Updated Desktop PNG path */
   background-image: url('assets/images/web/loginbg_pc_v2.png');
   background-size: cover;
   background-position: center;
@@ -26,10 +25,10 @@ body.fade-out {
   opacity: 0;
 }
 
-/* --- LOGIN CARD POSITIONED WITH RIGHT GAP --- */
+/* --- LOGIN CARD --- */
 .login-card {
   background: #ffffff;
-  padding: 24px 28px;
+  padding: 28px 28px;
   border-radius: 18px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
   width: 100%;
@@ -49,11 +48,11 @@ body.fade-out {
 .subtitle {
   color: #64748b;
   font-size: 0.82rem;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .input-group {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .input-group label {
@@ -84,7 +83,7 @@ body.fade-out {
 .login-btn {
   width: 100%;
   padding: 10px;
-  margin-top: 4px;
+  margin-top: 6px;
   background-color: #1565c0;
   color: #ffffff;
   border: none;
@@ -92,36 +91,28 @@ body.fade-out {
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .login-btn:hover {
   background-color: #0d47a1;
 }
 
-.login-btn:active {
-  transform: scale(0.99);
-}
-
 .message {
-  margin-top: 16px;
-  font-size: 0.85rem;
+  margin-top: 14px;
+  font-size: 0.82rem;
   font-weight: 600;
   text-align: center;
-  min-height: 20px;
+  min-height: 18px;
 }
 
-.message.error {
-  color: #dc2626;
-}
-
-.message.success {
-  color: #16a34a;
-}
+.message.error { color: #dc2626; }
+.message.success { color: #16a34a; }
 
 .back-home-link {
   display: block;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 16px;
   color: #64748b;
   text-decoration: none;
   font-size: 0.82rem;
@@ -149,13 +140,11 @@ body.fade-out {
   }
 }
 
-/* --- MOBILE SPECIFIC BACKGROUND & LAYOUT --- */
+/* --- MOBILE LAYOUT --- */
 @media screen and (max-width: 600px) {
   body {
-    /* Updated Mobile PNG path */
     background-image: url('assets/images/web/loginbg_v1.png');
     background-position: center top;
-    
     justify-content: center;
     align-items: center;
     padding: 20px 16px;
@@ -167,52 +156,4 @@ body.fade-out {
     max-width: 360px;
     padding: 24px 20px;
   }
-}
-
-/* --- SIGN UP PROMPT STYLES --- 
-.signup-prompt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid #f1f5f9;
-  font-size: 0.82rem;
-  color: #64748b;
-}
-
-.signup-link {
-  color: #1565c0;
-  font-weight: 700;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.signup-link:hover {
-  color: #0d47a1;
-  text-decoration: underline;
-}
-*/
-.forgot-pass {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 14px;
-  padding-top: 12px;
-  font-size: 0.82rem;
-  color: #64748b;
-}
-
-.reset-pass-link {
-  color: #1565c0;
-  font-weight: 700;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.reset-pass-link:hover {
-  color: #0d47a1;
-  text-decoration: underline;
 }

@@ -32,55 +32,75 @@
       <div id="message" class="message"></div>
     </form>
 
-   <!-- <div class="signup-prompt">
-      <span>ليس لديك حساب؟</span>
-      <a href="signup.html" class="signup-link" onclick="smoothNavigate(event, 'signup.html')">إنشاء حساب جديد</a>
-    </div> -->
-
-    <div class="forgot-pass">
-      <span>نسيت كلمة المرور؟</span>
-      <a href="#" class="reset-pass-link">إعادة تعيين كلمة المرور</a>
-    </div>
-
     <a href="index.html#educational-materials" class="back-home-link" onclick="smoothNavigate(event, 'index.html#educational-materials')">
       &rarr; العودة للرئيسية
     </a>
   </div>
 
   <script>
-    // Allowed users (all lowercase keys to match .toLowerCase() check)
+    // Allowed users database (Keys MUST be lowercase)
     const allowedUsers = {
-      "alif": "123",
-      "sarah": "secret2026",
-      "john": "welcome456"
+      "alif khaerul anam": { 
+        name: "أليف خير الأنام", 
+        gender: "male",
+        avatar: "assets/images/web/default_avatar.png", 
+        pass: "123" 
+      },
+      "sarah": { 
+        name: "سارة", 
+        gender: "female",
+        avatar: "assets/images/web/default_avatar.png", 
+        pass: "1" 
+      },
+      "john": { 
+        name: "جون", 
+        avatar: "assets/images/web/default_avatar.png", 
+        pass: "welcome456" 
+      }
     };
-
+  
     const loginForm = document.getElementById('loginForm');
     const messageDiv = document.getElementById('message');
-
+  
     loginForm.addEventListener('submit', function(e) {
       e.preventDefault();
-
-      const usernameInput = document.getElementById('username').value.trim().toLowerCase();
-      const passwordInput = document.getElementById('password').value;
-
-      if (allowedUsers[usernameInput] && allowedUsers[usernameInput] === passwordInput) {
+  
+      // Replaces multiple spaces with a single space and lowers case
+      const usernameInput = document.getElementById('username').value
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ' ');
+  
+      const passwordInput = document.getElementById('password').value.trim();
+  
+      // Check if user exists
+      if (allowedUsers[usernameInput] && allowedUsers[usernameInput].pass === passwordInput) {
+        const user = allowedUsers[usernameInput];
+  
+        // Store user session in LocalStorage
+        localStorage.setItem('currentUser', JSON.stringify({
+          username: usernameInput,
+          name: user.name,
+          gender: user.gender,
+          avatar: user.avatar
+        }));
+  
         messageDiv.className = "message success";
         messageDiv.textContent = "تم تسجيل الدخول بنجاح! جاري التوجيه...";
-
+  
         setTimeout(() => {
           document.body.classList.add('fade-out');
           setTimeout(() => {
             window.location.href = "index.html";
           }, 300);
         }, 1200);
-
+  
       } else {
         messageDiv.className = "message error";
         messageDiv.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة. يُرجَى المحاولة مرة أخرى";
       }
     });
-
+  
     function smoothNavigate(event, targetUrl) {
       event.preventDefault();
       document.body.classList.add('fade-out');
@@ -89,6 +109,7 @@
       }, 300);
     }
   </script>
+  
 
 </body>
 </html>

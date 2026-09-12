@@ -34,7 +34,6 @@
   <section class="hero-banner">
     <div class="hero-overlay">
       <div class="hero-content">
-        
         <h1 class="hero-title">
           <span class="title-white">المكتبة</span>
           <span class="title-dark">الرقمية</span>
@@ -64,12 +63,10 @@
 
     <!-- SECTION 1: المواد التعليمية -->
     <section id="educational-materials" class="main-card-section">
-      
-      <!-- Section Header with View All Link -->
       <div class="section-header">
         <h2 class="section-title">المواد التعليمية</h2>
-        <a href="category-view.html?cat=educational" class="view-all-link" onclick="smoothNavigate(event, 'category-view.html?cat=educational')"
-        >عرض الكل &rarr;
+        <a href="category-view.html?cat=educational" class="view-all-link" onclick="smoothNavigate(event, 'category-view.html?cat=educational')">
+          عرض الكل &rarr;
         </a>
       </div>
   
@@ -87,7 +84,7 @@
       <!-- Horizontal Book List Container -->
       <div class="book-list-container">
   
-        <!-- Book Row Item 1: Balagha -->
+        <!-- Book 1: Balagha -->
         <div class="book-row-card" data-category="balagha">
           <div class="book-row-right">
             <img src="assets/images/covers/badee3tareekh.png" alt="علم البديع" class="book-row-cover">
@@ -115,7 +112,7 @@
           </div>
         </div>
   
-        <!-- Book Row Item 2: Balagha -->
+        <!-- Book 2: Balagha -->
         <div class="book-row-card" data-category="balagha">
           <div class="book-row-right">
             <img src="assets/images/covers/badee3_1.png" alt="البديع في ضوء أساليب القرآن" class="book-row-cover">
@@ -143,7 +140,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 3: Qira'ah -->
+        <!-- Book 3: Qira'ah -->
         <div class="book-row-card" data-category="qiraah">
           <div class="book-row-right">
             <img src="assets/images/covers/maharat.png" alt="المهارات اللغوية" class="book-row-cover">
@@ -171,7 +168,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 4: Tawheed -->
+        <!-- Book 4: Tawheed -->
         <div class="book-row-card" data-category="tawheed">
           <div class="book-row-right">
             <img src="assets/images/covers/mulakhasktabtawheed.png" alt="الملخص في شرح كتاب التوحيد" class="book-row-cover">
@@ -199,7 +196,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 5: Kitabah -->
+        <!-- Book 5: Kitabah -->
         <div class="book-row-card" data-category="kitaba">
           <div class="book-row-right">
             <img src="assets/images/covers/imlatarqim.png" alt="الإملاء و الترقيم" class="book-row-cover">
@@ -227,7 +224,7 @@
           </div>
         </div>
         
-        <!-- Book Row Item 6: Nahw -->
+        <!-- Book 6: Nahw -->
         <div class="book-row-card" data-category="nahw">
           <div class="book-row-right">
             <img src="assets/images/covers/sharhbn3qeel.png" alt="شرح ابن عقيل على ألفية ابن مالك" class="book-row-cover">
@@ -255,7 +252,7 @@
           </div>
         </div>
         
-        <!-- Book Row Item 7: Nahw -->
+        <!-- Book 7: Nahw -->
         <div class="book-row-card" data-category="nahw">
           <div class="book-row-right">
             <img src="assets/images/covers/ikhtisaribnaqeel.png" alt="الاختصار و التكميل لشرح ابن عقيل على ألفية ابن مالك" class="book-row-cover">
@@ -283,7 +280,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 8: Adab -->
+        <!-- Book 8: Adab -->
         <div class="book-row-card" data-category="adab">
           <div class="book-row-right">
             <img src="assets/images/covers/adab3rby_1.png" alt="الأدب العربي و تاريخه للسنة الأولى" class="book-row-cover">
@@ -367,7 +364,72 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', filterBooks);
+    // --- CHECK USER LOGIN SESSION ---
+    function checkUserSession() {
+      const sessionData = localStorage.getItem('currentUser');
+      const navbarRight = document.querySelector('.navbar-right');
+
+      if (sessionData && navbarRight) {
+        const user = JSON.parse(sessionData);
+
+        const isMale = user.gender === 'male';
+        const genderLabel = isMale ? 'رجل ♂' : 'أنثى ♀';
+        const genderClass = isMale ? 'gender-male' : 'gender-female';
+
+        navbarRight.innerHTML = `
+          <div class="user-profile-badge">
+            <img src="${user.avatar}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
+            <span class="profile-name">${user.name}</span>
+            <span class="gender-badge ${genderClass}">${genderLabel}</span>
+            <button class="logout-btn" onclick="logoutUser()" title="تسجيل الخروج">&times;</button>
+          </div>
+          <button class="icon-btn" aria-label="Menu">
+            <span class="dots-icon"></span>
+          </button>
+        `;
+      }
+    }
+
+    // Opens the modal prompt when clicking the logout button
+    function logoutUser() {
+      const modal = document.getElementById('logoutModal');
+      if (modal) {
+        modal.classList.add('show');
+      }
+    }
+
+    // Closes the modal without logging out
+    function closeLogoutModal() {
+      const modal = document.getElementById('logoutModal');
+      if (modal) {
+        modal.classList.remove('show');
+      }
+    }
+
+    // Executes the session deletion only when confirmed
+    function confirmLogout() {
+      localStorage.removeItem('currentUser');
+      location.reload();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      filterBooks();
+      checkUserSession();
+    });
   </script>
+
+  <!-- LOGOUT CONFIRMATION MODAL -->
+<div id="logoutModal" class="logout-modal-overlay">
+  <div class="logout-modal-card">
+    <div class="logout-modal-icon">⚠️</div>
+    <h3 class="logout-modal-title">تسجيل الخروج</h3>
+    <p class="logout-modal-text">هل أنت تأكد من أنك تريد تسجيل الخروج؟</p>
+    <div class="logout-modal-actions">
+      <button class="logout-confirm-btn" onclick="confirmLogout()">نعم، تسجيل الخروج</button>
+      <button class="logout-cancel-btn" onclick="closeLogoutModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
