@@ -91,40 +91,51 @@ input, button, select, textarea {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: #ffffff;
-  text-align: center;
   direction: rtl;
 }
 
 .hero-overlay {
-  background: linear-gradient(180deg, rgba(13, 71, 161, 0.45) 0%, rgba(13, 71, 161, 0.8) 100%);
-  padding: 50px 20px 45px;
+  background: linear-gradient(180deg, rgba(13, 71, 161, 0.35) 0%, rgba(13, 71, 161, 0.75) 100%);
+  padding: 45px 24px 35px;
 }
 
 .hero-content {
-  max-width: 700px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 .hero-title {
-  font-size: 2.2rem;
+  font-size: 2.6rem;
   font-weight: 800;
-  margin: 0 0 10px 0;
-  letter-spacing: -0.5px;
+  margin: 0 0 8px 0;
+  text-align: right;
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.title-white {
+  color: #ffffff;
+}
+
+.title-dark {
+  color: #0b132b;
 }
 
 .hero-subtitle {
-  font-size: 1rem;
-  opacity: 0.92;
+  font-size: 1.05rem;
+  color: #ffffff;
+  opacity: 0.95;
   line-height: 1.6;
-  margin: 0 0 28px 0;
-  font-weight: 400;
+  margin: 0 0 24px 0;
+  text-align: right;
+  font-weight: 500;
 }
 
 /* --- SEARCH BAR INSIDE HERO --- */
 .search-container {
   width: 100%;
-  max-width: 580px;
+  max-width: 900px;
   margin: 0 auto;
   position: relative;
   display: flex;
@@ -132,7 +143,7 @@ input, button, select, textarea {
   background-color: #ffffff;
   padding: 5px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
 }
 
@@ -144,7 +155,7 @@ input, button, select, textarea {
   border-radius: 8px;
   outline: none;
   text-align: right;
-  background-color: #f0f6ff;
+  background-color: #f0f4f9;
   color: #1d4ed8;
   box-sizing: border-box;
 }
@@ -415,12 +426,12 @@ input, button, select, textarea {
   }
 
   .hero-title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    gap: 8px;
   }
 
   .hero-subtitle {
-    font-size: 0.85rem;
-    margin-bottom: 20px;
+    font-size: 0.88rem;
   }
 
   #searchInput {
