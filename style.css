@@ -1,94 +1,190 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'IBM Plex Sans Arabic', 'Work Sans', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: flex-start; /* Aligns card to the right side in RTL */
+  align-items: center;
+  min-height: 100vh;
+  background-image: url('loginbg_pc_v2.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  direction: rtl;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  margin: 0;
+  padding: 0;
+}
+
+body.fade-out {
+  opacity: 0;
+}
+
+/* --- LOGIN CARD POSITIONED WITH RIGHT GAP --- */
+.login-card {
+  background: #ffffff;
+  padding: 40px 32px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 420px;
+  text-align: right;
   
+  /* Guarantees clean gap from the right window edge */
+  margin-right: 15vw; 
+  
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.login-card h2 {
+  color: #0f172a;
+  font-size: 1.7rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  text-align: right;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 0.88rem;
+  text-align: right;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #1e293b;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  text-align: right;
+  background-color: #f8fafc;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.input-group input:focus {
+  border-color: #1565c0;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #1565c0;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.login-btn:hover {
+  background-color: #0d47a1;
+}
+
+.login-btn:active {
+  transform: scale(0.99);
+}
+
+.message {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  min-height: 20px;
+}
+
+.message.error {
+  color: #dc2626;
+}
+
+.message.success {
+  color: #16a34a;
+}
+
+.back-home-link {
+  display: block;
+  text-align: center;
+  margin-top: 22px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.back-home-link:hover {
+  color: #1565c0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .login-card {
+    margin-right: 8vw;
+  }
+}
+
+@media screen and (max-width: 600px) {
   body {
-    display: flex;
+    justify-content: center;
+  }
+  .login-card {
+    margin-right: 0;
+    width: 90%;
+  }
+}
+
+/* --- MOBILE SPECIFIC BACKGROUND & LAYOUT --- */
+@media screen and (max-width: 600px) {
+  body {
+    /* Switch to mobile portrait background image */
+    background-image: url('loginbg_v1.png');
+    background-position: center top;
+    
+    /* Center the login card vertically and horizontally */
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #5c88d5 100%);
+    padding: 20px 16px;
   }
-  
+
   .login-card {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    /* Reset desktop offset margin */
+    margin-right: 0;
     width: 100%;
-    max-width: 400px;
+    max-width: 360px;
+    padding: 30px 22px;
   }
-  
-  .login-card h2 {
-    color: #333;
-    margin-bottom: 8px;
-    text-align: center;
-  }
-  
-  .subtitle {
-    color: #666;
-    font-size: 14px;
-    text-align: center;
-    margin-bottom: 24px;
-  }
-  
-  .input-group {
-    margin-bottom: 20px;
-  }
-  
-  .input-group label {
-    display: block;
-    margin-bottom: 6px;
-    color: #444;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  
-  .input-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.30s;
-  }
-  
-  .input-group input:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-  
-  .login-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #667eea;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .login-btn:hover {
-    background-color: #5a67d8;
-  }
-  
-  .message {
-    margin-top: 15px;
-    font-size: 14px;
-    text-align: center;
-    min-height: 20px;
-  }
-  
-  .message.error {
-    color: #e53e3e;
-  }
-  
-  .message.success {
-    color: #38a169;
-  }
+}

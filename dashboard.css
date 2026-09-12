@@ -657,3 +657,33 @@ input, button, select, textarea {
     height: 34px;
   }
 }
+
+/* --- PAGE TRANSITION ANIMATIONS --- */
+body {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+body.fade-out {
+  opacity: 0;
+}
+
+/* Smooth Fade In Effect on Page Load */
+.main-card-section, .book-row-card {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

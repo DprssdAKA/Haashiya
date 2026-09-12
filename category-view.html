@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>المكتبة الرقمية</title>
+  <title>المواد التعليمية - المكتبة الرقمية</title>
 
   <link rel="icon" type="image/png" href="haashiya_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,13 +16,13 @@
   <header class="navbar">
     <div class="navbar-container">
       <div class="navbar-left">
-        <a href="#" class="logo-link">
+        <a href="index.html#educational-materials" class="logo-link" onclick="smoothNavigate(event, 'index.html#educational-materials')">
           <img src="navbar_logo.png" alt="حاشية" class="navbar-logo">
         </a>
       </div>
 
       <div class="navbar-right">
-        <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+        <a href="index.html#educational-materials" class="btn-login" onclick="smoothNavigate(event, 'index.html#educational-materials')">&rarr; العودة للرئيسية</a>
         <button class="icon-btn" aria-label="Menu">
           <span class="dots-icon"></span>
         </button>
@@ -30,64 +30,45 @@
     </div>
   </header>
 
-  <!-- Hero Banner Section -->
-  <section class="hero-banner">
-    <div class="hero-overlay">
-      <div class="hero-content">
-        
-        <h1 class="hero-title">
-          <span class="title-white">المكتبة</span>
-          <span class="title-dark">الرقمية</span>
-        </h1>
-        <p class="hero-subtitle">رف كتب رقمي يضم مجموعة من المراجع المساندة الداعمة للدراسة الجامعية</p>
-
-        <!-- Search Bar Inside Hero -->
-        <div class="search-container">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="اكتب للبحث عن كتاب..."
-            onkeyup="filterBooks()"
-          />
-          <button class="search-btn" aria-label="Search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <main class="library-wrapper">
 
-    <!-- SECTION 1: المواد التعليمية -->
-    <section id="educational-materials" class="main-card-section">
+    <section class="main-card-section">
       
-      <!-- Section Header with View All Link -->
       <div class="section-header">
-        <h2 class="section-title">المواد التعليمية</h2>
-        <a href="category-view.html?cat=educational" class="view-all-link" onclick="smoothNavigate(event, 'category-view.html?cat=educational')"
-        >عرض الكل &rarr;
-        </a>
+        <h2 class="section-title">جميع كتب المواد التعليمية</h2>
       </div>
-  
+
+      <!-- Search Bar -->
+      <div class="search-container" style="margin-bottom: 20px;">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="اكتب للبحث عن كتاب في المواد التعليمية..."
+          onkeyup="filterBooks()"
+        />
+        <button class="search-btn" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+
       <!-- Category Filter Tabs -->
       <div class="category-buttons">
-        <button class="cat-btn active" onclick="filterCategory('balagha', this)">البلاغة</button>
+        <button class="cat-btn active" onclick="filterCategory('all', this)">الكل</button>
+        <button class="cat-btn" onclick="filterCategory('balagha', this)">البلاغة</button>
         <button class="cat-btn" onclick="filterCategory('qiraah', this)">القراءة</button>
         <button class="cat-btn" onclick="filterCategory('tawheed', this)">التوحيد</button>
         <button class="cat-btn" onclick="filterCategory('kitaba', this)">الكتابة</button>
         <button class="cat-btn" onclick="filterCategory('nahw', this)">النحو</button>
         <button class="cat-btn" onclick="filterCategory('adab', this)">تاريخ الأدب</button>
-        <button class="cat-btn" onclick="filterCategory('indonesian', this)">اللغة الإندونيسية</button>
       </div>
-  
+
       <!-- Horizontal Book List Container -->
       <div class="book-list-container">
-  
-        <!-- Book Row Item 1: Balagha -->
+
+        <!-- Book 1: Balagha -->
         <div class="book-row-card" data-category="balagha">
           <div class="book-row-right">
             <img src="badee3tareekh.png" alt="علم البديع" class="book-row-cover">
@@ -97,7 +78,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة البلاغة</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="badee3tareekh.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -114,8 +95,8 @@
             </a>
           </div>
         </div>
-  
-        <!-- Book Row Item 2: Balagha -->
+
+        <!-- Book 2: Balagha -->
         <div class="book-row-card" data-category="balagha">
           <div class="book-row-right">
             <img src="badee3_1.png" alt="البديع في ضوء أساليب القرآن" class="book-row-cover">
@@ -125,7 +106,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة البلاغة</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="badee3asaleeb.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -143,7 +124,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 3: Qira'ah -->
+        <!-- Book 3: Qira'ah -->
         <div class="book-row-card" data-category="qiraah">
           <div class="book-row-right">
             <img src="maharat.png" alt="المهارات اللغوية" class="book-row-cover">
@@ -153,7 +134,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة القراءة</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="maharatlughawya.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -171,7 +152,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 4: Tawheed -->
+        <!-- Book 4: Tawheed -->
         <div class="book-row-card" data-category="tawheed">
           <div class="book-row-right">
             <img src="mulakhasktabtawheed.png" alt="الملخص في شرح كتاب التوحيد" class="book-row-cover">
@@ -181,7 +162,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة التوحيد</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="mulakhasktabtawheed.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -199,7 +180,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 5: Kitabah -->
+        <!-- Book 5: Kitabah -->
         <div class="book-row-card" data-category="kitaba">
           <div class="book-row-right">
             <img src="imlatarqim.png" alt="الإملاء و الترقيم" class="book-row-cover">
@@ -209,7 +190,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة الكتابة</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="imlatarqim.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -226,8 +207,8 @@
             </a>
           </div>
         </div>
-        
-        <!-- Book Row Item 6: Nahw -->
+
+        <!-- Book 6: Nahw -->
         <div class="book-row-card" data-category="nahw">
           <div class="book-row-right">
             <img src="sharhbn3qeel.png" alt="شرح ابن عقيل على ألفية ابن مالك" class="book-row-cover">
@@ -237,7 +218,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة النحو</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="sharhbn3qeel.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -254,8 +235,8 @@
             </a>
           </div>
         </div>
-        
-        <!-- Book Row Item 7: Nahw -->
+
+        <!-- Book 7: Nahw -->
         <div class="book-row-card" data-category="nahw">
           <div class="book-row-right">
             <img src="ikhtisaribnaqeel.png" alt="الاختصار و التكميل لشرح ابن عقيل على ألفية ابن مالك" class="book-row-cover">
@@ -265,7 +246,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة النحو</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="ikhtisaribnaqeel.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -283,7 +264,7 @@
           </div>
         </div>
 
-        <!-- Book Row Item 8: Adab -->
+        <!-- Book 8: Adab -->
         <div class="book-row-card" data-category="adab">
           <div class="book-row-right">
             <img src="adab3rby_1.png" alt="الأدب العربي و تاريخه للسنة الأولى" class="book-row-cover">
@@ -293,7 +274,7 @@
               <span class="book-row-meta">المرجع الرئيسي - مادة تاريخ الأدب</span>
             </div>
           </div>
-  
+
           <div class="book-row-actions">
             <a href="adab3rby_1.pdf" target="_blank" class="action-icon-btn" title="قراءة">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -313,32 +294,19 @@
 
       </div>
     </section>
-  
-    <!-- SECTION 2: المكتبة العامة -->
-    <section class="main-card-section">
-      <div class="section-header">
-        <h2 class="section-title">المكتبة العامة</h2>
-        <a href="category-view.html?cat=general" class="view-all-link">عرض الكل &rarr;</a>
-      </div>
-  
-      <div class="book-list-container">
-        <!-- General library row items go here -->
-      </div>
-    </section>
-  
+
   </main>
 
   <script>
     function smoothNavigate(event, targetUrl) {
       event.preventDefault();
-
-      document.body.classList.add('fade-out')
-
+      document.body.classList.add('fade-out');
       setTimeout(() => {
         window.location.href = targetUrl;
-      }, 300)
+      }, 300);
     }
-    let activeCategory = 'balagha';
+
+    let activeCategory = 'all';
 
     function filterCategory(categoryKey, btnElement) {
       activeCategory = categoryKey;
