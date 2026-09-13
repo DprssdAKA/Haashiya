@@ -620,6 +620,434 @@ body.fade-out {
   background-color: #e2e8f0;
 }
 
+/* --- SITE FOOTER (100% FULL BLEED SCREEN WIDTH) --- */
+.site-footer {
+  width: 100%;
+  margin-top: 50px;
+  direction: rtl;
+  overflow: hidden;
+}
+
+.footer-overlay {
+  width: 100%;
+  background: transparent;
+  padding: 0; /* Removed padding so image spans true 100% width */
+}
+
+.footer-container {
+  width: 100%;
+  max-width: 100%; /* Overridden 1200px limit so it spans full width */
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover; /* Ensures banner fills entire width cleanly */
+}
+
+/* --- SECTION ACTIONS & ADD BOOK BUTTON --- */
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-add-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #1565c0;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-add-book:hover {
+  background-color: #0d47a1;
+  transform: translateY(-1px);
+}
+
+.btn-add-book:active {
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 600px) {
+  .section-actions {
+    gap: 8px;
+  }
+  
+  .btn-add-book {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+  }
+}
+
+/* --- UPLOAD MODAL & DRAG AND DROP --- */
+.upload-modal-overlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  direction: rtl;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.upload-modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.upload-modal-card {
+  background: #ffffff;
+  padding: 22px 24px;
+  border-radius: 18px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 88vh; /* Keeps modal inside top and bottom viewport edges */
+  overflow-y: auto; /* Enables smooth scrolling if content exceeds height */
+  position: relative;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+
+.upload-modal-overlay.show .upload-modal-card {
+  transform: scale(1);
+}
+
+.modal-close-x {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #94a3b8;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.upload-modal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.upload-modal-subtitle {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+
+/* DRAG AND DROP ZONES */
+.drop-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  background-color: #f8fafc;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: #1565c0;
+  background-color: #f0f6ff;
+}
+
+.drop-icon {
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.drop-zone-text {
+  font-size: 0.76rem;
+  color: #475569;
+}
+
+.drop-zone-text b {
+  color: #1565c0;
+}
+
+.upload-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-submit-upload {
+  flex: 1;
+  padding: 10px;
+  background-color: #1565c0;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-submit-upload:hover {
+  background-color: #0d47a1;
+}
+
+.btn-cancel-upload {
+  flex: 1;
+  padding: 10px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- FANCY MODAL FORM FIELDS --- */
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  width: 100%;
+  text-align: right;
+}
+
+.modal-field label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.modal-input, .modal-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background-color: #f8fafc;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modal-input:focus, .modal-select:focus {
+  border-color: #1565c0;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3.5px rgba(21, 101, 192, 0.12);
+}
+
+.modal-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%3c1565c0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  background-size: 16px;
+  padding-left: 36px;
+}
+
+/* MOBILE ADAPTATION for upload pdfs */
+@media screen and (max-width: 480px) {
+  .upload-modal-card {
+    padding: 18px 16px;
+    max-height: 92vh;
+  }
+  
+  .upload-modal-title {
+    font-size: 1.1rem;
+  }
+  
+  .modal-input, .modal-select {
+    font-size: 0.82rem;
+    padding: 8px 10px;
+  }
+}
+
+/* --- SUCCESS TOAST NOTIFICATION --- */
+.toast-notification {
+  position: fixed;
+  bottom: -80px; /* Hidden off-screen by default */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #16a34a; /* Vibrant Green */
+  color: #ffffff; /* White text */
+  padding: 12px 22px;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(22, 163, 74, 0.35);
+  z-index: 3000;
+  direction: rtl;
+  opacity: 0;
+  transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.toast-notification.show {
+  bottom: 30px; /* Slides smoothly into view */
+  opacity: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .toast-notification {
+    width: 88%;
+    box-sizing: border-box;
+    justify-content: center;
+    font-size: 0.82rem;
+    padding: 10px 16px;
+  }
+}
+
+/* --- ERROR TOAST NOTIFICATION (SLIDES FROM RIGHT) --- */
+.toast-error {
+  background-color: #dc2626 !important; /* Red Box */
+  box-shadow: 0 10px 25px rgba(220, 38, 38, 0.35) !important;
+  
+  /* Initial Position: Off-screen to the right */
+  bottom: 30px;
+  left: auto;
+  right: -350px;
+  transform: none;
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.toast-error.show {
+  right: 30px; /* Slides smoothly in from the right */
+  opacity: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .toast-error {
+    right: -100%;
+    width: 88%;
+  }
+  
+  .toast-error.show {
+    right: 6%; /* Centered fit on mobile screens */
+  }
+}
+
+/* --- ADMIN PENDING QUEUE BUTTON --- */
+.btn-pending-queue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #64748b; /* Gray Button */
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.btn-pending-queue:hover {
+  background-color: #475569;
+}
+
+.sandglass-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.pending-count {
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+/* QUEUE ITEM CARDS */
+.queue-modal-card {
+  max-width: 520px;
+}
+
+.pending-item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.pending-action-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-approve {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-reject {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* --- ADMIN EDIT & DELETE BUTTON STYLES --- */
+.admin-edit-btn:hover {
+  background-color: #2563eb !important; /* Blue hover for Edit */
+}
+
+.admin-delete-btn:hover {
+  background-color: #dc2626 !important; /* Red hover for Delete */
+}
+
 html {
   scroll-behavior: smooth;
 }

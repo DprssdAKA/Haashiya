@@ -312,16 +312,33 @@
     </section>
   
     <!-- SECTION 2: المكتبة العامة -->
-    <section class="main-card-section">
-      <div class="section-header">
-        <h2 class="section-title">المكتبة العامة</h2>
-        <a href="category-view.html?cat=general" class="view-all-link">عرض الكل &rarr;</a>
-      </div>
-  
-      <div class="book-list-container">
-        <!-- General library row items go here -->
-      </div>
-    </section>
+<section class="main-card-section">
+  <div class="section-header">
+    <h2 class="section-title">المكتبة العامة</h2>
+    
+    <!-- Right side action buttons container -->
+    <div class="section-actions">
+      <!-- Sandglass Admin Button (Hidden by default, shown via JS for Admins) -->
+      <button id="adminQueueBtn" class="btn-pending-queue" onclick="openAdminQueueModal()" style="display: none;" title="قائمة المراجعة">
+        <img src="assets/images/web/approvalqueue_icon.png" alt="Pending Queue" class="sandglass-icon">
+        <span id="pendingBadgeCount" class="pending-count">0</span>
+      </button>
+    
+      <button class="btn-add-book" onclick="openUploadModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        طلب إضافة كتاب
+      </button>
+      
+      <a href="category-view.html?cat=general" class="view-all-link">عرض الكل &rarr;</a>
+    </div>
+    
+  </div>
+
+  <div class="book-list-container">
+    <!-- General library row items go here -->
+  </div>
+</section>
+
   
   </main>
 
@@ -364,14 +381,17 @@
       });
     }
 
-    // --- CHECK USER LOGIN SESSION ---
+    // --- LOCALSTORAGE KEYS ---
+    const STORAGE_PENDING_KEY = 'pendingBooksDB';
+    const STORAGE_APPROVED_KEY = 'approvedBooksDB';
+
+    // --- USER LOGIN SESSION & ADMIN CHECK ---
     function checkUserSession() {
       const sessionData = localStorage.getItem('currentUser');
       const navbarRight = document.querySelector('.navbar-right');
 
       if (sessionData && navbarRight) {
         const user = JSON.parse(sessionData);
-
         const isMale = user.gender === 'male';
         const genderLabel = isMale ? 'رجل ♂' : 'أنثى ♀';
         const genderClass = isMale ? 'gender-male' : 'gender-female';
@@ -383,40 +403,386 @@
             <span class="gender-badge ${genderClass}">${genderLabel}</span>
             <button class="logout-btn" onclick="logoutUser()" title="تسجيل الخروج">&times;</button>
           </div>
-          <button class="icon-btn" aria-label="Menu">
-            <span class="dots-icon"></span>
-          </button>
+          <button class="icon-btn" aria-label="Menu"><span class="dots-icon"></span></button>
         `;
+
+        // Display Sandglass Queue Button if Admin
+        if (user.role === 'admin') {
+          const adminBtn = document.getElementById('adminQueueBtn');
+          if (adminBtn) adminBtn.style.display = 'inline-flex';
+          updatePendingBadgeCount();
+        }
       }
     }
 
-    // Opens the modal prompt when clicking the logout button
+    // --- LOGOUT MODAL CONTROLLERS ---
     function logoutUser() {
       const modal = document.getElementById('logoutModal');
-      if (modal) {
-        modal.classList.add('show');
-      }
+      if (modal) modal.classList.add('show');
     }
 
-    // Closes the modal without logging out
     function closeLogoutModal() {
       const modal = document.getElementById('logoutModal');
-      if (modal) {
-        modal.classList.remove('show');
-      }
+      if (modal) modal.classList.remove('show');
     }
 
-    // Executes the session deletion only when confirmed
     function confirmLogout() {
       localStorage.removeItem('currentUser');
       location.reload();
     }
 
+    // --- UPLOAD MODAL CONTROLLERS ---
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.add('show');
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.remove('show');
+      document.getElementById('uploadBookForm').reset();
+      document.getElementById('pdfDropText').innerHTML = 'اسحب ملف PDF الكتاب هنا أو <b>اختر من الجهاز</b>';
+      document.getElementById('coverDropText').innerHTML = 'اسحب صورة الغلاف (PNG/JPG) أو <b>اختر صورة</b>';
+    }
+
+    // --- TOAST NOTIFICATION CONTROLLERS ---
+    function showToastNotification() {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    function showErrorToast(messageText) {
+      const toast = document.getElementById('errorToastNotification');
+      const messageSpan = document.getElementById('errorToastMessage');
+
+      if (toast && messageSpan) {
+        messageSpan.textContent = messageText;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    // --- FILE VALIDATION & DRAG/DROP ---
+    function validateFileSelect(input, textId, allowedTypes, fileTypeName) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const isAllowed = allowedTypes.some(type => file.type.match(type) || file.name.toLowerCase().endsWith(type));
+
+        if (!isAllowed) {
+          showErrorToast(`عذراً، هذا الحقل يقبل ملفات ${fileTypeName} فقط!`);
+          input.value = '';
+          return;
+        }
+        document.getElementById(textId).textContent = 'تم اختيار: ' + file.name;
+      }
+    }
+
+    function setupDropZone(zoneId, inputId, textId, allowedTypes, fileTypeName) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+
+      if (!zone || !input) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        zone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        zone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+        }, false);
+      });
+
+      zone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          const isAllowed = allowedTypes.some(type => file.type.match(type) || file.name.toLowerCase().endsWith(type));
+
+          if (!isAllowed) {
+            showErrorToast(`عذراً، هذا الحقل يقبل ملفات ${fileTypeName} فقط!`);
+            return;
+          }
+
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          input.files = dataTransfer.files;
+          validateFileSelect(input, textId, allowedTypes, fileTypeName);
+        }
+      });
+    }
+
+    // --- ADMIN PENDING QUEUE LOGIC ---
+    function openAdminQueueModal() {
+      renderPendingQueueList();
+      document.getElementById('adminQueueModal').classList.add('show');
+    }
+
+    function closeAdminQueueModal() {
+      document.getElementById('adminQueueModal').classList.remove('show');
+    }
+
+    function getPendingBooks() {
+      return JSON.parse(localStorage.getItem(STORAGE_PENDING_KEY) || '[]');
+    }
+
+    function updatePendingBadgeCount() {
+      const badge = document.getElementById('pendingBadgeCount');
+      if (badge) badge.textContent = getPendingBooks().length;
+    }
+
+    function renderPendingQueueList() {
+      const container = document.getElementById('pendingBooksList');
+      const pendingBooks = getPendingBooks();
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (pendingBooks.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد كتب معلقة حالياً</p>';
+        return;
+      }
+
+      pendingBooks.forEach((book, index) => {
+        const card = document.createElement('div');
+        card.className = 'pending-item-card';
+        card.innerHTML = `
+          <div style="text-align:right;">
+            <strong style="font-size:0.88rem; color:#0f172a; display:block;">${book.title}</strong>
+            <span style="font-size:0.78rem; color:#64748b;">المؤلف: ${book.author} | الفن: ${book.theme}</span>
+          </div>
+          <div class="pending-action-btns">
+            <button class="btn-approve" onclick="approveBook(${index})">قبول</button>
+            <button class="btn-reject" onclick="rejectBook(${index})">رفض</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function approveBook(index) {
+      let pending = getPendingBooks();
+      let approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
+
+      const bookToApprove = pending.splice(index, 1)[0];
+      approved.unshift(bookToApprove);
+
+      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(pending));
+      localStorage.setItem(STORAGE_APPROVED_KEY, JSON.stringify(approved));
+
+      renderPendingQueueList();
+      updatePendingBadgeCount();
+      renderApprovedBooksOnSurface();
+    }
+
+    function rejectBook(index) {
+      let pending = getPendingBooks();
+      pending.splice(index, 1);
+      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(pending));
+
+      renderPendingQueueList();
+      updatePendingBadgeCount();
+    }
+
+    function renderApprovedBooksOnSurface() {
+  const container = document.querySelector('.main-card-section:last-of-type .book-list-container');
+  const approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
+  const sessionData = localStorage.getItem('currentUser');
+  const user = sessionData ? JSON.parse(sessionData) : null;
+  const isAdmin = user && user.role === 'admin';
+
+  if (!container) return;
+
+  // Clear previously rendered dynamic cards
+  document.querySelectorAll('.user-approved-card').forEach(el => el.remove());
+
+  approved.forEach((book, index) => {
+    const card = document.createElement('div');
+    card.className = 'book-row-card user-approved-card';
+    card.setAttribute('data-category', 'general');
+
+    // Display admin controls if logged in as Admin
+    const adminActions = isAdmin ? `
+      <button class="action-icon-btn admin-edit-btn" onclick="openEditBookModal(${index})" title="تعديل الكتاب">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+      </button>
+      <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook(${index})" title="حذف الكتاب">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+      </button>
+    ` : '';
+
+    card.innerHTML = `
+      <div class="book-row-right">
+        <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
+        <div class="book-row-details">
+          <h3 class="book-row-title">${book.title}</h3>
+          <p class="book-row-author">${book.author}</p>
+          <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}</span>
+        </div>
+      </div>
+      <div class="book-row-actions">
+        ${adminActions}
+        <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </a>
+        <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+    `;
+    container.prepend(card);
+  });
+}
+
+
+    function handleBookSubmit(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('bookTitle').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+      const theme = document.getElementById('bookCategory').value;
+      const pdfFile = document.getElementById('pdfInput').files[0];
+      const coverFile = document.getElementById('coverInput').files[0];
+
+      if (!title || !author) {
+        showErrorToast('يُرجَى ملء جميع الحقول المطلوبة (عنوان الكتاب واسم المؤلف)');
+        return;
+      }
+
+      if (!pdfFile) {
+        showErrorToast('يُرجَى رفع ملف PDF الخاص بالكتاب للمتابعة');
+        return;
+      }
+
+      const pendingBooks = getPendingBooks();
+      pendingBooks.push({
+        title,
+        author,
+        theme,
+        pdfUrl: URL.createObjectURL(pdfFile),
+        coverUrl: coverFile ? URL.createObjectURL(coverFile) : 'assets/images/covers/badee3tareekh.png'
+      });
+
+      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(pendingBooks));
+
+      closeUploadModal();
+      updatePendingBadgeCount();
+      showToastNotification();
+    }
+
+    // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
       filterBooks();
       checkUserSession();
+      renderApprovedBooksOnSurface();
+      setupDropZone('pdfDropZone', 'pdfInput', 'pdfDropText', ['application/pdf', '.pdf'], 'PDF');
+      setupDropZone('coverDropZone', 'coverInput', 'coverDropText', ['image/png', 'image/jpeg', 'image/jpg'], 'صور (PNG/JPG)');
     });
+
+    let currentEditingIndex = null;
+
+// Open Edit Modal with pre-filled book details
+function openEditBookModal(index) {
+  const approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
+  const book = approved[index];
+
+  if (!book) return;
+  currentEditingIndex = index;
+
+  document.getElementById('editBookTitle').value = book.title;
+  document.getElementById('editBookAuthor').value = book.author;
+  document.getElementById('editBookCategory').value = book.theme;
+
+  document.getElementById('editBookModal').classList.add('show');
+}
+
+function closeEditBookModal() {
+  document.getElementById('editBookModal').classList.remove('show');
+  currentEditingIndex = null;
+}
+
+// Handle Edit Form Submission
+function handleEditBookSubmit(e) {
+  e.preventDefault();
+
+  if (currentEditingIndex === null) return;
+
+  let approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
+  
+  // Update details
+  approved[currentEditingIndex].title = document.getElementById('editBookTitle').value.trim();
+  approved[currentEditingIndex].author = document.getElementById('editBookAuthor').value.trim();
+  approved[currentEditingIndex].theme = document.getElementById('editBookCategory').value;
+
+  localStorage.setItem(STORAGE_APPROVED_KEY, JSON.stringify(approved));
+
+  closeEditBookModal();
+  renderApprovedBooksOnSurface();
+  showToastNotification();
+}
+
+// Remove Approved Book from Surface & LocalStorage
+let currentDeletingIndex = null;
+
+// Opens the custom deletion modal dialog
+function removeApprovedBook(index) {
+  currentDeletingIndex = index;
+  const modal = document.getElementById('deleteBookModal');
+  if (modal) {
+    modal.classList.add('show');
+  }
+}
+
+// Closes the modal dialog without deleting
+function closeDeleteBookModal() {
+  const modal = document.getElementById('deleteBookModal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+  currentDeletingIndex = null;
+}
+
+// Executes the deletion from LocalStorage and updates the UI
+function confirmDeleteBook() {
+  if (currentDeletingIndex !== null) {
+    let approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
+    approved.splice(currentDeletingIndex, 1);
+    localStorage.setItem(STORAGE_APPROVED_KEY, JSON.stringify(approved));
+
+    renderApprovedBooksOnSurface();
+    closeDeleteBookModal();
+    showErrorToast('تم حذف الكتاب بنجاح من المكتبة العامة');
+  }
+}
+
+
   </script>
+
+<footer class="site-footer">
+  <div class="footer-overlay">
+    <div class="footer-container">
+      <img src="assets/images/web/footer_preview.png" alt="footer" class="footer-logo">
+    </div>
+  </div>
+</footer>
 
   <!-- LOGOUT CONFIRMATION MODAL -->
 <div id="logoutModal" class="logout-modal-overlay">
@@ -427,6 +793,171 @@
     <div class="logout-modal-actions">
       <button class="logout-confirm-btn" onclick="confirmLogout()">نعم، تسجيل الخروج</button>
       <button class="logout-cancel-btn" onclick="closeLogoutModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD BOOK MODAL -->
+<div id="uploadModal" class="upload-modal-overlay">
+  <div class="upload-modal-card">
+    <button class="modal-close-x" onclick="closeUploadModal()">&times;</button>
+
+    <h3 class="upload-modal-title">إضافة كتاب جديد</h3>
+    <p class="upload-modal-subtitle">قم برفع ملف PDF وصورة الغلاف للمساهمة في المكتبة العامة</p>
+
+    <form id="uploadBookForm" onsubmit="handleBookSubmit(event)">
+      <!-- Book Title -->
+      <div class="modal-field">
+        <label for="bookTitle">عنوان الكتاب</label>
+        <input type="text" id="bookTitle" class="modal-input" placeholder="أدخل اسم الكتاب..." required autocomplete="off">
+      </div>
+
+      <!-- Author -->
+      <div class="modal-field">
+        <label for="bookAuthor">اسم المؤلف</label>
+        <input type="text" id="bookAuthor" class="modal-input" placeholder="أدخل اسم المؤلف..." required autocomplete="off">
+      </div>
+
+      <!-- Theme / Topic Category -->
+      <div class="modal-field">
+        <label for="bookCategory">موضوع الكتاب / الفن</label>
+        <select id="bookCategory" class="modal-select" required>
+          <option value="العقيدة">العقيدة</option>
+          <option value="الشرح">الشرح</option>
+          <option value="المتن">المتن</option>
+          <option value="اللغة">اللغة</option>
+          <option value="الأحكام الشرعية">الأحكام الشرعية</option>
+          <option value="التفسير">التفسير</option>
+          <option value="الحديث">الحديث</option>
+          <option value="أخرى" selected>أخرى</option>
+        </select>
+      </div>
+
+      <!-- 1st Zone: PDF File -->
+      <div class="drop-zone" id="pdfDropZone" onclick="document.getElementById('pdfInput').click()">
+        <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="9" y1="15" x2="12" y2="12"></line>
+          <line x1="15" y1="15" x2="12" y2="12"></line>
+        </svg>
+        <span class="drop-zone-text" id="pdfDropText">اسحب ملف PDF الكتاب هنا أو <b>اختر من الجهاز</b></span>
+        <input 
+          type="file" 
+          id="pdfInput" 
+          accept="application/pdf" 
+          style="display: none;" 
+          onchange="validateFileSelect(this, 'pdfDropText', ['application/pdf', '.pdf'], 'PDF')"
+          >
+      </div>
+
+      <!-- 2nd Zone: Book Cover Image -->
+      <div class="drop-zone" id="coverDropZone" onclick="document.getElementById('coverInput').click()">
+        <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <span class="drop-zone-text" id="coverDropText">اسحب صورة الغلاف (PNG/JPG) أو <b>اختر صورة</b></span>
+        <input 
+        type="file" 
+        id="coverInput" 
+        accept="image/png, image/jpeg, image/jpg" 
+        style="display: none;" 
+        onchange="validateFileSelect(this, 'coverDropText', ['image/png', 'image/jpeg', 'image/jpg'])"
+        >
+      </div>
+
+      <div class="upload-modal-actions">
+        <button type="submit" class="btn-submit-upload">طلب رفع كتاب</button>
+        <button type="button" class="btn-cancel-upload" onclick="closeUploadModal()">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SUCCESS TOAST NOTIFICATION -->
+<div id="toastNotification" class="toast-notification">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+  <span>تم طلب رفع الكتاب بنجاح! سيتم عرضه فور الموافقة عليه</span>
+</div>
+
+<!-- ERROR TOAST NOTIFICATION (SLIDES FROM RIGHT) -->
+<div id="errorToastNotification" class="toast-notification toast-error">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="15" y1="9" x2="9" y2="15"></line>
+    <line x1="9" y1="9" x2="15" y2="15"></line>
+  </svg>
+  <span id="errorToastMessage">حدث خطأ في المدخلات!</span>
+</div>
+
+<!-- ADMIN APPROVAL QUEUE MODAL -->
+<div id="adminQueueModal" class="upload-modal-overlay">
+  <div class="upload-modal-card queue-modal-card">
+    <button class="modal-close-x" onclick="closeAdminQueueModal()">&times;</button>
+    <h3 class="upload-modal-title">طلبات المراجعة المعلقة</h3>
+    <p class="upload-modal-subtitle">الموافقة أو الرفض على الكتب المرسلة من المستخدمين</p>
+
+    <div id="pendingBooksList" class="pending-books-container">
+      <!-- Pending items populate here dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- EDIT BOOK MODAL -->
+<div id="editBookModal" class="upload-modal-overlay">
+  <div class="upload-modal-card">
+    <button class="modal-close-x" onclick="closeEditBookModal()">&times;</button>
+
+    <h3 class="upload-modal-title">تعديل معلومات الكتاب</h3>
+    <p class="upload-modal-subtitle">تعديل اسم الكتاب، المؤلف، أو التصنيف</p>
+
+    <form id="editBookForm" onsubmit="handleEditBookSubmit(event)">
+      <div class="modal-field">
+        <label for="editBookTitle">عنوان الكتاب</label>
+        <input type="text" id="editBookTitle" class="modal-input" required autocomplete="off">
+      </div>
+
+      <div class="modal-field">
+        <label for="editBookAuthor">اسم المؤلف</label>
+        <input type="text" id="editBookAuthor" class="modal-input" required autocomplete="off">
+      </div>
+
+      <div class="modal-field">
+        <label for="editBookCategory">موضوع الكتاب / الفن</label>
+        <select id="editBookCategory" class="modal-select" required>
+          <option value="العقيدة">العقيدة</option>
+          <option value="الشرح">الشرح</option>
+          <option value="المتن">المتن</option>
+          <option value="اللغة">اللغة</option>
+          <option value="الأحكام الشرعية">الأحكام الشرعية</option>
+          <option value="التفسير">التفسير</option>
+          <option value="الحديث">الحديث</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+
+      <div class="upload-modal-actions">
+        <button type="submit" class="btn-submit-upload">حفظ التغييرات</button>
+        <button type="button" class="btn-cancel-upload" onclick="closeEditBookModal()">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="deleteBookModal" class="logout-modal-overlay">
+  <div class="logout-modal-card">
+    <div class="logout-modal-icon">🗑️</div>
+    <h3 class="logout-modal-title">حذف الكتاب</h3>
+    <p class="logout-modal-text">هل أنت تأكد من رغبتك في حذف هذا الكتاب بشكل نهائي من المكتبة العامة؟</p>
+    <div class="logout-modal-actions">
+      <button class="logout-confirm-btn" onclick="confirmDeleteBook()">نعم، احذف الكتاب</button>
+      <button class="logout-cancel-btn" onclick="closeDeleteBookModal()">إلغاء</button>
     </div>
   </div>
 </div>
