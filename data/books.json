@@ -1,0 +1,75 @@
+[
+    {
+      "id": "badee3tareekh",
+      "title": "علم البديع دراسة تاريخية وفنية",
+      "author": "د. بسيوني عبد الفتاح فيود",
+      "category": "balagha",
+      "meta": "المرجع الرئيسي - مادة البلاغة",
+      "coverUrl": "assets/images/covers/badee3tareekh.png",
+      "pdfUrl": "assets/pdfs/badee3tareekh.pdf"
+    },
+    {
+      "id": "badee3asaleeb",
+      "title": "البديع في ضوء أساليب القرآن",
+      "author": "د. عبد الفتاح لاشين",
+      "category": "balagha",
+      "meta": "المرجع الرئيسي - مادة البلاغة",
+      "coverUrl": "assets/images/covers/badee3_1.png",
+      "pdfUrl": "assets/pdfs/badee3asaleeb.pdf"
+    },
+    {
+      "id": "maharat",
+      "title": "المهارات اللغوية",
+      "author": "د. محمد صالح الشنطي",
+      "category": "qiraah",
+      "meta": "المرجع الرئيسي - مادة القراءة",
+      "coverUrl": "assets/images/covers/maharat.png",
+      "pdfUrl": "assets/pdfs/maharatlughawya.pdf"
+    },
+    {
+      "id": "mulakhas",
+      "title": "الملخص في شرح كتاب التوحيد",
+      "author": "د. صالح بن فوزان بن عبدالله الفوزان",
+      "category": "tawheed",
+      "meta": "المرجع الرئيسي - مادة التوحيد",
+      "coverUrl": "assets/images/covers/mulakhasktabtawheed.png",
+      "pdfUrl": "assets/pdfs/mulakhasktabtawheed.pdf"
+    },
+    {
+      "id": "imla",
+      "title": "الإملاء و الترقيم",
+      "author": "أحمد محمد أبو بكر",
+      "category": "kitaba",
+      "meta": "المرجع الرئيسي - مادة الكتابة",
+      "coverUrl": "assets/images/covers/imlatarqim.png",
+      "pdfUrl": "assets/pdfs/imlatarqim.pdf"
+    },
+    {
+      "id": "sharhbn3qeel",
+      "title": "شرح ابن عقيل على ألفية ابن مالك",
+      "author": "بهاء الدين عبدالله بن الرحمن بن عبدالله بن عقيل",
+      "category": "nahw",
+      "meta": "المرجع الرئيسي - مادة النحو",
+      "coverUrl": "assets/images/covers/sharhbn3qeel.png",
+      "pdfUrl": "assets/pdfs/sharhbn3qeel.pdf"
+    },
+    {
+      "id": "ikhtisar",
+      "title": "الاختصار و التكميل لشرح ابن عقيل على ألفية ابن مالك",
+      "author": "د. مؤمن بن صبري غنام",
+      "category": "nahw",
+      "meta": "المرجع الرئيسي - مادة النحو",
+      "coverUrl": "assets/images/covers/ikhtisaribnaqeel.png",
+      "pdfUrl": "assets/pdfs/ikhtisaribnaqeel.pdf"
+    },
+    {
+      "id": "adab3rby",
+      "title": "الأدب العربي و تاريخه للسنة الأولى",
+      "author": "جامعة الإمام محمد بن سعود الإسلامية",
+      "category": "adab",
+      "meta": "المرجع الرئيسي - مادة تاريخ الأدب",
+      "coverUrl": "assets/images/covers/adab3rby_1.png",
+      "pdfUrl": "assets/pdfs/adab3rby_1.pdf"
+    }
+  ]
+  

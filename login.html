@@ -38,36 +38,25 @@
   </div>
 
   <script>
-    // Allowed users database (Keys MUST be lowercase)
-    const allowedUsers = {
-      "alif khaerul anam": { 
-        name: "Alif", 
-        gender: "male",
-        role: "admin",
-        avatar: "assets/images/web/default_avatar.png", 
-        pass: "123" 
-      },
-      "sarah": { 
-        name: "سارة", 
-        gender: "female",
-        role: "user",
-        avatar: "assets/images/web/default_avatar.png", 
-        pass: "1" 
-      },
-      "john": { 
-        name: "جون", 
-        avatar: "assets/images/web/default_avatar.png", 
-        pass: "welcome456" 
+    // Load users array from data/users.json
+    async function loadUsersData() {
+      try {
+        const response = await fetch('data/users.json');
+        if (!response.ok) throw new Error('Failed to fetch users.json');
+        return await response.json();
+      } catch (error) {
+        console.error('Error loading users JSON data:', error);
+        return [];
       }
-    };
+    }
   
     const loginForm = document.getElementById('loginForm');
     const messageDiv = document.getElementById('message');
   
-    loginForm.addEventListener('submit', function(e) {
+    // Mark event listener as async to use fetch()
+    loginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
   
-      // Replaces multiple spaces with a single space and lowers case
       const usernameInput = document.getElementById('username').value
         .trim()
         .toLowerCase()
@@ -75,17 +64,22 @@
   
       const passwordInput = document.getElementById('password').value.trim();
   
-      // Check if user exists
-      if (allowedUsers[usernameInput] && allowedUsers[usernameInput].pass === passwordInput) {
-        const user = allowedUsers[usernameInput];
+      // Fetch users list from JSON
+      const usersList = await loadUsersData();
   
+      // Find matching user profile
+      const matchedUser = usersList.find(u => 
+        u.username.toLowerCase() === usernameInput && u.pass === passwordInput
+      );
+  
+      if (matchedUser) {
         // Store user session in LocalStorage
         localStorage.setItem('currentUser', JSON.stringify({
-          username: usernameInput,
-          name: user.name,
-          gender: user.gender,
-          role: user.role,
-          avatar: user.avatar
+          username: matchedUser.username,
+          name: matchedUser.name,
+          gender: matchedUser.gender,
+          role: matchedUser.role,
+          avatar: matchedUser.avatar
         }));
   
         messageDiv.className = "message success";
@@ -112,6 +106,7 @@
       }, 300);
     }
   </script>
+  
   
 
 </body>

@@ -166,82 +166,79 @@
     }
 
     // Default Educational Books List
-    const defaultEducationalBooks = [
-      { title: "علم البديع دراسة تاريخية وفنية", author: "د. بسيوني عبد الفتاح فيود", meta: "المرجع الرئيسي - مادة البلاغة", cover: "assets/images/covers/badee3tareekh.png", pdf: "assets/pdfs/badee3tareekh.pdf" },
-      { title: "البديع في ضوء أساليب القرآن", author: "د. عبد الفتاح لاشين", meta: "المرجع الرئيسي - مادة البلاغة", cover: "assets/images/covers/badee3_1.png", pdf: "assets/pdfs/badee3asaleeb.pdf" },
-      { title: "المهارات اللغوية", author: "د. محمد صالح الشنطي", meta: "المرجع الرئيسي - مادة القراءة", cover: "assets/images/covers/maharat.png", pdf: "assets/pdfs/maharatlughawya.pdf" },
-      { title: "الملخص في شرح كتاب التوحيد", author: "د. صالح بن فوزان بن عبدالله الفوزان", meta: "المرجع الرئيسي - مادة التوحيد", cover: "assets/images/covers/mulakhasktabtawheed.png", pdf: "assets/pdfs/mulakhasktabtawheed.pdf" },
-      { title: "الإملاء و الترقيم", author: "أحمد محمد أبو بكر", meta: "المرجع الرئيسي - مادة الكتابة", cover: "assets/images/covers/imlatarqim.png", pdf: "assets/pdfs/imlatarqim.pdf" },
-      { title: "شرح ابن عقيل على ألفية ابن مالك", author: "بهاء الدين عبدالله بن الرحمن بن عبدالله بن عقيل", meta: "المرجع الرئيسي - مادة النحو", cover: "assets/images/covers/sharhbn3qeel.png", pdf: "assets/pdfs/sharhbn3qeel.pdf" },
-      { title: "الاختصار و التكميل لشرح ابن عقيل على ألفية ابن مالك", author: "د. مؤمن بن صبري غنام", meta: "المرجع الرئيسي - مادة النحو", cover: "assets/images/covers/ikhtisaribnaqeel.png", pdf: "assets/pdfs/ikhtisaribnaqeel.pdf" },
-      { title: "الأدب العربي و تاريخه للسنة الأولى", author: "جامعة الإمام محمد بن سعود الإسلامية", meta: "المرجع الرئيسي - مادة تاريخ الأدب", cover: "assets/images/covers/adab3rby_1.png", pdf: "assets/pdfs/adab3rby_1.pdf" }
-    ];
+    
 
     // --- DETECT CATEGORY FROM URL & LOAD BOOKS ---
-    document.addEventListener('DOMContentLoaded', () => {
-      checkUserSession();
+    document.addEventListener('DOMContentLoaded', async () => {
+  checkUserSession();
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const category = urlParams.get('cat') || 'educational';
-      const pageTitle = document.getElementById('categoryPageTitle');
-      const container = document.getElementById('categoryBooksContainer');
+  const urlParams = new URLSearchParams(window.location.search);
+  const category = urlParams.get('cat') || 'educational';
+  const pageTitle = document.getElementById('categoryPageTitle');
+  const container = document.getElementById('categoryBooksContainer');
 
-      if (category === 'general') {
-        pageTitle.textContent = 'جميع كتب المكتبة العامة';
-        const approved = JSON.parse(localStorage.getItem('approvedBooksDB') || '[]');
-        if (approved.length === 0) {
-          container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.9rem; padding:30px 0;">لا توجد كتب مضافة في المكتبة العامة حالياً</p>';
-        } else {
-          approved.forEach(book => {
-            container.innerHTML += `
-              <div class="book-row-card">
-                <div class="book-row-right">
-                  <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
-                  <div class="book-row-details">
-                    <h3 class="book-row-title">${book.title}</h3>
-                    <p class="book-row-author">${book.author}</p>
-                    <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}</span>
-                  </div>
-                </div>
-                <div class="book-row-actions">
-                  <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                  </a>
-                  <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  </a>
-                </div>
-              </div>
-            `;
-          });
-        }
-      } else {
-        pageTitle.textContent = 'جميع كتب المواد التعليمية';
-        container.innerHTML = '';
-        defaultEducationalBooks.forEach(book => {
-          container.innerHTML += `
-            <div class="book-row-card">
-              <div class="book-row-right">
-                <img src="${book.cover}" alt="${book.title}" class="book-row-cover">
-                <div class="book-row-details">
-                  <h3 class="book-row-title">${book.title}</h3>
-                  <p class="book-row-author">${book.author}</p>
-                  <span class="book-row-meta">${book.meta}</span>
-                </div>
-              </div>
-              <div class="book-row-actions">
-                <a href="${book.pdf}" target="_blank" class="action-icon-btn" title="قراءة">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </a>
-                <a href="${book.pdf}" download class="action-icon-btn" title="تحميل">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                </a>
+  if (category === 'general') {
+    pageTitle.textContent = 'جميع كتب المكتبة العامة';
+    const approved = JSON.parse(localStorage.getItem('approvedBooksDB') || '[]');
+    if (approved.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.9rem; padding:30px 0;">لا توجد كتب مضافة في المكتبة العامة حالياً</p>';
+    } else {
+      approved.forEach(book => {
+        container.innerHTML += `
+          <div class="book-row-card">
+            <div class="book-row-right">
+              <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
+              <div class="book-row-details">
+                <h3 class="book-row-title">${book.title}</h3>
+                <p class="book-row-author">${book.author}</p>
+                <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}</span>
               </div>
             </div>
-          `;
-        });
-      }
+            <div class="book-row-actions">
+              <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </a>
+              <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+  } else {
+    pageTitle.textContent = 'جميع كتب المواد التعليمية';
+    container.innerHTML = '';
+    
+    // Fetch books dynamically from books.json
+    const response = await fetch('data/books.json');
+    const books = await response.json();
+
+    books.forEach(book => {
+      container.innerHTML += `
+        <div class="book-row-card">
+          <div class="book-row-right">
+            <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
+            <div class="book-row-details">
+              <h3 class="book-row-title">${book.title}</h3>
+              <p class="book-row-author">${book.author}</p>
+              <span class="book-row-meta">${book.meta}</span>
+            </div>
+          </div>
+          <div class="book-row-actions">
+            <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </a>
+            <a href="${book.pdfUrl}" download class="action-icon-btn" title="تحميل">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </a>
+          </div>
+        </div>
+      `;
     });
+  }
+});
+
   </script>
 
   <!-- NOTIFICATIONS MODAL -->

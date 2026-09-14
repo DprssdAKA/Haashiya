@@ -1,0 +1,18 @@
+[
+    {
+        "username": "alif khaerul anam",
+        "name": "Alif",
+        "gender": "male",
+        "role": "admin",
+        "avatar": "assets/images/web/default_avatar.png",
+        "pass": "123"
+    },
+    {
+        "username": "sarah",
+        "name": "Sarah",
+        "gender": "female",
+        "role": "user",
+        "avatar": "assets/images/web/default_avatar.png",
+        "pass": "test"
+    }
+]
