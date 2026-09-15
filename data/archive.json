@@ -1,0 +1,62 @@
+{
+    "recordings": [
+      {
+        "id": 1,
+        "title": "علم البديع دراسة تاريخية",
+        "author": "مادة البلاغة - المستوى الأول",
+        "category": "balagha",
+        "level": "1",
+        "videoUrl": "assets/videos/rec1.mp4",
+        "coverUrl": "assets/images/covers/badee3tareekh.png"
+      },
+      {
+        "id": 2,
+        "title": "علم البديع دراسة تاريخية",
+        "author": "مادة البلاغة - المستوى الأول",
+        "category": "balagha",
+        "level": "1",
+        "videoUrl": "assets/videos/rec2.mp4",
+        "coverUrl": "assets/images/covers/badee3_1.png"
+      }
+    ],
+    "assignments": [
+      {
+        "id": 1,
+        "title": "علم البديع دراسة تاريخية وفنية",
+        "author": "د. بسيوني عبد الفتاح فيود",
+        "meta": "مادة البلاغة",
+        "category": "balagha",
+        "coverUrl": "assets/images/covers/badee3tareekh.png",
+        "pdfUrl": "assets/pdfs/badee3tareekh.pdf"
+      }
+    ],
+    "whiteboards": [
+      {
+        "id": 1,
+        "date": "31/08/2026",
+        "meta": "مادة النحو - المستوى الأول",
+        "imageUrl": "assets/images/covers/ikhtisaribnaqeel.png"
+      },
+      {
+        "id": 2,
+        "date": "17/08/2026",
+        "meta": "مادة البلاغة - المستوى الأول",
+        "imageUrl": "assets/images/covers/badee3tareekh.png"
+      }
+    ],
+    "photos": [
+      {
+        "id": 1,
+        "date": "31/08/2026",
+        "meta": "مادة النحو - المستوى الأول",
+        "imageUrl": "assets/images/covers/sharhbn3qeel.png"
+      },
+      {
+        "id": 2,
+        "date": "17/08/2026",
+        "meta": "مادة البلاغة - المستوى الأول",
+        "imageUrl": "assets/images/covers/maharat.png"
+      }
+    ]
+  }
+  

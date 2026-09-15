@@ -24,7 +24,7 @@
 
       <div class="navbar-right">
         <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
-        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة">
+        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
           <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
             <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
@@ -56,20 +56,23 @@
        <a href="#" class="menu-link menu-home">الرئيسية</a>
  
        <!-- Menu Dropdown: معرض الأرشيف -->
-       <div class="dropdown">
-         <button id="archive-btn" class="dropdown-btn active">
-           <span>معرض الأرشيف</span>
-           <svg class="arrow-icon open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-             <polyline points="6 9 12 15 18 9"></polyline>
-           </svg>
-         </button>
-         <div id="archive-submenu" class="submenu open">
-           <a href="#" class="submenu-link">التسجيلات</a>
-           <a href="#" class="submenu-link">السبورات</a>
-           <a href="#" class="submenu-link">الواجبات</a>
-           <a href="#" class="submenu-link">الصور</a>
-         </div>
-       </div>
+<div class="dropdown">
+  <button id="archive-btn" class="dropdown-btn active">
+    <span>معرض الأرشيف</span>
+    <svg class="arrow-icon open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+  
+  <div id="archive-submenu" class="submenu open">
+    <a href="archive.html#recordings" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a>
+    <a href="archive.html#whiteboards" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a>
+    <a href="archive.html#assignments" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a>
+    <a href="archive.html#photos" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a>
+  </div>
+</div>
+
+
  
        <!-- Menu Dropdown: المكتبة الرقمية -->
        <div class="dropdown">
@@ -80,8 +83,8 @@
            </svg>
          </button>
          <div id="library-submenu" class="submenu">
-           <a href="#" class="submenu-link">المواد التعليمية</a>
-           <a href="#" class="submenu-link">المكتبة العامة</a>
+           <a href="#educational-materials" class="submenu-link" onclick="toggleSidebar()">المواد التعليمية</a>
+           <a href="#general-library" class="submenu-link" onclick="toggleSidebar()">المكتبة العامة</a>
          </div>
        </div>
  
@@ -150,7 +153,7 @@
     </section>
   
     <!-- SECTION 2: المكتبة العامة -->
-<section class="main-card-section">
+<section id="general-library" class="main-card-section">
   <div class="section-header">
     <h2 class="section-title">المكتبة العامة</h2>
     
@@ -315,6 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <span class="profile-name">${user.name}</span>
         <span class="gender-badge ${genderClass}">${genderLabel}</span>
       </div>
+      <span class="nav-unread-dot" style="display: none;"></span>
       <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
     </button>
 
@@ -350,7 +354,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     </div>
   </div>
 
-  <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة">
+  <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
     <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
       <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
@@ -797,35 +801,57 @@ function getNotifications() {
 }
 
 // Add a new notification record
+// Add a new notification record with Date and Time
 function addNotification(title, message, type = 'pending') {
   const notifications = getNotifications();
+  
+  // Formats date as: "١٥ سبتمبر ، ٠٦:٠١ ص" (Arabic date + time)
+  const now = new Date();
+  const formattedTimestamp = now.toLocaleDateString('ar-EG', {
+    day: 'numeric',
+    month: 'short'
+  }) + ' ، ' + now.toLocaleTimeString('ar-EG', { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+
   notifications.unshift({
     id: Date.now(),
     title,
     message,
-    type, // 'pending' or 'success'
-    timestamp: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+    type,
+    timestamp: formattedTimestamp,
     unread: true
   });
+
   localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
   updateNotificationBadge();
 }
 
 // Update Unread Badge Count on Profile Dropdown
 function updateNotificationBadge() {
-  const badge = document.querySelector('.unread-badge');
+  const dropdownBadge = document.querySelector('.unread-badge');
+  const navRedDot = document.querySelector('.nav-unread-dot');
+  
   const notifications = getNotifications();
   const unreadCount = notifications.filter(n => n.unread).length;
 
-  if (badge) {
-    if (unreadCount > 0) {
-      badge.textContent = unreadCount;
-      badge.style.display = 'inline-block';
-    } else {
-      badge.style.display = 'none';
+  if (unreadCount > 0) {
+    // Inner dropdown count
+    if (dropdownBadge) {
+      dropdownBadge.textContent = unreadCount;
+      dropdownBadge.style.display = 'inline-block';
     }
+    // Outer profile badge red dot
+    if (navRedDot) {
+      navRedDot.style.display = 'inline-block';
+    }
+  } else {
+    if (dropdownBadge) dropdownBadge.style.display = 'none';
+    if (navRedDot) navRedDot.style.display = 'none';
   }
 }
+
 
 // Modal Toggle Handlers
 function openNotificationsModal(e) {
@@ -899,6 +925,16 @@ function renderNotificationsList() {
 
 // 2. Triggered when admin approves a book
 // Inside approveBook():
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+  }
+}
+
 function initSidebarEvents() {
   const openSidebarBtn = document.getElementById('open-sidebar-btn');
   const closeSidebarBtn = document.getElementById('close-sidebar-btn');
@@ -916,7 +952,7 @@ function initSidebarEvents() {
       overlay.classList.add('active');
     });
   }
-
+  
   const closeSidebar = () => {
     if (sidebar && overlay) {
       sidebar.classList.remove('open');
@@ -944,7 +980,13 @@ function initSidebarEvents() {
   };
 
   if (archiveBtn && archiveSubmenu) {
-    archiveBtn.addEventListener('click', () => toggleDropdown(archiveBtn, archiveSubmenu));
+    archiveBtn.addEventListener('click', (e) => {
+      if (e.target.tagName === 'SPAN') {
+        smoothNavigate(e, 'archive.html');
+      } else {
+        toggleDropdown(archiveBtn, archiveSubmenu)
+      }
+    });
   }
   if (libraryBtn && librarySubmenu) {
     libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));

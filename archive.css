@@ -1,0 +1,123 @@
+/* --- ARCHIVE HERO --- */
+.archive-hero-overlay {
+    background: linear-gradient(180deg, rgba(13, 71, 161, 0.45) 0%, rgba(13, 71, 161, 0.85) 100%);
+    padding: 45px 24px 35px;
+  }
+  
+  /* --- FILTER BAR & LEVEL DROPDOWN --- */
+  .archive-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .level-select {
+    background-color: #1565c0;
+    color: #ffffff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  /* --- 2x2 VIDEO RECORDINGS GRID --- */
+  .recordings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 14px;
+  }
+  
+  .video-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  }
+  
+  .video-thumbnail-box {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #020617;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .video-thumbnail-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .play-icon-overlay {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(21, 101, 192, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: transform 0.2s ease;
+  }
+  
+  .video-thumbnail-box:hover .play-icon-overlay {
+    transform: scale(1.1);
+  }
+  
+  .video-card-details {
+    padding: 12px 14px;
+    text-align: right;
+  }
+  
+  /* --- WHITEBOARD & PHOTO GALLERY GRID --- */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 14px;
+  }
+  
+  .photo-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .photo-preview {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .photo-date {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #0f172a;
+    margin: 8px 0 2px 0;
+  }
+  
+  .photo-meta {
+    font-size: 0.76rem;
+    color: #64748b;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .recordings-grid, .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  

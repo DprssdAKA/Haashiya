@@ -1299,19 +1299,27 @@ body.fade-out {
 /* Sidebar Overlay */
 .sidebar-overlay {
   position: fixed;
-  top: 72px;
+  top: 0 !important;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 9998;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000; /* Under the sidebar (9999), but over the navbar (900) */
   display: none;
-}
-.sidebar-overlay.active { 
-  display: block; 
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
+.sidebar-overlay.active { 
+  display: block; 
+  opacity: 1;
+}
+
+/* Sidebar Drawer */
 /* Sidebar Drawer */
 .sidebar {
   position: fixed;
@@ -1320,16 +1328,17 @@ body.fade-out {
   width: 280px;
   height: 100vh;
   background-color: #ffffff;
-  z-index: 9999;
+  z-index: 10001;
   transition: left 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
   padding: 0;
   direction: rtl;
 }
+
 .sidebar.open {
   left: 0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-header {
@@ -1445,6 +1454,25 @@ body.fade-out {
   color: #003399; 
   cursor: pointer;
 }
+
+/* Red Dot Indicator on Navbar Profile Badge */
+.nav-unread-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 2px #ffffff; /* Gives a crisp border separation */
+  animation: pulseDot 2s infinite;
+}
+
+/* Optional subtle pulse effect to catch user attention */
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
 
 html {
   scroll-behavior: smooth;
