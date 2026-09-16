@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاشية - الرئيسية</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar Container -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()" aria-label="Tutup">
+        <img src="images/sidebar_icon.png" alt="Logo" class="sidebar-logo-img">
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="menu-items">
+      <a href="#" class="menu-link menu-home">الرئيسية</a>
+
+      <div class="dropdown">
+        <button id="archive-btn" class="dropdown-btn active">
+          <span>معرض الأرشيف</span>
+          <svg class="arrow-icon open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div id="archive-submenu" class="submenu open">
+          <a href="#" class="submenu-link">التسجيلات</a>
+          <a href="#" class="submenu-link">السبورات</a>
+          <a href="#" class="submenu-link">الواجبات</a>
+          <a href="#" class="submenu-link">الصور</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button id="library-btn" class="dropdown-btn">
+          <span>المكتبة الرقمية</span>
+          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div id="library-submenu" class="submenu">
+          <a href="#" class="submenu-link">المواد التعليمية</a>
+          <a href="#" class="submenu-link">المكتبة العامة</a>
+        </div>
+      </div>
+
+      <a href="#" class="menu-link">معجم المصطلحات</a>
+      <a href="#" class="menu-link">التقويم الأكاديمي</a>
+      <a href="#" class="menu-link">التعلم المدعوم بالذكاء الاصطناعي</a>
+    </div>
+  </aside>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <a href="#">
+        <img src="images/navbar_logo.png" alt="حاشية (Haashiya)" class="logo-img">
+      </a>
+    </div>
+
+    <div class="navbar-controls">
+      <button class="btn-login">تسجيل الدخول</button>
+      <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
+          <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
+          <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="mobile-container">
+    
+    <!-- Hero Banner Section -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <h1 class="hero-title">بوابتنا لتعلم اللغة العربية</h1>
+        <p class="hero-subtitle">الانخراط في أجواء التعلم في أي وقت ومكان</p>
+        <a href="#" class="hero-btn">ادرس الآن &larr;</a>
+      </div>
+    </section>
+
+    <!-- Section: خدمات التعلم -->
+    <section class="section-container">
+      <h2 class="section-title">خدمات التعلم</h2>
+      <div class="service-grid">
+        
+        <a href="#" class="service-card">
+          <div class="card-image-wrapper">
+            <img src="images/card_galeriarsip.png" alt="معرض الأرشيف">
+          </div>
+          <div class="card-content">
+            <h3>معرض الأرشيف</h3>
+            <span class="card-link-text">انظر التفاصيل &larr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="service-card">
+          <div class="card-image-wrapper">
+            <img src="images/card_perpustakaandigital.png" alt="المكتبة الرقمية">
+          </div>
+          <div class="card-content">
+            <h3>المكتبة الرقمية</h3>
+            <span class="card-link-text">انظر التفاصيل &larr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="service-card">
+          <div class="card-image-wrapper">
+            <img src="images/card_bahanajar.png" alt="المواد التعليمية">
+          </div>
+          <div class="card-content">
+            <h3>المواد التعليمية</h3>
+            <span class="card-link-text">انظر التفاصيل &larr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="service-card">
+          <div class="card-image-wrapper">
+            <img src="images/card_ailearning.png" alt="التعلم المدعوم بالذكاء الاصطناعي">
+          </div>
+          <div class="card-content">
+            <h3>التعلم المدعوم بالذكاء الاصطناعي</h3>
+            <span class="card-link-text">انظر التفاصيل &larr;</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Section: المواد التعليمية -->
+    <section class="section-container section-tint">
+      <h2 class="section-title">المواد التعليمية</h2>
+      <div class="resource-list">
+        
+        <div class="resource-item">
+          <div class="resource-info">
+            <h3 class="resource-title">البديع في ضوء أساليب القرآن</h3>
+            <p class="resource-meta">المرجع الرئيس • مادة البلاغة</p>
+          </div>
+          <span class="badge badge-pdf">PDF</span>
+        </div>
+
+        <div class="resource-item">
+          <div class="resource-info">
+            <h3 class="resource-title">مهارات القراءة والاستماع</h3>
+            <p class="resource-meta">المرجع المساند • مادة القراءة</p>
+          </div>
+          <span class="badge badge-docx">DOCX</span>
+        </div>
+
+        <div class="resource-item">
+          <div class="resource-info">
+            <h3 class="resource-title">BAHASA INDONESIA AKADEMIK</h3>
+            <p class="resource-meta">المرجع الرئيس • مادة اللغة الإندونيسية</p>
+          </div>
+          <span class="badge badge-pdf">PDF</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section: معجم المصطلحات -->
+    <section class="section-container">
+      <h2 class="section-title">معجم المصطلحات</h2>
+      <div class="glossary-box">
+        <div class="glossary-search-bar">
+          <button class="glossary-add-btn">+</button>
+          <input type="text" placeholder="بحث" class="glossary-input">
+        </div>
+        <div class="glossary-divider"></div>
+      </div>
+    </section>
+
+    <!-- Section: التقويم الأكاديمي -->
+    <section class="section-container section-tint">
+      <h2 class="section-title">التقويم الأكاديمي</h2>
+      <div class="resource-list">
+        
+        <div class="resource-item">
+          <div class="resource-info">
+            <h3 class="resource-title">ورقة بحثية في تاريخ اللغة الإندونيسية</h3>
+            <p class="resource-meta">مادة Bahasa Indonesia • 15 Desember 2026</p>
+          </div>
+          <span class="badge badge-calendar"></span>
+        </div>
+
+        <div class="resource-item">
+          <div class="resource-info">
+            <h3 class="resource-title">ورقة بحثية حول التنمية الذاتية</h3>
+            <p class="resource-meta">مادة PKN • 15 Desember 2026</p>
+          </div>
+          <span class="badge badge-calendar"></span>
+        </div>
+
+        <div class="resource-item">
+          <div class="resource-info">
+            <h3 class="resource-title">عطلة عيد الميلاد</h3>
+            <p class="resource-meta">عطلة • 25 Desember 2026</p>
+          </div>
+          <span class="badge badge-calendar"></span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="footer-content">
+      <img src="images/footer_logo.png" alt="حاشية Logo" class="footer-logo">
+      <p class="footer-desc">موقع إلكتروني غير ربحي يهدف إلى تلبية احتياجات التعلم لطلاب برنامج الأدب العربي في LIPIA (الدفعة التاسعة عشرة)</p>
+      <div class="footer-credits">
+        <span>من تطوير: @iqbalbaihaqi</span>
+        <span>من تصميم: @angga.reksa_</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

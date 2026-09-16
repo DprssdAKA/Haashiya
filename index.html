@@ -514,34 +514,55 @@ document.addEventListener('click', (e) => {
       if (badge) badge.textContent = getPendingBooks().length;
     }
 
-    function renderPendingQueueList() {
-      const container = document.getElementById('pendingBooksList');
-      const pendingBooks = getPendingBooks();
+    // Render Admin Pending Queue List with Book Cover & View Action
+function renderPendingQueueList() {
+  const container = document.getElementById('pendingBooksList');
+  const pendingBooks = getPendingBooks();
 
-      if (!container) return;
-      container.innerHTML = '';
+  if (!container) return;
+  container.innerHTML = '';
 
-      if (pendingBooks.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد كتب معلقة حالياً</p>';
-        return;
-      }
+  if (pendingBooks.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد كتب معلقة حالياً</p>';
+    return;
+  }
 
-      pendingBooks.forEach((book, index) => {
-        const card = document.createElement('div');
-        card.className = 'pending-item-card';
-        card.innerHTML = `
-          <div style="text-align:right;">
-            <strong style="font-size:0.88rem; color:#0f172a; display:block;">${book.title}</strong>
-            <span style="font-size:0.78rem; color:#64748b;">المؤلف: ${book.author} | الفن: ${book.theme}</span>
-          </div>
-          <div class="pending-action-btns">
-            <button class="btn-approve" onclick="approveBook(${index})">قبول</button>
-            <button class="btn-reject" onclick="rejectBook(${index})">رفض</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+  pendingBooks.forEach((book, index) => {
+    const card = document.createElement('div');
+    card.className = 'pending-item-card';
+
+    // Fallback image if coverUrl is missing
+    const coverImage = book.coverUrl || 'assets/images/covers/badee3tareekh.png';
+
+    card.innerHTML = `
+      <div class="pending-item-left">
+        <img src="${coverImage}" alt="${book.title}" class="pending-book-cover">
+        <div class="pending-book-info">
+          <strong class="pending-book-title">${book.title}</strong>
+          <span class="pending-book-meta">المؤلف: ${book.author} | الفن: ${book.theme}</span>
+        </div>
+      </div>
+
+      <div class="pending-action-btns">
+        <!-- View / Read PDF Button -->
+        <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn btn-view-pending" title="معاينة الكتاب">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </a>
+
+        <!-- Accept / Approve Button -->
+        <button class="btn-approve" onclick="approveBook(${index})" title="قبول الطلب">قبول</button>
+
+        <!-- Refuse / Reject Button -->
+        <button class="btn-reject" onclick="rejectBook(${index})" title="رفض الطلب">رفض</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
 
     function approveBook(index) {
   let pending = getPendingBooks();

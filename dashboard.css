@@ -1056,35 +1056,102 @@ body.fade-out {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 10px;
+  gap: 12px;
+}
+
+.pending-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: right;
+  flex: 1;
+}
+
+.pending-book-cover {
+  width: 40px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+
+.pending-book-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.pending-book-title {
+  font-size: 0.88rem;
+  color: #0f172a;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.pending-book-meta {
+  font-size: 0.78rem;
+  color: #64748b;
 }
 
 .pending-action-btns {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Eye Icon View Button inside Pending Modal */
+.btn-view-pending {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #0284c7;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-view-pending:hover {
+  background-color: #0369a1;
+  transform: scale(1.08);
 }
 
 .btn-approve {
   background-color: #16a34a;
-  color: white;
+  color: #ffffff;
   border: none;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-approve:hover {
+  background-color: #15803d;
 }
 
 .btn-reject {
   background-color: #dc2626;
-  color: white;
+  color: #ffffff;
   border: none;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-reject:hover {
+  background-color: #b91c1c;
 }
 
 /* --- ADMIN EDIT & DELETE BUTTON STYLES --- */
