@@ -536,7 +536,7 @@ body.fade-out {
 /* --- ROLE / GENDER BADGE FIX --- */
 .user-role-badge,
 .role-pill, 
-.badge-student { /* Use your actual badge class name here */
+.gender-badge { 
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -552,7 +552,6 @@ body.fade-out {
   align-items: center;
   vertical-align: middle;
 }
-
 
 /* --- MOBILE RESPONSIVE OPTIMIZATIONS --- */
 @media screen and (max-width: 600px) {
@@ -576,7 +575,11 @@ body.fade-out {
 
   .gender-badge {
     font-size: 0.65rem;
-    padding: 1px 5px;
+    padding: 2px 5px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
   }
 
   .profile-dropdown-menu {

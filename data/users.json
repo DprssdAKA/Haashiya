@@ -8,6 +8,15 @@
         "avatar": "assets/images/web/default_avatar.png",
         "pass": "123"
     },
+    {
+      "username": "little gotch",
+      "email": "@gmail.com",
+      "name": "Little Gotch",
+      "gender": "male",
+      "role": "admin",
+      "avatar": "assets/images/web/default_avatar.png",
+      "pass": "siomaygoreng"
+  },
     
   {
     "username": "hanin fathina",
