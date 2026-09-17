@@ -533,6 +533,27 @@ body.fade-out {
   border: 1px solid #fbcfe8;
 }
 
+/* --- ROLE / GENDER BADGE FIX --- */
+.user-role-badge,
+.role-pill, 
+.badge-student { /* Use your actual badge class name here */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap; /* Prevents text and icon from wrapping */
+  line-height: 1;
+}
+
+/* Ensure inline icons align correctly with Arabic text */
+.user-role-badge .gender-icon,
+.role-pill span {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+
 /* --- MOBILE RESPONSIVE OPTIMIZATIONS --- */
 @media screen and (max-width: 600px) {
   .user-profile-badge {
