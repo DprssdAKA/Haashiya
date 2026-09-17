@@ -138,7 +138,7 @@ input, button, select, textarea {
 /* --- HERO BANNER --- */
 .hero-banner {
   width: 100%;
-  background-image: url('assets/images/web/libraryhero_v1.png');
+  background-image: url('/assets/images/web/libraryhero_v1.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

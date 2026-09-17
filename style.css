@@ -10,7 +10,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   min-height: 100vh;
-  background-image: url('assets/images/web/loginbg_pc_v2.png');
+  background-image: url('/assets/images/web/loginbg_pc_v2.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -143,7 +143,7 @@ body.fade-out {
 /* --- MOBILE LAYOUT --- */
 @media screen and (max-width: 600px) {
   body {
-    background-image: url('assets/images/web/loginbg_v1.png');
+    background-image: url('/assets/images/web/loginbg_v1.png');
     background-position: center top;
     justify-content: center;
     align-items: center;

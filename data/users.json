@@ -1,18 +1,545 @@
 [
     {
         "username": "alif khaerul anam",
+        "email": "alifkaaka@gmail.com",
         "name": "Alif",
         "gender": "male",
         "role": "admin",
         "avatar": "assets/images/web/default_avatar.png",
         "pass": "123"
     },
-    {
-        "username": "sarah",
-        "name": "Sarah",
-        "gender": "female",
-        "role": "user",
-        "avatar": "assets/images/web/default_avatar.png",
-        "pass": "test"
-    }
+    
+  {
+    "username": "hanin fathina",
+    "name": "Hanin Fathina",
+    "email": "haninfathina8@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "hanin_482"
+  },
+  {
+    "username": "happy rizqallah",
+    "name": "Happy Rizqallah",
+    "email": "riskallahhepi@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "happy_915"
+  },
+  {
+    "username": "syakirah athiyah",
+    "name": "Syakirah Athiyah",
+    "email": "syakirathiyah17@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "syakirah_307"
+  },
+  {
+    "username": "dhea aisyah",
+    "name": "Dhea Aisyah",
+    "email": "dheaaisyah625@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "dhea_624"
+  },
+  {
+    "username": "andyan figur ramadhine putri",
+    "name": "Andyan Putri",
+    "email": "andinfrp@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "andyan_159"
+  },
+  {
+    "username": "ghaitsa salsabila yumna widodo",
+    "name": "Ghaitsa Widodo",
+    "email": "ghaitsasyw@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "ghaitsa_831"
+  },
+  {
+    "username": "brilliant faza meilan azimah",
+    "name": "Brilliant Azimah",
+    "email": "brilliantfazaaa@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "brilliant_472"
+  },
+  {
+    "username": "aqila zahratun nisa",
+    "name": "Aqila Nisa",
+    "email": "aqilazahratun07@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "aqila_960"
+  },
+  {
+    "username": "elvira febrianty",
+    "name": "Elvira Febrianty",
+    "email": "amarillachava@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "elvira_218"
+  },
+  {
+    "username": "aisyah salsabila",
+    "name": "Aisyah Salsabila",
+    "email": "Camelliaaisyah368@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "aisyah_743"
+  },
+  {
+    "username": "air fasolla wangi",
+    "name": "Air Wangi",
+    "email": "fasollair@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "air_506"
+  },
+  {
+    "username": "sabrina ainu rahmah",
+    "name": "Sabrina Rahmah",
+    "email": "Sabrinanew36@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "sabrina_389"
+  },
+  {
+    "username": "alifah dzatil izzah",
+    "name": "Alifah Izzah",
+    "email": "alifahdzatilizzah30@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "alifah_821"
+  },
+  {
+    "username": "lubaabah basyamhah",
+    "name": "Lubaabah Basyamhah",
+    "email": "midnightybloom@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "lubaabah_164"
+  },
+  {
+    "username": "sekar difa rahmani",
+    "name": "Sekar Rahmani",
+    "email": "sekardifarone@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "sekar_935"
+  },
+  {
+    "username": "cut aini ary cintha",
+    "name": "Cut Cintha",
+    "email": "cinthahafiz1@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "cut_247"
+  },
+  {
+    "username": "khairunnisa muthiah syakhirah",
+    "name": "Khairunnisa Syakhirah",
+    "email": "khirasyakirah35@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "khairunnisa_608"
+  },
+  {
+    "username": "refaela aylin asila",
+    "name": "Refaela Asila",
+    "email": "refaelaaylinasila@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "refaela_173"
+  },
+  {
+    "username": "unaisah",
+    "name": "Unaisah",
+    "email": "unaisah1506@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "unaisah_854"
+  },
+  {
+    "username": "akhwat qana'ah",
+    "name": "Akhwat Qana'ah",
+    "email": "akhwatqon2@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "akhwat_391"
+  },
+  {
+    "username": "nurul marhamah ardian",
+    "name": "Nurul Ardian",
+    "email": "nurulmarhamh176@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "nurul_726"
+  },
+  {
+    "username": "chevy aura firdaus",
+    "name": "Chevy Firdaus",
+    "email": "aurachevy51@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "chevy_519"
+  },
+  {
+    "username": "minhah wajiehah",
+    "name": "Minhah Wajiehah",
+    "email": "minhawajiehah@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "minhah_942"
+  },
+  {
+    "username": "mutiara amanda yunis",
+    "name": "Mutiara Yunis",
+    "email": "amandayunismutiara@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "mutiara_283"
+  },
+  {
+    "username": "azka hanifa ikhwan",
+    "name": "Azka Ikhwan",
+    "email": "a.hanifaikhwan@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "azka_615"
+  },
+  {
+    "username": "ammara aqila ghaniya",
+    "name": "Ammara Ghaniya",
+    "email": "ammaraqila117@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "ammara_407"
+  },
+  {
+    "username": "intan shaulatun nisa",
+    "name": "Intan Nisa",
+    "email": "intanshaaa.n@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "intan_839"
+  },
+  {
+    "username": "nurul raudhah harahap",
+    "name": "Nurul Harahap",
+    "email": "raudhahhrp04@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "nurul_152"
+  },
+  {
+    "username": "nadia ghoziatu asysyahidah",
+    "name": "Nadia Asysyahidah",
+    "email": "nadiaghoziya@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "nadia_674"
+  },
+  {
+    "username": "aisyah bintu mustakim",
+    "name": "Aisyah Mustakim",
+    "email": "aikmaliisaa@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "aisyah_318"
+  },
+  {
+    "username": "khumaira aisha yona putri",
+    "name": "Khumaira Putri",
+    "email": "Kayonapuyra@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "khumaira_951"
+  },
+  {
+    "username": "qanitah khaira zadid taqwa",
+    "name": "Qanitah Taqwa",
+    "email": "qanitahkhaira@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "qanitah_260"
+  },
+  {
+    "username": "lulu majidah harahap",
+    "name": "Lulu Harahap",
+    "email": "ametttarinjani21@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "lulu_784"
+  },
+  {
+    "username": "halwa azka hunafa",
+    "name": "Halwa Hunafa",
+    "email": "halwa.azka@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "halwa_439"
+  },
+  {
+    "username": "farha amania",
+    "name": "Farha Amania",
+    "email": "farhaamania@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "farha_812"
+  },
+  {
+    "username": "nabila al quraysi",
+    "name": "Nabila Al Quraysi",
+    "email": "nabilaalquraysi@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "nabila_593"
+  },
+  {
+    "username": "qonita naila syahada",
+    "name": "Qonita Syahada",
+    "email": "qonitanaaila@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "qonita_168"
+  },
+  {
+    "username": "sri wahyuni",
+    "name": "Sri Wahyuni",
+    "email": "sriyuu0105@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "sri_725"
+  },
+  {
+    "username": "selvi ashani siregar",
+    "name": "Selvi Siregar",
+    "email": "selviashanisiregar@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "selvi_341"
+  },
+  {
+    "username": "najwa hasanahafifah",
+    "name": "Najwa Hasanahafifah",
+    "email": "nhsaudi25@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "najwa_906"
+  },
+  {
+    "username": "zahira aliya tsalatsa",
+    "name": "Zahira Tsalatsa",
+    "email": "zahiraal378@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "zahira_582"
+  },
+  {
+    "username": "latiifatunnihaayah",
+    "name": "Latiifatunnihaayah",
+    "email": "latheefa6116@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "latiifatunnihaayah_819"
+  },
+  {
+    "username": "mikaila medinna",
+    "name": "Mikaila Medinna",
+    "email": "medinnamikaila@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "mikaila_867"
+  },
+  {
+    "username": "muthiah dzatil himmah",
+    "name": "Muthiah Himmah",
+    "email": "muthiadz74@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "muthiah_435"
+  },
+  {
+    "username": "uswatul janna",
+    "name": "Uswatul Janna",
+    "email": "uswatuljannah03@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "uswatul_192"
+  },
+  {
+    "username": "zahra arrisya pasaribu",
+    "name": "Zahra Pasaribu",
+    "email": "itsnotmeayam@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "zahra_658"
+  },
+  {
+    "username": "istiqomah",
+    "name": "Istiqomah",
+    "email": "istiqomahh27122005@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "istiqomah_327"
+  },
+  {
+    "username": "uzlifatil jannah",
+    "name": "Uzlifatil Jannah",
+    "email": "uzlifatjannah3945@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "uzlifatil_801"
+  },
+  {
+    "username": "siti fadhilah",
+    "name": "Siti Fadhilah",
+    "email": "sittifadhilah170@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "siti_476"
+  },
+  {
+    "username": "kaila kharisma bayuputeri",
+    "name": "Kaila Bayuputeri",
+    "email": "vc.kailakharismabayu.200100@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "kaila_913"
+  },
+  {
+    "username": "rumaisha",
+    "name": "Rumaisha",
+    "email": "meisesahara@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "rumaisha_254"
+  },
+  {
+    "username": "tsabita munira laththuf",
+    "name": "Tsabita Laththuf",
+    "email": "tsabitalaththuf@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "tsabita_689"
+  },
+  {
+    "username": "nur isfayani",
+    "name": "Nur Isfayani",
+    "email": "Nurisfayani15@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "nur_142"
+  },
+  {
+    "username": "inayah harisya manoppo",
+    "name": "Inayah Manoppo",
+    "email": "inayahmanoppo18@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "inayah_735"
+  },
+  {
+    "username": "affany fadilah",
+    "name": "Affany Fadilah",
+    "email": "Afanyfadilah@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "affany_590"
+  },
+  {
+    "username": "andani nadia putri",
+    "name": "Andani Putri",
+    "email": "nadiarustandi2@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "andani_823"
+  },
+  {
+    "username": "azzah afifah",
+    "name": "Azzah Afifah",
+    "email": "azzahafifah613@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "azzah_361"
+  },
+  {
+    "username": "naiya zalfa zafiraha",
+    "name": "Naiya Zafiraha",
+    "email": "nayypunya7@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "naiya_947"
+  },
+  {
+    "username": "aisyah",
+    "name": "Aisyah",
+    "email": "azhariaisyah23@gmail.com",
+    "gender": "female",
+    "role": "user",
+    "avatar": "assets/images/web/default_avatar.png",
+    "pass": "aisyah_185"
+  }
 ]
+
+    
