@@ -509,48 +509,66 @@ body.fade-out {
 
 /* GENDER BADGE */
 .gender-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 12px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
   white-space: nowrap;
-  flex-shrink: 0; /* Ensures badge never shrinks or drops down */
+  line-height: 1;
+}
+
+.gender-svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  display: block; /* Eliminates vertical baseline space */
 }
 
 /* Male badge */
+/* --- GENDER BADGE & SVG ICON FIX --- */
+.gender-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+  line-height: 1;
+  flex-shrink: 0; /* Ensures badge never shrinks or drops down */
+}
+
+.gender-svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  display: block; /* Eliminates extra vertical baseline spacing */
+}
+
+/* Male Badge */
 .gender-badge.gender-male {
   background-color: #e0f2fe;
   color: #0284c7;
   border: 1px solid #bae6fd;
 }
 
-/* Fem */
+/* Female Badge */
 .gender-badge.gender-female {
   background-color: #fce7f3;
   color: #db2777;
   border: 1px solid #fbcfe8;
 }
 
-/* --- ROLE / GENDER BADGE FIX --- */
-.user-role-badge,
-.role-pill, 
-.gender-badge { 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  white-space: nowrap; /* Prevents text and icon from wrapping */
-  line-height: 1;
-}
-
-/* Ensure inline icons align correctly with Arabic text */
-.user-role-badge .gender-icon,
-.role-pill span {
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
+/* Ensure inline SVG icons align cleanly inside flex parents */
+.user-role-badge .gender-svg,
+.role-pill .gender-svg {
+  display: block;
 }
 
 /* --- MOBILE RESPONSIVE OPTIMIZATIONS --- */
@@ -577,9 +595,7 @@ body.fade-out {
     font-size: 0.65rem;
     padding: 2px 5px;
     box-sizing: border-box;
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
+    align-self: center; /* Properly centers inside flex container on mobile */
   }
 
   .profile-dropdown-menu {
