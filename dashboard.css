@@ -1611,6 +1611,115 @@ select.cat-btn:hover {
   animation: pulseDot 2s infinite;
 }
 
+/* --- DESKTOP NAVIGATION --- */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-item-link:hover {
+  color: #1e40af;
+  background-color: #f1f5f9;
+}
+
+.chevron-icon {
+  transition: transform 0.2s ease;
+}
+
+/* DESKTOP DROPDOWN MENU */
+.nav-dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0; /* Align to right for Arabic RTL */
+  min-width: 180px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+  padding: 8px 0;
+  list-style: none;
+  margin-top: 6px;
+  
+  /* Hidden state with transition */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+/* Hover reveal for Desktop */
+.nav-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown:hover .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 10px 16px;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #f8fafc;
+  color: #1e40af;
+}
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 991px) {
+  /* Hide desktop horizontal menu on mobile/tablets */
+  .desktop-nav {
+    display: none;
+  }
+
+  /* Show hamburger button on mobile/tablets */
+  .mobile-only-btn {
+    display: inline-flex !important;
+  }
+}
+
+@media (min-width: 992px) {
+  /* Hide mobile hamburger menu button on desktop screens */
+  .mobile-only-btn {
+    display: none !important;
+  }
+}
+
 /* Optional subtle pulse effect to catch user attention */
 @keyframes pulseDot {
   0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
@@ -1618,6 +1727,28 @@ select.cat-btn:hover {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
+/* --- DISABLE SIDEBAR ON PC / DESKTOP (≥ 992px) --- */
+@media (min-width: 992px) {
+  /* Prevent sidebar drawer from displaying on PC screens */
+  #sidebar,
+  .sidebar,
+  #sidebar-overlay,
+  #open-sidebar-btn,
+  .btn-menu {
+    display: none !important
+  }
+  .sidebar-overlay {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Ensure body scroll is never blocked on PC */
+  body {
+    overflow: auto !important;
+  }
+}
 
 html {
   scroll-behavior: smooth;

@@ -1,0 +1,133 @@
+/* --- PROFILE PAGE STYLES --- */
+
+.profile-hero {
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile-wrapper {
+    margin-top: -50px;
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    padding: 0 16px;
+  }
+  
+  .profile-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  
+  .profile-label-top {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .profile-user-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+  }
+  
+  .gender-badge-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+  }
+  
+  /* DETAILS TABLE */
+  .profile-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+  
+  .detail-label {
+    color: #94a3b8;
+    font-weight: 600;
+  }
+  
+  .detail-value {
+    color: #0f172a;
+    font-weight: 700;
+    direction: ltr;
+  }
+  
+  /* BUTTONS */
+  .profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn-profile-action {
+    width: 100%;
+    padding: 12px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    color: #1e40af;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-profile-action:hover {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+  }
+
+  /* --- PASSWORD HIDE/SHOW TOGGLE --- */
+.password-value-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    direction: ltr;
+  }
+  
+  .btn-toggle-password {
+    background: none;
+    border: none;
+    padding: 4px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  
+  .btn-toggle-password:hover {
+    color: #1d4ed8;
+    background-color: #f1f5f9;
+  }

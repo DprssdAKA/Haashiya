@@ -12,25 +12,82 @@
   
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="archive.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
   <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="navbar-container">
-      <div class="navbar-left">
-        <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
-          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
-        </a>
-      </div>
-      <div class="navbar-right">
-        <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
-        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor"><path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/><path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/><path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/></svg>
-        </button>
-      </div>
+  <!-- NAVBAR -->
+<header class="navbar">
+  <div class="navbar-container">
+    
+    <!-- LEFT: LOGO -->
+    <div class="navbar-left">
+      <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
+        <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+      </a>
     </div>
-  </header>
+
+    <!-- CENTER: DESKTOP HORIZONTAL MENU (Hidden on Mobile) -->
+    <nav class="desktop-nav">
+      <ul class="nav-links">
+        <li>
+          <a href="index.html" class="nav-item-link" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+        </li>
+
+        <!-- DROPDOWN: معرض الأرشيف -->
+        <li class="nav-dropdown">
+          <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
+            <span>معرض الأرشيف</span>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
+            <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
+            <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
+            <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
+          </ul>
+        </li>
+
+        <!-- DROPDOWN: المكتبة الرقمية -->
+        <li class="nav-dropdown">
+          <a href="index.html#educational-materials" class="nav-item-link dropdown-trigger">
+            <span>المكتبة الرقمية</span>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="index.html#educational-materials" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a></li>
+            <li><a href="index.html#general-library" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a></li>
+          </ul>
+        </li>
+
+        <li><a href="#" class="nav-item-link">معجم المصطلحات</a></li>
+        <li><a href="#" class="nav-item-link">التقويم الأكاديمي</a></li>
+        <li><a href="#" class="nav-item-link">التعلم بالذكاء الاصطناعي</a></li>
+      </ul>
+    </nav>
+
+    <!-- RIGHT: LOGIN / USER PROFILE & MOBILE HAMBURGER BUTTON -->
+    <div class="navbar-right">
+      <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+      
+      <!-- Mobile Sidebar Toggle Button (Only visible on screens < 992px) -->
+      <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+          <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
+          <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
+          <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</header>
 
   <!-- SIDEBAR OVERLAY -->
   <div id="sidebar-overlay" class="sidebar-overlay"></div>
@@ -241,45 +298,52 @@
   </div>
 
   <script>
+    
+    const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
+  
+    // --- SIDEBAR DRAWER LOGIC ---
     function toggleSidebar() {
       const sb = document.getElementById('sidebar');
       const ov = document.getElementById('sidebar-overlay');
-      if (sb && ov) { sb.classList.toggle('open'); ov.classList.toggle('active'); }
+      if (sb && ov) { 
+        sb.classList.toggle('open'); 
+        ov.classList.toggle('active'); 
+      }
     }
-
+  
     function initSidebarEvents() {
       const openSidebarBtn = document.getElementById('open-sidebar-btn');
       const closeSidebarBtn = document.getElementById('close-sidebar-btn');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
-
+  
       const archiveBtn = document.getElementById('archive-btn');
       const archiveSubmenu = document.getElementById('archive-submenu');
       const libraryBtn = document.getElementById('library-btn');
       const librarySubmenu = document.getElementById('library-submenu');
-
+  
       const closeSidebar = () => {
         if (sidebar && overlay) {
           sidebar.classList.remove('open');
           overlay.classList.remove('active');
         }
       };
-
+  
       if (openSidebarBtn && sidebar && overlay) {
         openSidebarBtn.addEventListener('click', () => {
           sidebar.classList.add('open');
           overlay.classList.add('active');
         });
       }
-
+  
       if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
       if (overlay) overlay.addEventListener('click', closeSidebar);
-
+  
       const toggleDropdown = (button, submenu) => {
         if (!button || !submenu) return;
         const isOpen = submenu.classList.contains('open');
         const arrow = button.querySelector('.arrow-icon');
-
+  
         if (isOpen) {
           submenu.classList.remove('open');
           button.classList.remove('active');
@@ -290,7 +354,7 @@
           if (arrow) arrow.classList.add('open');
         }
       };
-
+  
       if (archiveBtn && archiveSubmenu) {
         archiveBtn.addEventListener('click', () => toggleDropdown(archiveBtn, archiveSubmenu));
       }
@@ -298,90 +362,194 @@
         libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
       }
     }
-
+  
+    // --- USER SESSION & PROFILE DROPDOWN ---
     function checkUserSession() {
-      const sessionData = localStorage.getItem('currentUser');
-      const navbarRight = document.querySelector('.navbar-right');
+  const sessionData = localStorage.getItem('currentUser');
+  const navbarRight = document.querySelector('.navbar-right');
 
-      if (sessionData && navbarRight) {
-        const user = JSON.parse(sessionData);
-        const isMale = user.gender === 'male';
-        const genderLabel = isMale ? 'طالب ♂' : 'طالبة ♀';
-        const genderClass = isMale ? 'gender-male' : 'gender-female';
+  if (sessionData && navbarRight) {
+    const user = JSON.parse(sessionData);
+    const isMale = user.gender === 'male';
 
-        navbarRight.innerHTML = `
-          <div class="user-profile-wrapper">
-            <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
-              <img src="${user.avatar}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
-              <div class="profile-info-group">
-                <span class="profile-name">${user.name}</span>
-                <span class="gender-badge ${genderClass}">${genderLabel}</span>
-              </div>
-              <span class="nav-unread-dot" style="display: none;"></span>
-              <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </button>
+    // SVG Gender Badge setup matching index.html
+    const genderBadgeHTML = isMale ? `
+      <span class="gender-badge gender-male">
+        <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="14" r="5"></circle>
+          <path d="M19 5L13.5 10.5"></path>
+          <path d="M19 5h-5"></path>
+          <path d="M19 5v5"></path>
+        </svg>
+        طالب
+      </span>` : `
+      <span class="gender-badge gender-female">
+        <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="10" r="5"></circle>
+          <path d="M12 15v7"></path>
+          <path d="M9 19h6"></path>
+        </svg>
+        طالبة
+      </span>`;
 
-            <div id="profileDropdown" class="profile-dropdown-menu">
-              <a href="#" class="dropdown-item" onclick="event.preventDefault(); showErrorToast('صفحة الملف الشخصي قيد التطوير');">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                الملف الشخصي
-              </a>
-              <a href="#" class="dropdown-item" onclick="openNotificationsModal(event)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                الإشعارات
-                <span class="unread-badge" style="display: none;">0</span>
-              </a>
-              <div class="dropdown-divider"></div>
-              <button class="dropdown-item logout-item" onclick="logoutUser()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                تسجيل الخروج
-              </button>
-            </div>
+    navbarRight.innerHTML = `
+      <div class="user-profile-wrapper">
+        <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
+          <img src="${user.avatar || 'assets/images/web/default_avatar.png'}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
+          <div class="profile-info-group">
+            <span class="profile-name">${user.name}</span>
+            ${genderBadgeHTML}
           </div>
+          <span class="nav-unread-dot" style="display: none;"></span>
+          <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
 
-          <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-            <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
-              <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
-              <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
-            </svg>
+        <div id="profileDropdown" class="profile-dropdown-menu">
+          <a href="profile.html" class="dropdown-item" onclick="smoothNavigate(event, 'profile.html')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            الملف الشخصي
+          </a>
+          <a href="#" class="dropdown-item" onclick="openNotificationsModal(event)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            الإشعارات
+            <span class="unread-badge" style="display: none;">0</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-item" onclick="logoutUser()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            تسجيل الخروج
           </button>
-        `;
-      }
-    }
+        </div>
+      </div>
 
+      <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor"><path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/><path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/><path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/></svg>
+      </button>
+    `;
+
+    updateNotificationBadge();
+  }
+}
+  
     function toggleProfileDropdown(e) {
       e.stopPropagation();
       const dropdown = document.getElementById('profileDropdown');
       if (dropdown) dropdown.classList.toggle('show');
     }
-
+  
     document.addEventListener('click', (e) => {
       const dropdown = document.getElementById('profileDropdown');
       if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
     });
-
+  
     function logoutUser() {
       const modal = document.getElementById('logoutModal');
       if (modal) modal.classList.add('show');
     }
-
+  
     function closeLogoutModal() {
       const modal = document.getElementById('logoutModal');
       if (modal) modal.classList.remove('show');
     }
-
+  
     function confirmLogout() {
       localStorage.removeItem('currentUser');
       location.reload();
     }
-
-    function smoothNavigate(e, target) {
-      e.preventDefault();
+  
+    function smoothNavigate(event, targetUrl) {
+      event.preventDefault();
       document.body.classList.add('fade-out');
-      setTimeout(() => { window.location.href = target; }, 300);
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 300);
     }
-
+  
+    // --- NOTIFICATIONS SYSTEM ---
+    function getNotifications() {
+      return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
+    }
+  
+    function updateNotificationBadge() {
+      const dropdownBadge = document.querySelector('.unread-badge');
+      const navRedDot = document.querySelector('.nav-unread-dot');
+      
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => n.unread).length;
+  
+      if (unreadCount > 0) {
+        if (dropdownBadge) {
+          dropdownBadge.textContent = unreadCount;
+          dropdownBadge.style.display = 'inline-block';
+        }
+        if (navRedDot) navRedDot.style.display = 'inline-block';
+      } else {
+        if (dropdownBadge) dropdownBadge.style.display = 'none';
+        if (navRedDot) navRedDot.style.display = 'none';
+      }
+    }
+  
+    function openNotificationsModal(e) {
+      if (e) e.preventDefault();
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown) dropdown.classList.remove('show');
+      
+      const notifications = getNotifications().map(n => ({ ...n, unread: false }));
+      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
+      updateNotificationBadge();
+  
+      renderNotificationsList();
+      document.getElementById('notificationsModal').classList.add('show');
+    }
+  
+    function closeNotificationsModal() {
+      document.getElementById('notificationsModal').classList.remove('show');
+    }
+  
+    function clearAllNotifications() {
+      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify([]));
+      renderNotificationsList();
+      updateNotificationBadge();
+    }
+  
+    function renderNotificationsList() {
+      const container = document.getElementById('notificationsList');
+      const notifications = getNotifications();
+  
+      if (!container) return;
+      container.innerHTML = '';
+  
+      if (notifications.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد إشعارات حالياً</p>';
+        return;
+      }
+  
+      notifications.forEach(n => {
+        const card = document.createElement('div');
+        card.className = `notification-item-card ${n.unread ? 'unread' : ''}`;
+        let iconMarkup = '';
+        
+        if (n.type === 'success') {
+          iconMarkup = `<div class="notification-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
+        } else if (n.type === 'rejected' || n.type === 'deleted') {
+          iconMarkup = `<div class="notification-icon error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+        } else {
+          iconMarkup = `<div class="notification-icon pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+        }
+  
+        card.innerHTML = `
+          ${iconMarkup}
+          <div class="notification-content">
+            <h4 class="notification-title">${n.title}</h4>
+            <p class="notification-body">${n.message}</p>
+            <span class="notification-time">${n.timestamp}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+  
+    // --- DATA FETCHING & RENDERING ---
     async function loadArchiveData() {
       try {
         const res = await fetch('data/archive.json');
@@ -391,94 +559,104 @@
         return { recordings: [], assignments: [], whiteboards: [], photos: [] };
       }
     }
-
+  
+    function openVideoModal(youtubeVideoId) {
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('youtubeIframe');
+      
+      if (modal && iframe) {
+        iframe.src = `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`;
+        modal.classList.add('show');
+      }
+    }
+  
+    function closeVideoModal() {
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('youtubeIframe');
+      
+      if (modal && iframe) {
+        modal.classList.remove('show');
+        iframe.src = '';
+      }
+    }
+  
+    function handleModalBackdropClick(event) {
+      if (event.target.id === 'videoModal') {
+        closeVideoModal();
+      }
+    }
+  
+    // DOM INIT
     document.addEventListener('DOMContentLoaded', async () => {
-      checkUserSession();   // 1. Inject user profile & re-render open-sidebar-btn
-      initSidebarEvents();  // 2. Attach overlay & button click listeners
+      checkUserSession();
+      initSidebarEvents();
       
       const data = await loadArchiveData();
-
+  
       // Render Video Recordings
       const recContainer = document.getElementById('recordingsContainer');
-      data.recordings.forEach(rec => {
-        recContainer.innerHTML += `
-          <div class="video-card">
-            <div class="video-thumbnail-box">
-              <img src="${rec.coverUrl}" alt="${rec.title}">
-              <div class="play-icon-overlay">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      if (recContainer && data.recordings) {
+        data.recordings.forEach(rec => {
+          recContainer.innerHTML += `
+            <div class="video-card">
+              <div class="video-thumbnail-box">
+                <img src="${rec.coverUrl}" alt="${rec.title}">
+                <div class="play-icon-overlay">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </div>
               </div>
-            </div>
-            <div class="video-card-details">
-              <h3 class="book-row-title">${rec.title}</h3>
-              <p class="book-row-meta">${rec.author}</p>
-            </div>
-          </div>
-        `;
-      });
-
-      // Render Assignments
-      const assContainer = document.getElementById('assignmentsContainer');
-      data.assignments.forEach(ass => {
-        assContainer.innerHTML += `
-          <div class="book-row-card">
-            <div class="book-row-right">
-              <img src="${ass.coverUrl}" alt="${ass.title}" class="book-row-cover">
-              <div class="book-row-details">
-                <h3 class="book-row-title">${ass.title}</h3>
-                <p class="book-row-author">${ass.author}</p>
-                <span class="book-row-meta">${ass.meta}</span>
+              <div class="video-card-details">
+                <h3 class="book-row-title">${rec.title}</h3>
+                <p class="book-row-meta">${rec.author}</p>
               </div>
-            </div>
-            <div class="book-row-actions">
-              <a href="${ass.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              </a>
-              <a href="${ass.pdfUrl}" download class="action-icon-btn" title="تحميل">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              </a>
-            </div>
-          </div>
-        `;
-      });
-
-      // Render Whiteboards & Photos
-      ['whiteboards', 'photos'].forEach(key => {
-        const container = document.getElementById(key + 'Container');
-        data[key].forEach(item => {
-          container.innerHTML += `
-            <div class="photo-card">
-              <img src="${item.imageUrl}" alt="photo" class="photo-preview">
-              <div class="photo-date">${item.date}</div>
-              <div class="photo-meta">${item.meta}</div>
             </div>
           `;
         });
+      }
+  
+      // Render Assignments
+      const assContainer = document.getElementById('assignmentsContainer');
+      if (assContainer && data.assignments) {
+        data.assignments.forEach(ass => {
+          assContainer.innerHTML += `
+            <div class="book-row-card">
+              <div class="book-row-right">
+                <img src="${ass.coverUrl}" alt="${ass.title}" class="book-row-cover">
+                <div class="book-row-details">
+                  <h3 class="book-row-title">${ass.title}</h3>
+                  <p class="book-row-author">${ass.author}</p>
+                  <span class="book-row-meta">${ass.meta}</span>
+                </div>
+              </div>
+              <div class="book-row-actions">
+                <a href="${ass.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </a>
+                <a href="${ass.pdfUrl}" download class="action-icon-btn" title="تحميل">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </a>
+              </div>
+            </div>
+          `;
+        });
+      }
+  
+      // Render Whiteboards & Photos
+      ['whiteboards', 'photos'].forEach(key => {
+        const container = document.getElementById(key + 'Container');
+        if (container && data[key]) {
+          data[key].forEach(item => {
+            container.innerHTML += `
+              <div class="photo-card">
+                <img src="${item.imageUrl}" alt="photo" class="photo-preview">
+                <div class="photo-date">${item.date}</div>
+                <div class="photo-meta">${item.meta}</div>
+              </div>
+            `;
+          });
+        }
       });
     });
-
-    // Opens video modal and sets the YouTube embed URL
-function openVideoModal(youtubeVideoId) {
-  const modal = document.getElementById('videoModal');
-  const iframe = document.getElementById('youtubeIframe');
-  
-  if (modal && iframe) {
-    // Replaces iframe src with embed link + autoplay
-    iframe.src = `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`;
-    modal.classList.add('show');
-  }
-}
-
-// Closes modal and stops video playback
-function closeVideoModal() {
-  const modal = document.getElementById('videoModal');
-  const iframe = document.getElementById('youtubeIframe');
-  
-  if (modal && iframe) {
-    modal.classList.remove('show');
-    iframe.src = ''; // Clears source so audio stops playing in background
-  }
-}
   </script>
 
 <!-- YOUTUBE VIDEO PLAYER MODAL -->
@@ -498,253 +676,21 @@ function closeVideoModal() {
   </div>
 </div>
 
-<script>
-  function toggleSidebar() {
-    const sb = document.getElementById('sidebar');
-    const ov = document.getElementById('sidebar-overlay');
-    if (sb && ov) { sb.classList.toggle('open'); ov.classList.toggle('active'); }
-  }
+<!-- NOTIFICATIONS MODAL -->
+<div id="notificationsModal" class="upload-modal-overlay">
+  <div class="upload-modal-card notifications-modal-card">
+    <button class="modal-close-x" onclick="closeNotificationsModal()">&times;</button>
 
-  function initSidebarEvents() {
-    const openSidebarBtn = document.getElementById('open-sidebar-btn');
-    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
+    <div class="notifications-header">
+      <h3 class="upload-modal-title">الإشعارات</h3>
+      <button class="btn-clear-notifications" onclick="clearAllNotifications()">مسح الكل</button>
+    </div>
+    <p class="upload-modal-subtitle">سجل التحديثات وحالة طلبات إضافة الكتب</p>
 
-    const archiveBtn = document.getElementById('archive-btn');
-    const archiveSubmenu = document.getElementById('archive-submenu');
-    const libraryBtn = document.getElementById('library-btn');
-    const librarySubmenu = document.getElementById('library-submenu');
-
-    const closeSidebar = () => {
-      if (sidebar && overlay) {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-      }
-    };
-
-    if (openSidebarBtn && sidebar && overlay) {
-      openSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.add('open');
-        overlay.classList.add('active');
-      });
-    }
-
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
-    if (overlay) overlay.addEventListener('click', closeSidebar);
-
-    const toggleDropdown = (button, submenu) => {
-      if (!button || !submenu) return;
-      const isOpen = submenu.classList.contains('open');
-      const arrow = button.querySelector('.arrow-icon');
-
-      if (isOpen) {
-        submenu.classList.remove('open');
-        button.classList.remove('active');
-        if (arrow) arrow.classList.remove('open');
-      } else {
-        submenu.classList.add('open');
-        button.classList.add('active');
-        if (arrow) arrow.classList.add('open');
-      }
-    };
-
-    if (archiveBtn && archiveSubmenu) {
-      archiveBtn.addEventListener('click', () => toggleDropdown(archiveBtn, archiveSubmenu));
-    }
-    if (libraryBtn && librarySubmenu) {
-      libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
-    }
-  }
-
-  function checkUserSession() {
-    const sessionData = localStorage.getItem('currentUser');
-    const navbarRight = document.querySelector('.navbar-right');
-
-    if (sessionData && navbarRight) {
-      const user = JSON.parse(sessionData);
-      const isMale = user.gender === 'male';
-      const genderLabel = isMale ? 'طالب ♂' : 'طالبة ♀';
-      const genderClass = isMale ? 'gender-male' : 'gender-female';
-
-      navbarRight.innerHTML = `
-        <div class="user-profile-wrapper">
-          <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
-            <img src="${user.avatar}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
-            <div class="profile-info-group">
-              <span class="profile-name">${user.name}</span>
-              <span class="gender-badge ${genderClass}">${genderLabel}</span>
-            </div>
-            <span class="nav-unread-dot" style="display: none;"></span>
-            <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-
-          <div id="profileDropdown" class="profile-dropdown-menu">
-            <a href="#" class="dropdown-item" onclick="event.preventDefault(); alert('صفحة الملف الشخصي قيد التطوير');">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              الملف الشخصي
-            </a>
-            <a href="index.html" class="dropdown-item" onclick="smoothNavigate(event, 'index.html')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-              الإشعارات (انتقل للرئيسية)
-            </a>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item logout-item" onclick="logoutUser()">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-              تسجيل الخروج
-            </button>
-          </div>
-        </div>
-
-        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
-            <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
-            <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
-          </svg>
-        </button>
-      `;
-    }
-  }
-
-  function toggleProfileDropdown(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('profileDropdown');
-    if (dropdown) dropdown.classList.toggle('show');
-  }
-
-  document.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('profileDropdown');
-    if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
-  });
-
-  function logoutUser() {
-    const modal = document.getElementById('logoutModal');
-    if (modal) modal.classList.add('show');
-  }
-
-  function closeLogoutModal() {
-    const modal = document.getElementById('logoutModal');
-    if (modal) modal.classList.remove('show');
-  }
-
-  function confirmLogout() {
-    localStorage.removeItem('currentUser');
-    location.reload();
-  }
-
-  function smoothNavigate(e, target) {
-    e.preventDefault();
-    document.body.classList.add('fade-out');
-    setTimeout(() => { window.location.href = target; }, 300);
-  }
-
-  async function loadArchiveData() {
-    try {
-      const res = await fetch('data/archive.json');
-      return await res.json();
-    } catch (err) {
-      console.error('Error fetching archive.json:', err);
-      return { recordings: [], assignments: [], whiteboards: [], photos: [] };
-    }
-  }
-
-  function openVideoModal(youtubeVideoId) {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('youtubeIframe');
-    
-    if (modal && iframe) {
-      iframe.src = `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`;
-      modal.classList.add('show');
-    }
-  }
-
-  function closeVideoModal() {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('youtubeIframe');
-    
-    if (modal && iframe) {
-      modal.classList.remove('show');
-      iframe.src = '';
-    }
-  }
-
-  function handleModalBackdropClick(event) {
-    if (event.target.id === 'videoModal') {
-      closeVideoModal();
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    checkUserSession();
-    initSidebarEvents();
-    
-    const data = await loadArchiveData();
-
-    // Render Video Recordings
-    const recContainer = document.getElementById('recordingsContainer');
-    if (recContainer && data.recordings) {
-      data.recordings.forEach(rec => {
-        recContainer.innerHTML += `
-          <div class="video-card">
-            <div class="video-thumbnail-box">
-              <img src="${rec.coverUrl}" alt="${rec.title}">
-              <div class="play-icon-overlay">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              </div>
-            </div>
-            <div class="video-card-details">
-              <h3 class="book-row-title">${rec.title}</h3>
-              <p class="book-row-meta">${rec.author}</p>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // Render Assignments
-    const assContainer = document.getElementById('assignmentsContainer');
-    if (assContainer && data.assignments) {
-      data.assignments.forEach(ass => {
-        assContainer.innerHTML += `
-          <div class="book-row-card">
-            <div class="book-row-right">
-              <img src="${ass.coverUrl}" alt="${ass.title}" class="book-row-cover">
-              <div class="book-row-details">
-                <h3 class="book-row-title">${ass.title}</h3>
-                <p class="book-row-author">${ass.author}</p>
-                <span class="book-row-meta">${ass.meta}</span>
-              </div>
-            </div>
-            <div class="book-row-actions">
-              <a href="${ass.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              </a>
-              <a href="${ass.pdfUrl}" download class="action-icon-btn" title="تحميل">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              </a>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // Render Whiteboards & Photos
-    ['whiteboards', 'photos'].forEach(key => {
-      const container = document.getElementById(key + 'Container');
-      if (container && data[key]) {
-        data[key].forEach(item => {
-          container.innerHTML += `
-            <div class="photo-card">
-              <img src="${item.imageUrl}" alt="photo" class="photo-preview">
-              <div class="photo-date">${item.date}</div>
-              <div class="photo-meta">${item.meta}</div>
-            </div>
-          `;
-        });
-      }
-    });
-  });
-</script>
+    <div id="notificationsList" class="notifications-list-container">
+      <!-- Dynamic notification cards render here -->
+    </div>
+  </div>
+</div>
 </body>
 </html>

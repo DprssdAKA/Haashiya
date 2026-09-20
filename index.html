@@ -10,31 +10,102 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
+
+  <!-- Firebase Compatibility SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+    authDomain: "haashiya-web.firebaseapp.com",
+    projectId: "haashiya-web",
+    storageBucket: "haashiya-web.firebasestorage.app",
+    messagingSenderId: "340726241497",
+    appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
+
 </head>
 
 <body>
   
-  <header class="navbar">
-    <div class="navbar-container">
-      <div class="navbar-left">
-        <a href="#" class="logo-link">
-          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
-        </a>
-      </div>
-
-      <div class="navbar-right">
-        <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
-        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
-            <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
-            <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
-          </svg>
-        </button>
-      </div>
-      
+  <!-- NAVBAR -->
+<header class="navbar">
+  <div class="navbar-container">
+    
+    <!-- LEFT: LOGO -->
+    <div class="navbar-left">
+      <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
+        <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+      </a>
     </div>
-  </header>
+
+    <!-- CENTER: DESKTOP HORIZONTAL MENU (Hidden on Mobile) -->
+    <nav class="desktop-nav">
+      <ul class="nav-links">
+        <li>
+          <a href="index.html" class="nav-item-link" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+        </li>
+
+        <!-- DROPDOWN: معرض الأرشيف -->
+        <li class="nav-dropdown">
+          <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
+            <span>معرض الأرشيف</span>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
+            <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
+            <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
+            <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
+          </ul>
+        </li>
+
+        <!-- DROPDOWN: المكتبة الرقمية -->
+        <li class="nav-dropdown">
+          <a href="index.html#educational-materials" class="nav-item-link dropdown-trigger">
+            <span>المكتبة الرقمية</span>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="index.html#educational-materials" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a></li>
+            <li><a href="index.html#general-library" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a></li>
+          </ul>
+        </li>
+
+        <li><a href="#" class="nav-item-link">معجم المصطلحات</a></li>
+        <li><a href="#" class="nav-item-link">التقويم الأكاديمي</a></li>
+        <li><a href="#" class="nav-item-link">التعلم بالذكاء الاصطناعي</a></li>
+      </ul>
+    </nav>
+
+    <!-- RIGHT: LOGIN / USER PROFILE & MOBILE HAMBURGER BUTTON -->
+    <div class="navbar-right">
+      <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+      
+      <!-- Mobile Sidebar Toggle Button (Only visible on screens < 992px) -->
+      <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+          <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
+          <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
+          <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</header>
 
    <!-- Sidebar Overlay -->
    <div id="sidebar-overlay" class="sidebar-overlay"></div>
@@ -328,7 +399,7 @@
             </button>
   
             <div id="profileDropdown" class="profile-dropdown-menu">
-              <a href="#" class="dropdown-item" onclick="event.preventDefault(); showErrorToast('صفحة الملف الشخصي قيد التطوير');">
+              <a href="profile.html" class="dropdown-item" onclick=smoothNavigate(event, 'profile.html')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
@@ -587,37 +658,34 @@
       updatePendingBadgeCount();
     }
   
-    function renderApprovedBooksOnSurface() {
-      const container = document.querySelector('.main-card-section:last-of-type .book-list-container');
-      const approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
-      const sessionData = localStorage.getItem('currentUser');
-      const user = sessionData ? JSON.parse(sessionData) : null;
-      const isAdmin = user && user.role === 'admin';
-  
-      if (!container) return;
-  
+    function listenToApprovedBooks() {
+  const container = document.querySelector('.main-card-section:last-of-type .book-list-container');
+  if (!container) return;
+
+  const sessionData = localStorage.getItem('currentUser');
+  const user = sessionData ? JSON.parse(sessionData) : null;
+  const isAdmin = user && user.role === 'admin';
+
+  db.collection('approved_books')
+    .orderBy('createdAt', 'desc')
+    .onSnapshot((snapshot) => {
       document.querySelectorAll('.user-approved-card').forEach(el => el.remove());
-  
-      approved.forEach((book, index) => {
+
+      snapshot.forEach((doc) => {
+        const book = doc.data();
         const card = document.createElement('div');
         card.className = 'book-row-card user-approved-card';
         card.setAttribute('data-category', 'general');
-  
+
         const adminActions = isAdmin ? `
-          <button class="action-icon-btn admin-edit-btn" onclick="openEditBookModal(${index})" title="تعديل الكتاب">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-          </button>
-          <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook(${index})" title="حذف الكتاب">
+          <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook('${doc.id}')" title="حذف الكتاب">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
             </svg>
           </button>
         ` : '';
-  
+
         card.innerHTML = `
           <div class="book-row-right">
             <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
@@ -630,60 +698,86 @@
           <div class="book-row-actions">
             ${adminActions}
             <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </a>
             <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             </a>
           </div>
         `;
-        container.prepend(card);
+        container.appendChild(card);
       });
+    });
+}
+
+  // --- HELPER FUNCTION FOR FIREBASE STORAGE ---
+async function uploadFileToStorage(file, folderName) {
+  // Creates a unique path in bucket e.g., 'pdfs/1726732000000_book.pdf'
+  const fileRef = storage.ref(`${folderName}/${Date.now()}_${file.name}`);
+  const snapshot = await fileRef.put(file);
+  return await snapshot.getDownloadURL();
+}
+
+function convertFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
+  // --- UPDATED SUBMIT HANDLER ---
+  async function handleBookSubmit(e) {
+  e.preventDefault();
+
+  const title = document.getElementById('bookTitle').value.trim();
+  const author = document.getElementById('bookAuthor').value.trim();
+  const theme = document.getElementById('bookCategory').value;
+  const pdfFile = document.getElementById('pdfInput').files[0];
+  const coverFile = document.getElementById('coverInput').files[0];
+
+  if (!title || !author || !pdfFile) {
+    showErrorToast('يُرجَى ملء جميع الحقول المطلوبة ورفع ملف PDF');
+    return;
+  }
+
+  // Firestore documents have a 1MB size limit per document
+  if (pdfFile.size > 800 * 1024) {
+    showErrorToast('حجم ملف PDF يجب أن يكون أقل من 800 كيلوبايت');
+    return;
+  }
+
+  try {
+    showToastNotification('جاري تجهيز الملفات...');
+
+    // Convert PDF to Base64 string
+    const pdfUrl = await convertFileToBase64(pdfFile);
+
+    // Convert Cover to Base64 string if present, else fallback
+    let coverUrl = 'assets/images/covers/badee3tareekh.png';
+    if (coverFile) {
+      coverUrl = await convertFileToBase64(coverFile);
     }
-  
-    function handleBookSubmit(e) {
-      e.preventDefault();
-  
-      const title = document.getElementById('bookTitle').value.trim();
-      const author = document.getElementById('bookAuthor').value.trim();
-      const theme = document.getElementById('bookCategory').value;
-      const pdfFile = document.getElementById('pdfInput').files[0];
-      const coverFile = document.getElementById('coverInput').files[0];
-  
-      if (!title || !author) {
-        showErrorToast('يُرجَى ملء جميع الحقول المطلوبة (عنوان الكتاب واسم المؤلف)');
-        return;
-      }
-  
-      if (!pdfFile) {
-        showErrorToast('يُرجَى رفع ملف PDF الخاص بالكتاب للمتابعة');
-        return;
-      }
-  
-      const pendingBooks = getPendingBooks();
-      pendingBooks.push({
-        title,
-        author,
-        theme,
-        pdfUrl: URL.createObjectURL(pdfFile),
-        coverUrl: coverFile ? URL.createObjectURL(coverFile) : 'assets/images/covers/badee3tareekh.png'
-      });
-  
-      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(pendingBooks));
-  
-      addNotification('طلب إضافة كتاب', `تم إرسال طلب إضافة كتاب "${title}" بنجاح، وهو قيد مراجعة الإدارة.`, 'pending');
-  
-      closeUploadModal();
-      updatePendingBadgeCount();
-      showToastNotification();
-    }
+
+    // Save directly to Firestore
+    await db.collection('pending_books').add({
+      title,
+      author,
+      theme,
+      pdfUrl,
+      coverUrl,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    addNotification('طلب إضافة كتاب', `تم إرسال طلب إضافة كتاب "${title}" بنجاح، وهو قيد مراجعة الإدارة.`, 'pending');
+    closeUploadModal();
+    showToastNotification('تم طلب رفع الكتاب بنجاح!');
+  } catch (err) {
+    console.error('Base64 Upload Error:', err);
+    showErrorToast('حدث خطأ أثناء حفظ الكتاب');
+  }
+}
   
     let currentEditingIndex = null;
   
@@ -724,40 +818,32 @@
       showToastNotification();
     }
   
-    let currentDeletingIndex = null;
-  
-    function removeApprovedBook(index) {
-      currentDeletingIndex = index;
-      const modal = document.getElementById('deleteBookModal');
-      if (modal) modal.classList.add('show');
+    let currentDeletingDocId = null;
+
+function removeApprovedBook(docId) {
+  currentDeletingDocId = docId;
+  const modal = document.getElementById('deleteBookModal');
+  if (modal) modal.classList.add('show');
+}
+
+function closeDeleteBookModal() {
+  const modal = document.getElementById('deleteBookModal');
+  if (modal) modal.classList.remove('show');
+  currentDeletingDocId = null;
+}
+
+async function confirmDeleteBook() {
+  if (currentDeletingDocId) {
+    try {
+      await db.collection('approved_books').doc(currentDeletingDocId).delete();
+      closeDeleteBookModal();
+      showErrorToast('تم حذف الكتاب بنجاح من المكتبة العامة');
+    } catch (err) {
+      console.error('Delete Error:', err);
+      showErrorToast('حدث خطأ أثناء حذف الكتاب');
     }
-  
-    function closeDeleteBookModal() {
-      const modal = document.getElementById('deleteBookModal');
-      if (modal) modal.classList.remove('show');
-      currentDeletingIndex = null;
-    }
-  
-    function confirmDeleteBook() {
-      if (currentDeletingIndex !== null) {
-        let approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
-        const deletedBook = approved.splice(currentDeletingIndex, 1)[0];
-        
-        localStorage.setItem(STORAGE_APPROVED_KEY, JSON.stringify(approved));
-  
-        if (deletedBook) {
-          addNotification(
-            'تم حذف الكتاب 🗑️', 
-            `تم حذف كتاب "${deletedBook.title}" من المكتبة العامة بواسطة الإدارة.`, 
-            'deleted'
-          );
-        }
-  
-        renderApprovedBooksOnSurface();
-        closeDeleteBookModal();
-        showErrorToast('تم حذف الكتاب بنجاح من المكتبة العامة');
-      }
-    }
+  }
+}
   
     function getNotifications() {
       return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
@@ -929,7 +1015,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await renderEducationalBooks();
       checkUserSession();
-      renderApprovedBooksOnSurface();
+      listenToApprovedBooks();
       updateNotificationBadge();
       initSidebarEvents();
       setupDropZone('pdfDropZone', 'pdfInput', 'pdfDropText', ['application/pdf', '.pdf'], 'PDF');

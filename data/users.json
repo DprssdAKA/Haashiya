@@ -9,6 +9,15 @@
         "pass": "123"
     },
     {
+      "username": "test",
+      "email": "",
+      "name": "Breaux",
+      "gender": "male",
+      "role": "user",
+      "avatar": "assets/images/web/default_avatar.png",
+      "pass": "123"
+  },
+    {
       "username": "little gotch",
       "email": "@gmail.com",
       "name": "Little Gotch",

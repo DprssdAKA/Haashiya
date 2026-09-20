@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاشية | الملف الشخصي</title>
+
+  <link rel="icon" type="image/png" href="assets/images/web/haashiya_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="profile.css">
+
+  <!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init("AVj9Cirjo5fxF0hdb"); // Replace with your EmailJS Public Key
+   })();
+</script>
+
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
+          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+        </a>
+      </div>
+      <div class="navbar-right">
+        <!-- Rendered dynamically via JavaScript -->
+        <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+            <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
+            <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
+            <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+ <!-- Sidebar Overlay -->
+ <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+ <!-- Sidebar Container -->
+ <aside id="sidebar" class="sidebar">
+   <div class="sidebar-header">
+     <button id="close-sidebar-btn" class="btn-close" aria-label="Tutup">
+       <img src="assets/images/web/sidebar_icon.png" alt="Logo" class="sidebar-logo-img">
+     </button>
+   </div>
+
+   <div class="sidebar-divider"></div>
+
+   <div class="menu-items">
+     <a href="index.html" class="menu-link menu-home" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+
+     <div class="dropdown">
+       <button id="archive-btn" class="dropdown-btn">
+         <span>معرض الأرشيف</span>
+         <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+           <polyline points="6 9 12 15 18 9"></polyline>
+         </svg>
+       </button>
+
+       <div id="archive-submenu" class="submenu">
+         <a href="archive.html#recordings" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a>
+         <a href="archive.html#whiteboards" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a>
+         <a href="archive.html#assignments" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a>
+         <a href="archive.html#photos" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a>
+       </div>
+     </div>
+
+     <div class="dropdown">
+       <button id="library-btn" class="dropdown-btn active">
+         <span>المكتبة الرقمية</span>
+         <svg class="arrow-icon open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+           <polyline points="6 9 12 15 18 9"></polyline>
+         </svg>
+       </button>
+       <div id="library-submenu" class="submenu open">
+         <a href="index.html#educational-materials" class="submenu-link" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a>
+         <a href="index.html#general-library" class="submenu-link" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a>
+       </div>
+     </div>
+
+     <a href="#" class="menu-link">معجم المصطلحات</a>
+     <a href="#" class="menu-link">التقويم الأكاديمي</a>
+     <a href="#" class="menu-link">التعلم المدعوم بالذكاء الاصطناعي</a>
+   </div>
+ </aside>
+
+  <!-- HERO BANNER -->
+  <section class="hero-banner profile-hero">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <h1 class="hero-title"><span class="title-dark">الملف الشخصي</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE CONTENT CARD -->
+  <main class="library-wrapper profile-wrapper">
+    <div class="profile-card">
+      <span class="profile-label-top">الاسم المعروض</span>
+      <h2 id="profileDisplayName" class="profile-user-title">Lebah Ganteng</h2>
+
+      <!-- GENDER BADGE -->
+      <div class="gender-badge-container">
+        <span id="profileGenderBadge" class="gender-badge gender-male">رجل ♂</span>
+      </div>
+
+      <hr class="profile-divider">
+
+      <!-- USER DETAILS TABLE -->
+      <div class="profile-details-list">
+        <div class="detail-row">
+          <span class="detail-value" id="profileStudentId">11011110001</span>
+          <span class="detail-label">الرقم الجامعي</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-value" id="profileEmail">lebahganteng@gmail.com</span>
+          <span class="detail-label">البريد الإلكتروني</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-value" id="profileUsername">lebahganteng</span>
+          <span class="detail-label">اسم المستخدم</span>
+        </div>
+        <div class="detail-row">
+          <div class="password-value-container">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility()" title="إظهار/إخفاء كلمة المرور">
+              <svg id="eyeOpenIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg id="eyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+            <span class="detail-value" id="profilePassword">••••••••</span>
+          </div>
+          <span class="detail-label">كلمة المرور</span>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="profile-actions">
+        <button class="btn-profile-action" onclick="openNameModal()">تغيير الاسم المعروض</button>
+        <button class="btn-profile-action" onclick="openChangePasswordModal()">تغيير كلمة المرور</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- CHANGE DISPLAY NAME MODAL -->
+  <div id="nameModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeNameModal()">&times;</button>
+      <h3 class="upload-modal-title">تغيير الاسم المعروض</h3>
+      <p class="upload-modal-subtitle">أدخل الاسم الجديد الذي سيظهر في حسابك والمكتبة</p>
+  
+      <form onsubmit="handleNameChange(event)">
+        <div class="modal-field">
+          <label for="newDisplayNameInput">الاسم الجديد</label>
+          <input type="text" id="newDisplayNameInput" class="modal-input" placeholder="أدخل الاسم الجديد..." required autocomplete="off">
+        </div>
+  
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">حفظ التغييرات</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeNameModal()">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS MODAL -->
+  <div id="notificationsModal" class="upload-modal-overlay">
+    <div class="upload-modal-card notifications-modal-card">
+      <button class="modal-close-x" onclick="closeNotificationsModal()">&times;</button>
+  
+      <div class="notifications-header">
+        <h3 class="upload-modal-title">الإشعارات</h3>
+        <button class="btn-clear-notifications" onclick="clearAllNotifications()">مسح الكل</button>
+      </div>
+      <p class="upload-modal-subtitle">التحديثات والتنبيهات الخاصة بحسابك ومساهماتك</p>
+  
+      <div id="notificationsList" class="notifications-list-container">
+        <!-- Dynamic notification items populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 1: REQUEST OTP CODE -->
+  <div id="requestOtpModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeOtpModal('requestOtpModal')">&times;</button>
+      <h3 class="upload-modal-title">تغيير كلمة المرور</h3>
+      <p class="upload-modal-subtitle">أدخل بريدك الإلكتروني ليصلك رمز التحقق</p>
+  
+      <form id="requestOtpForm" onsubmit="handleSendOtp(event)">
+        <div class="modal-field">
+          <label for="otpEmailInput">البريد الإلكتروني</label>
+          <input type="email" id="otpEmailInput" class="modal-input" placeholder="example@domain.com" required>
+        </div>
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">إرسال رمز التحقق</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeOtpModal('requestOtpModal')">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ENTER OTP CODE & NEW PASSWORD -->
+  <div id="verifyOtpModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeOtpModal('verifyOtpModal')">&times;</button>
+      <h3 class="upload-modal-title">إدخال رمز التحقق</h3>
+      <p class="upload-modal-subtitle">أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك</p>
+  
+      <form id="verifyOtpForm" onsubmit="handleResetPassword(event)">
+        <div class="modal-field">
+          <label for="otpCodeInput">رمز التحقق (OTP)</label>
+          <input type="text" id="otpCodeInput" class="modal-input" maxlength="6" placeholder="123456" required style="letter-spacing: 4px; text-align: center; font-weight: bold;">
+        </div>
+  
+        <div class="modal-field">
+          <label for="newPasswordInput">كلمة المرور الجديدة</label>
+          <input type="password" id="newPasswordInput" class="modal-input" placeholder="••••••••" required minlength="6">
+        </div>
+  
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">تأكيد وتغيير كلمة المرور</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeOtpModal('verifyOtpModal')">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-overlay">
+      <div class="footer-container">
+        <img src="assets/images/web/footer_preview.png" alt="footer" class="footer-logo">
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
+
+    function toTitleCase(str) {
+      if (!str) return '';
+      return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    let isPasswordVisible = false;
+    let realPassword = '••••••••';
+
+    let generatedOtpCode = null;
+    let otpExpirationTime = null;
+    let targetUserDocId = null;
+
+    // Open Change Password Modal
+    function openChangePasswordModal() {
+      const sessionData = localStorage.getItem('currentUser');
+      if (sessionData) {
+        const user = JSON.parse(sessionData);
+        const emailInput = document.getElementById('otpEmailInput');
+        if (emailInput && user.email) {
+          emailInput.value = user.email;
+        }
+      }
+      document.getElementById('requestOtpModal').classList.add('show');
+    }
+
+    function closeOtpModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.remove('show');
+    }
+
+    function generate6DigitOTP() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    async function handleSendOtp(e) {
+  e.preventDefault();
+  const email = document.getElementById('otpEmailInput').value.trim().toLowerCase();
+
+  try {
+    let userFound = false;
+
+    // 1. Check Firestore first
+    const snapshot = await db.collection('users').where('email', '==', email).get();
+
+    if (!snapshot.empty) {
+      targetUserDocId = snapshot.docs[0].id;
+      userFound = true;
+    } else {
+      // 2. Fallback to LocalStorage session
+      const sessionData = localStorage.getItem('currentUser');
+      if (sessionData) {
+        const currentUser = JSON.parse(sessionData);
+        if (currentUser.email && currentUser.email.toLowerCase() === email) {
+          targetUserDocId = currentUser.username ? currentUser.username.toLowerCase() : 'local_user';
+          userFound = true;
+        }
+      }
+    }
+
+    if (!userFound) {
+      showErrorToast('عذراً، البريد الإلكتروني غير مسجل بالمنظومة');
+      return;
+    }
+
+    generatedOtpCode = generate6DigitOTP();
+    otpExpirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes
+
+    // --- EMAILJS SEND CALL ---
+    const templateParams = {
+      pass_code: generatedOtpCode,
+      email: email
+    };
+
+    await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+
+    closeOtpModal('requestOtpModal');
+    document.getElementById('verifyOtpModal').classList.add('show');
+    
+    // --- SUCCESS TOAST ---
+    showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
+
+  } catch (err) {
+    console.error('OTP / EmailJS Error:', err);
+    showErrorToast('حدث خطأ أثناء إرسال البريد الإلكتروني، يُرجى المحاولة لاحقاً');
+  }
+}
+
+async function handleResetPassword(e) {
+  e.preventDefault();
+  const userEnteredOtp = document.getElementById('otpCodeInput').value.trim();
+  const newPassword = document.getElementById('newPasswordInput').value;
+
+  if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
+    showErrorToast('رمز التحقق غير صحيح!');
+    return;
+  }
+
+  if (Date.now() > otpExpirationTime) {
+    showErrorToast('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
+    return;
+  }
+
+  try {
+    await db.collection('users').doc(targetUserDocId).update({
+      pass: newPassword,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    const sessionData = localStorage.getItem('currentUser');
+    if (sessionData) {
+      let currentUser = JSON.parse(sessionData);
+      currentUser.pass = newPassword;
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+
+    closeOtpModal('verifyOtpModal');
+    
+    // --- SUCCESS TOAST ---
+    showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
+    
+    checkUserSession();
+  } catch (err) {
+    console.error('Password Update Error:', err);
+    showErrorToast('فشل تحديث كلمة المرور');
+  }
+}
+
+    async function handleResetPassword(e) {
+      e.preventDefault();
+      const userEnteredOtp = document.getElementById('otpCodeInput').value.trim();
+      const newPassword = document.getElementById('newPasswordInput').value;
+
+      if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
+        alert('رمز التحقق غير صحيح!');
+        return;
+      }
+
+      if (Date.now() > otpExpirationTime) {
+        alert('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
+        return;
+      }
+
+      try {
+        await db.collection('users').doc(targetUserDocId).update({
+          pass: newPassword,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        const sessionData = localStorage.getItem('currentUser');
+        if (sessionData) {
+          let currentUser = JSON.parse(sessionData);
+          currentUser.pass = newPassword;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+
+        closeOtpModal('verifyOtpModal');
+        alert('تم تغيير كلمة المرور بنجاح! 🎉');
+        checkUserSession();
+      } catch (err) {
+        console.error('Password Update Error:', err);
+        alert('فشل تحديث كلمة المرور');
+      }
+    }
+
+    // --- USER SESSION & HEADER RENDER ---
+    async function checkUserSession() {
+      const sessionData = localStorage.getItem('currentUser');
+      const navbarRight = document.querySelector('.navbar-right');
+
+      if (sessionData && navbarRight) {
+        let user = JSON.parse(sessionData);
+
+        try {
+          const doc = await db.collection('users').doc(user.username.toLowerCase()).get();
+          if (doc.exists && doc.data().name) {
+            user.name = doc.data().name;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+          }
+        } catch (err) {
+          console.warn('Could not sync with Firestore:', err);
+        }
+
+        realPassword = user.pass || user.password || '123';
+        const isMale = user.gender === 'male';
+        
+        const genderBadgeHTML = isMale ? `
+          <span class="gender-badge gender-male">
+            <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="14" r="5"></circle>
+              <path d="M19 5L13.5 10.5"></path>
+              <path d="M19 5h-5"></path>
+              <path d="M19 5v5"></path>
+            </svg>
+            طالب
+          </span>` : `
+          <span class="gender-badge gender-female">
+            <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="10" r="5"></circle>
+              <path d="M12 15v7"></path>
+              <path d="M9 19h6"></path>
+            </svg>
+            طالبة
+          </span>`;
+
+        const formattedName = toTitleCase(user.name);
+        const formattedUsername = toTitleCase(user.username);
+        const userEmail = user.email || 'alifkaaka@gmail.com'; 
+
+        navbarRight.innerHTML = `
+          <div class="user-profile-wrapper">
+            <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
+              <img src="${user.avatar || 'assets/images/web/default_avatar.png'}" alt="${formattedName}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(formattedName)}&background=1565c0&color=fff'">
+              <div class="profile-info-group">
+                <span class="profile-name">${formattedName}</span>
+                ${genderBadgeHTML}
+              </div>
+              <span class="nav-unread-dot" style="display: none;"></span>
+              <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            <div id="profileDropdown" class="profile-dropdown-menu">
+              <a href="profile.html" class="dropdown-item" onclick="smoothNavigate(event, 'profile.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                الملف الشخصي
+              </a>
+
+              <a href="#" class="dropdown-item" onclick="openNotificationsModal(event)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                الإشعارات
+                <span class="unread-badge" style="display: none;">0</span>
+              </a>
+              
+              <div class="dropdown-divider"></div>
+              
+              <button class="dropdown-item logout-item" onclick="logoutUser()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                تسجيل الخروج
+              </button>
+            </div>
+          </div>
+
+          <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+            <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+              <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
+              <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
+              <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
+            </svg>
+          </button>
+        `;
+
+        document.getElementById('profileDisplayName').textContent = formattedName || 'Alif Khaerul Anam';
+        document.getElementById('profileUsername').textContent = formattedUsername || 'Alif Khaerul Anam';
+        document.getElementById('profileEmail').textContent = userEmail;
+        document.getElementById('profileStudentId').textContent = user.studentId || '11011110001';
+
+        const badgeContainer = document.querySelector('.gender-badge-container');
+        if (badgeContainer) badgeContainer.innerHTML = genderBadgeHTML;
+
+        updateNotificationBadge();
+      }
+    }
+
+    // --- SIDEBAR DRAWER LOGIC ---
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      }
+    }
+
+    function initSidebarEvents() {
+      const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      const archiveBtn = document.getElementById('archive-btn');
+      const archiveSubmenu = document.getElementById('archive-submenu');
+      const libraryBtn = document.getElementById('library-btn');
+      const librarySubmenu = document.getElementById('library-submenu');
+
+      const closeSidebar = () => {
+        if (sidebar && overlay) {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        }
+      };
+
+      if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+      if (overlay) overlay.addEventListener('click', closeSidebar);
+
+      const toggleDropdown = (button, submenu) => {
+        if (!button || !submenu) return;
+        const isOpen = submenu.classList.contains('open');
+        const arrow = button.querySelector('.arrow-icon');
+
+        if (isOpen) {
+          submenu.classList.remove('open');
+          button.classList.remove('active');
+          if (arrow) arrow.classList.remove('open');
+        } else {
+          submenu.classList.add('open');
+          button.classList.add('active');
+          if (arrow) arrow.classList.add('open');
+        }
+      };
+
+      if (archiveBtn && archiveSubmenu) {
+        archiveBtn.addEventListener('click', (e) => {
+          if (e.target.tagName === 'SPAN') {
+            smoothNavigate(e, 'archive.html');
+          } else {
+            toggleDropdown(archiveBtn, archiveSubmenu);
+          }
+        });
+      }
+      if (libraryBtn && librarySubmenu) {
+        libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
+      }
+    }
+
+    // --- NOTIFICATIONS LOGIC ---
+    function getNotifications() {
+      return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
+    }
+
+    function updateNotificationBadge() {
+      const dropdownBadge = document.querySelector('.unread-badge');
+      const navRedDot = document.querySelector('.nav-unread-dot');
+      
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => n.unread).length;
+
+      if (unreadCount > 0) {
+        if (dropdownBadge) {
+          dropdownBadge.textContent = unreadCount;
+          dropdownBadge.style.display = 'inline-block';
+        }
+        if (navRedDot) navRedDot.style.display = 'inline-block';
+      } else {
+        if (dropdownBadge) dropdownBadge.style.display = 'none';
+        if (navRedDot) navRedDot.style.display = 'none';
+      }
+    }
+
+    function openNotificationsModal(e) {
+      if (e) e.preventDefault();
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown) dropdown.classList.remove('show');
+
+      const notifications = getNotifications().map(n => ({ ...n, unread: false }));
+      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
+      updateNotificationBadge();
+
+      renderNotificationsList();
+      document.getElementById('notificationsModal').classList.add('show');
+    }
+
+    function closeNotificationsModal() {
+      document.getElementById('notificationsModal').classList.remove('show');
+    }
+
+    function clearAllNotifications() {
+      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify([]));
+      renderNotificationsList();
+      updateNotificationBadge();
+    }
+
+    function renderNotificationsList() {
+      const container = document.getElementById('notificationsList');
+      const notifications = getNotifications();
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (notifications.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد إشعارات حالياً</p>';
+        return;
+      }
+
+      notifications.forEach(n => {
+        const card = document.createElement('div');
+        card.className = `notification-item-card ${n.unread ? 'unread' : ''}`;
+        let iconMarkup = '';
+
+        if (n.type === 'success') {
+          iconMarkup = `<div class="notification-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
+        } else if (n.type === 'rejected' || n.type === 'deleted') {
+          iconMarkup = `<div class="notification-icon error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+        } else {
+          iconMarkup = `<div class="notification-icon pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+        }
+
+        card.innerHTML = `
+          ${iconMarkup}
+          <div class="notification-content">
+            <h4 class="notification-title">${n.title}</h4>
+            <p class="notification-body">${n.message}</p>
+            <span class="notification-time">${n.timestamp}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // --- OTHER HELPERS ---
+    function toggleProfileDropdown(e) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    function logoutUser() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'index.html';
+    }
+
+    function togglePasswordVisibility() {
+      const passwordEl = document.getElementById('profilePassword');
+      const eyeOpen = document.getElementById('eyeOpenIcon');
+      const eyeOff = document.getElementById('eyeOffIcon');
+
+      isPasswordVisible = !isPasswordVisible;
+      if (isPasswordVisible) {
+        passwordEl.textContent = realPassword;
+        eyeOpen.style.display = 'none';
+        eyeOff.style.display = 'block';
+      } else {
+        passwordEl.textContent = '••••••••';
+        eyeOpen.style.display = 'block';
+        eyeOff.style.display = 'none';
+      }
+    }
+
+    function smoothNavigate(e, target) {
+      e.preventDefault();
+      document.body.classList.add('fade-out');
+      setTimeout(() => { window.location.href = target; }, 300);
+    }
+
+    function openNameModal() {
+      const modal = document.getElementById('nameModal');
+      const input = document.getElementById('newDisplayNameInput');
+      const currentTitle = document.getElementById('profileDisplayName').textContent;
+      if (modal && input) {
+        input.value = currentTitle;
+        modal.classList.add('show');
+      }
+    }
+
+    function closeNameModal() {
+      const modal = document.getElementById('nameModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    async function handleNameChange(e) {
+      e.preventDefault();
+      const input = document.getElementById('newDisplayNameInput');
+      const newName = input ? input.value.trim() : '';
+      if (!newName) return;
+
+      const sessionData = localStorage.getItem('currentUser');
+      if (sessionData) {
+        let user = JSON.parse(sessionData);
+        try {
+          await db.collection('users').doc(user.username.toLowerCase()).set({
+            name: newName,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+
+          user.name = newName;
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          checkUserSession();
+        } catch (err) {
+          console.error('Firebase Update Error:', err);
+          user.name = newName;
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          checkUserSession();
+        }
+      }
+      closeNameModal();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await checkUserSession();
+      initSidebarEvents();
+    });
+
+    function showToastNotification(messageText) {
+  const toast = document.getElementById('toastNotification');
+  const messageSpan = document.getElementById('toastMessage');
+  if (toast && messageSpan) {
+    messageSpan.textContent = messageText;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+}
+
+function showErrorToast(messageText) {
+  const toast = document.getElementById('errorToastNotification');
+  const messageSpan = document.getElementById('errorToastMessage');
+  if (toast && messageSpan) {
+    messageSpan.textContent = messageText;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+}
+  </script>
+
+  <!-- SUCCESS TOAST NOTIFICATION -->
+<div id="toastNotification" class="toast-notification">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastMessage">تمت العملية بنجاح!</span>
+  </div>
+  
+  <!-- ERROR TOAST NOTIFICATION -->
+  <div id="errorToastNotification" class="toast-notification toast-error">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+    <span id="errorToastMessage">حدث خطأ في المدخلات!</span>
+  </div>
+
+</body>
+</html>
