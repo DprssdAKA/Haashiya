@@ -39,6 +39,39 @@
 
   <script>
     // Load users array from data/users.json
+    // Example using Firebase Realtime Database
+async function handleLogin(e) {
+  e.preventDefault();
+  const usernameInput = document.getElementById('usernameInput').value.trim();
+  const passwordInput = document.getElementById('passwordInput').value.trim();
+
+  try {
+    // 1. Fetch user data directly from Firebase
+    const userRef = firebase.database().ref('users/' + usernameInput);
+    const snapshot = await userRef.once('value');
+    const userData = snapshot.val();
+
+    if (userData) {
+      // 2. Compare entered password with actual password stored in Firebase
+      const firebasePassword = userData.pass || userData.password;
+
+      if (passwordInput === firebasePassword) {
+        // 3. Save the exact user object returned from Firebase to localStorage
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        
+        // Navigate to dashboard/profile
+        window.location.href = 'index.html';
+      } else {
+        alert('كلمة المرور غير صحيحة'); // Incorrect password
+      }
+    } else {
+      alert('اسم المستخدم غير موجود'); // Username not found
+    }
+  } catch (error) {
+    console.error("Firebase Login Error:", error);
+  }
+}
+
     async function loadUsersData() {
       try {
         const response = await fetch('data/users.json');

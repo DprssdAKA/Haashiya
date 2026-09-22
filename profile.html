@@ -14,12 +14,12 @@
   <link rel="stylesheet" href="profile.css">
 
   <!-- EmailJS SDK -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script type="text/javascript">
-   (function(){
-      emailjs.init("AVj9Cirjo5fxF0hdb"); // Replace with your EmailJS Public Key
-   })();
-</script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+     (function(){
+        emailjs.init("h60WtwHIiLSrbGnWB"); // Replace with your Public Key
+     })();
+  </script>
 
 </head>
 
@@ -32,10 +32,44 @@
           <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
         </a>
       </div>
+
+      <!-- DESKTOP HORIZONTAL MENU -->
+      <nav class="desktop-nav">
+        <ul class="nav-links">
+          <li>
+            <a href="index.html" class="nav-item-link" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+          </li>
+          <li class="nav-dropdown">
+            <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
+              <span>معرض الأرشيف</span>
+              <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
+              <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
+              <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
+              <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
+            </ul>
+          </li>
+          <li class="nav-dropdown">
+            <a href="index.html#educational-materials" class="nav-item-link dropdown-trigger">
+              <span>المكتبة الرقمية</span>
+              <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="index.html#educational-materials" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a></li>
+              <li><a href="index.html#general-library" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a></li>
+            </ul>
+          </li>
+          <li><a href="#" class="nav-item-link">معجم المصطلحات</a></li>
+          <li><a href="#" class="nav-item-link">التقويم الأكاديمي</a></li>
+          <li><a href="#" class="nav-item-link">التعلم بالذكاء الاصطناعي</a></li>
+        </ul>
+      </nav>
+
       <div class="navbar-right">
-        <!-- Rendered dynamically via JavaScript -->
         <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
-        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+        <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
           <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
             <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
             <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
@@ -283,7 +317,6 @@
     let otpExpirationTime = null;
     let targetUserDocId = null;
 
-    // Open Change Password Modal
     function openChangePasswordModal() {
       const sessionData = localStorage.getItem('currentUser');
       if (sessionData) {
@@ -312,14 +345,14 @@
   try {
     let userFound = false;
 
-    // 1. Check Firestore first
+    // Check Firestore user records
     const snapshot = await db.collection('users').where('email', '==', email).get();
 
     if (!snapshot.empty) {
       targetUserDocId = snapshot.docs[0].id;
       userFound = true;
     } else {
-      // 2. Fallback to LocalStorage session
+      // Check session fallback
       const sessionData = localStorage.getItem('currentUser');
       if (sessionData) {
         const currentUser = JSON.parse(sessionData);
@@ -337,66 +370,42 @@
 
     generatedOtpCode = generate6DigitOTP();
     otpExpirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes
+    console.log("👉 GENERATED OTP CODE IS:", generatedOtpCode);
 
-    // --- EMAILJS SEND CALL ---
-    const templateParams = {
-      pass_code: generatedOtpCode,
-      email: email
-    };
+    // Send request to Resend via Vercel Serverless API
+    try {
+      const response = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          otp: generatedOtpCode
+        })
+      });
 
-    await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+      const resData = await response.json();
 
-    closeOtpModal('requestOtpModal');
-    document.getElementById('verifyOtpModal').classList.add('show');
-    
-    // --- SUCCESS TOAST ---
-    showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
-
-  } catch (err) {
-    console.error('OTP / EmailJS Error:', err);
-    showErrorToast('حدث خطأ أثناء إرسال البريد الإلكتروني، يُرجى المحاولة لاحقاً');
-  }
-}
-
-async function handleResetPassword(e) {
-  e.preventDefault();
-  const userEnteredOtp = document.getElementById('otpCodeInput').value.trim();
-  const newPassword = document.getElementById('newPasswordInput').value;
-
-  if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
-    showErrorToast('رمز التحقق غير صحيح!');
-    return;
-  }
-
-  if (Date.now() > otpExpirationTime) {
-    showErrorToast('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
-    return;
-  }
-
-  try {
-    await db.collection('users').doc(targetUserDocId).update({
-      pass: newPassword,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    const sessionData = localStorage.getItem('currentUser');
-    if (sessionData) {
-      let currentUser = JSON.parse(sessionData);
-      currentUser.pass = newPassword;
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      if (response.ok && resData.success) {
+        showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
+      } else {
+        console.warn('Resend API response error:', resData);
+        showToastNotification('تم توليد الرمز! تفقد Console (F12) للرمز.');
+      }
+    } catch (fetchErr) {
+      console.warn('Network error hitting /api/send-otp:', fetchErr);
+      showToastNotification('تم توليد الرمز! تفقد Console (F12) للرمز.');
     }
 
-    closeOtpModal('verifyOtpModal');
-    
-    // --- SUCCESS TOAST ---
-    showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
-    
-    checkUserSession();
+    // Move to verification modal
+    closeOtpModal('requestOtpModal');
+    document.getElementById('verifyOtpModal').classList.add('show');
+
   } catch (err) {
-    console.error('Password Update Error:', err);
-    showErrorToast('فشل تحديث كلمة المرور');
+    console.error('OTP Handler Error:', err);
+    showErrorToast('حدث خطأ أثناء معالجة الطلب، يُرجى المحاولة لاحقاً');
   }
 }
+
 
     async function handleResetPassword(e) {
       e.preventDefault();
@@ -404,12 +413,12 @@ async function handleResetPassword(e) {
       const newPassword = document.getElementById('newPasswordInput').value;
 
       if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
-        alert('رمز التحقق غير صحيح!');
+        showErrorToast('رمز التحقق غير صحيح!');
         return;
       }
 
       if (Date.now() > otpExpirationTime) {
-        alert('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
+        showErrorToast('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
         return;
       }
 
@@ -427,17 +436,17 @@ async function handleResetPassword(e) {
         }
 
         closeOtpModal('verifyOtpModal');
-        alert('تم تغيير كلمة المرور بنجاح! 🎉');
+        showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
         checkUserSession();
       } catch (err) {
         console.error('Password Update Error:', err);
-        alert('فشل تحديث كلمة المرور');
+        showErrorToast('فشل تحديث كلمة المرور');
       }
     }
 
-    // --- USER SESSION & HEADER RENDER ---
     async function checkUserSession() {
       const sessionData = localStorage.getItem('currentUser');
+      if (!sessionData) return;
       const navbarRight = document.querySelector('.navbar-right');
 
       if (sessionData && navbarRight) {
@@ -522,7 +531,7 @@ async function handleResetPassword(e) {
             </div>
           </div>
 
-          <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+          <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
             <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
               <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
               <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
@@ -543,7 +552,6 @@ async function handleResetPassword(e) {
       }
     }
 
-    // --- SIDEBAR DRAWER LOGIC ---
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
@@ -603,7 +611,6 @@ async function handleResetPassword(e) {
       }
     }
 
-    // --- NOTIFICATIONS LOGIC ---
     function getNotifications() {
       return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
     }
@@ -687,7 +694,6 @@ async function handleResetPassword(e) {
       });
     }
 
-    // --- OTHER HELPERS ---
     function toggleProfileDropdown(e) {
       e.stopPropagation();
       const dropdown = document.getElementById('profileDropdown');
@@ -772,34 +778,34 @@ async function handleResetPassword(e) {
       closeNameModal();
     }
 
+    function showToastNotification(messageText) {
+      const toast = document.getElementById('toastNotification');
+      const messageSpan = document.getElementById('toastMessage');
+      if (toast && messageSpan) {
+        messageSpan.textContent = messageText;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    function showErrorToast(messageText) {
+      const toast = document.getElementById('errorToastNotification');
+      const messageSpan = document.getElementById('errorToastMessage');
+      if (toast && messageSpan) {
+        messageSpan.textContent = messageText;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       await checkUserSession();
       initSidebarEvents();
     });
-
-    function showToastNotification(messageText) {
-  const toast = document.getElementById('toastNotification');
-  const messageSpan = document.getElementById('toastMessage');
-  if (toast && messageSpan) {
-    messageSpan.textContent = messageText;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
-}
-
-function showErrorToast(messageText) {
-  const toast = document.getElementById('errorToastNotification');
-  const messageSpan = document.getElementById('errorToastMessage');
-  if (toast && messageSpan) {
-    messageSpan.textContent = messageText;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
-}
   </script>
 
   <!-- SUCCESS TOAST NOTIFICATION -->
-<div id="toastNotification" class="toast-notification">
+  <div id="toastNotification" class="toast-notification">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="20 6 9 17 4 12"></polyline>
     </svg>
