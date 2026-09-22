@@ -407,42 +407,55 @@
 }
 
 
-    async function handleResetPassword(e) {
-      e.preventDefault();
-      const userEnteredOtp = document.getElementById('otpCodeInput').value.trim();
-      const newPassword = document.getElementById('newPasswordInput').value;
+async function handleResetPassword(e) {
+  e.preventDefault();
+  const userEnteredOtp = document.getElementById('otpCodeInput').value.trim();
+  const newPassword = document.getElementById('newPasswordInput').value.trim();
 
-      if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
-        showErrorToast('رمز التحقق غير صحيح!');
-        return;
-      }
+  if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
+    showErrorToast('رمز التحقق غير صحيح!');
+    return;
+  }
 
-      if (Date.now() > otpExpirationTime) {
-        showErrorToast('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
-        return;
-      }
+  if (Date.now() > otpExpirationTime) {
+    showErrorToast('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
+    return;
+  }
 
-      try {
-        await db.collection('users').doc(targetUserDocId).update({
-          pass: newPassword,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        const sessionData = localStorage.getItem('currentUser');
-        if (sessionData) {
-          let currentUser = JSON.parse(sessionData);
-          currentUser.pass = newPassword;
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-
-        closeOtpModal('verifyOtpModal');
-        showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
-        checkUserSession();
-      } catch (err) {
-        console.error('Password Update Error:', err);
-        showErrorToast('فشل تحديث كلمة المرور');
-      }
+  try {
+    const sessionData = localStorage.getItem('currentUser');
+    if (!sessionData) {
+      showErrorToast('عذراً، لم يتم العثور على الجلسة الحالية');
+      return;
     }
+
+    let currentUser = JSON.parse(sessionData);
+    const docId = targetUserDocId || currentUser.username.toLowerCase();
+
+    // 1. Update Firestore document (updating both 'pass' and 'password' keys to cover all references)
+    await db.collection('users').doc(docId).set({
+      pass: newPassword,
+      password: newPassword,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    // 2. Update local storage session
+    currentUser.pass = newPassword;
+    currentUser.password = newPassword;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    // 3. Update global reference variable for current view
+    realPassword = newPassword;
+
+    closeOtpModal('verifyOtpModal');
+    showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
+    checkUserSession();
+  } catch (err) {
+    console.error('Password Update Error:', err);
+    showErrorToast('فشل تحديث كلمة المرور في قاعدة البيانات');
+  }
+}
+
 
     async function checkUserSession() {
       const sessionData = localStorage.getItem('currentUser');

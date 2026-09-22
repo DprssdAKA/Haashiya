@@ -40,37 +40,70 @@
   <script>
     // Load users array from data/users.json
     // Example using Firebase Realtime Database
-async function handleLogin(e) {
+    async function handleLoginSubmit(e) {
   e.preventDefault();
-  const usernameInput = document.getElementById('usernameInput').value.trim();
+  
+  const usernameInput = document.getElementById('usernameInput').value.trim().toLowerCase();
   const passwordInput = document.getElementById('passwordInput').value.trim();
 
   try {
-    // 1. Fetch user data directly from Firebase
-    const userRef = firebase.database().ref('users/' + usernameInput);
-    const snapshot = await userRef.once('value');
-    const userData = snapshot.val();
+    // 1. Check Firestore database for updated user credentials
+    const userDoc = await db.collection('users').doc(usernameInput).get();
 
-    if (userData) {
-      // 2. Compare entered password with actual password stored in Firebase
-      const firebasePassword = userData.pass || userData.password;
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      const storedPassword = userData.pass || userData.password;
 
-      if (passwordInput === firebasePassword) {
-        // 3. Save the exact user object returned from Firebase to localStorage
-        localStorage.setItem('currentUser', JSON.stringify(userData));
+      if (storedPassword === passwordInput) {
+        // Successful login with updated password
+        const userSession = {
+          username: usernameInput,
+          name: userData.name || 'المستخدم',
+          email: userData.email || '',
+          gender: userData.gender || 'male',
+          pass: storedPassword,
+          password: storedPassword,
+          avatar: userData.avatar || 'assets/images/web/default_avatar.png',
+          studentId: userData.studentId || '11011110001'
+        };
+
+        localStorage.setItem('currentUser', JSON.stringify(userSession));
+        showToastNotification('تم تسجيل الدخول بنجاح!');
         
-        // Navigate to dashboard/profile
-        window.location.href = 'index.html';
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 800);
+        return;
       } else {
-        alert('كلمة المرور غير صحيحة'); // Incorrect password
+        showErrorToast('كلمة المرور غير صحيحة!');
+        return;
       }
-    } else {
-      alert('اسم المستخدم غير موجود'); // Username not found
     }
-  } catch (error) {
-    console.error("Firebase Login Error:", error);
+
+    // 2. Fallback check for session in localStorage if Firestore record isn't found
+    const sessionData = localStorage.getItem('currentUser');
+    if (sessionData) {
+      const localUser = JSON.parse(sessionData);
+      if (localUser.username.toLowerCase() === usernameInput) {
+        const localPassword = localUser.pass || localUser.password;
+        if (localPassword === passwordInput) {
+          showToastNotification('تم تسجيل الدخول بنجاح!');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 800);
+          return;
+        }
+      }
+    }
+
+    showErrorToast('اسم المستخدم أو كلمة المرور غير صحيحة');
+
+  } catch (err) {
+    console.error('Login Error:', err);
+    showErrorToast('حدث خطأ أثناء تسجيل الدخول، يُرجى المحاولة لاحقاً');
   }
 }
+
 
     async function loadUsersData() {
       try {
