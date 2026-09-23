@@ -10,6 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="login-page">
 
@@ -17,7 +21,7 @@
     <h2>مرحباً بك!</h2>
     <p class="subtitle">يُرجَى تسجيل الدخول باستخدام البيانات المزوَّدة لك</p>
 
-    <form id="loginForm">
+    <form id="loginForm" onsubmit="handleLoginSubmit(event)">
       <div class="input-group">
         <label for="username">اسم المستخدم</label>
         <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
@@ -38,114 +42,76 @@
   </div>
 
   <script>
-    // Load users array from data/users.json
-    // Example using Firebase Realtime Database
-    async function handleLoginSubmit(e) {
-  e.preventDefault();
-  
-  const usernameInput = document.getElementById('usernameInput').value.trim().toLowerCase();
-  const passwordInput = document.getElementById('passwordInput').value.trim();
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
 
-  try {
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const userDoc = await db.collection('users').doc(usernameInput).get();
 
-    if (!userDoc.exists) {
-      showErrorToast('اسم المستخدم غير مسجل بالمنظومة');
-      return;
-    }
-
-    const userData = userDoc.data();
-    
-    // Fallback check to support either field
-    const activePassword = userData.pass || userData.password;
-
-    if (activePassword === passwordInput) {
-      const userSession = {
-        username: usernameInput,
-        name: userData.name || 'المستخدم',
-        email: userData.email || '',
-        gender: userData.gender || 'male',
-        role: userData.role || 'user',
-        pass: activePassword,
-        password: activePassword,
-        avatar: userData.avatar || 'assets/images/web/default_avatar.png',
-        studentId: userData.studentId || '11011110001'
-      };
-
-      localStorage.setItem('currentUser', JSON.stringify(userSession));
-      showToastNotification('تم تسجيل الدخول بنجاح!');
-      
-      setTimeout(() => { window.location.href = 'index.html'; }, 800);
-    } else {
-      showErrorToast('كلمة المرور غير صحيحة!');
-    }
-
-  } catch (err) {
-    console.error('Login Error:', err);
-    showErrorToast('حدث خطأ أثناء تسجيل الدخول');
-  }
-}
-
-    async function loadUsersData() {
-      try {
-        const response = await fetch('data/users.json');
-        if (!response.ok) throw new Error('Failed to fetch users.json');
-        return await response.json();
-      } catch (error) {
-        console.error('Error loading users JSON data:', error);
-        return [];
-      }
-    }
-  
-    const loginForm = document.getElementById('loginForm');
-    const messageDiv = document.getElementById('message');
-  
-    // Mark event listener as async to use fetch()
-    loginForm.addEventListener('submit', async function(e) {
+    async function handleLoginSubmit(e) {
       e.preventDefault();
-  
-      const usernameInput = document.getElementById('username').value
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, ' ');
-  
+      
+      const messageDiv = document.getElementById('message');
+      const usernameInput = document.getElementById('username').value.trim().toLowerCase();
       const passwordInput = document.getElementById('password').value.trim();
-  
-      // Fetch users list from JSON
-      const usersList = await loadUsersData();
-  
-      // Find matching user profile
-      const matchedUser = usersList.find(u => 
-        u.username.toLowerCase() === usernameInput && u.pass === passwordInput
-      );
-  
-      if (matchedUser) {
-        // Store user session in LocalStorage
-        localStorage.setItem('currentUser', JSON.stringify({
-          username: matchedUser.username,
-          name: matchedUser.name,
-          gender: matchedUser.gender,
-          role: matchedUser.role,
-          avatar: matchedUser.avatar
-        }));
-  
-        messageDiv.className = "message success";
-        messageDiv.textContent = "تم تسجيل الدخول بنجاح! جاري التوجيه...";
-  
-        setTimeout(() => {
-          document.body.classList.add('fade-out');
+
+      try {
+        // Query Firestore document by username
+        const userDoc = await db.collection('users').doc(usernameInput).get();
+
+        if (!userDoc.exists) {
+          messageDiv.className = "message error";
+          messageDiv.textContent = "اسم المستخدم غير مسجل بالمنظومة";
+          return;
+        }
+
+        const userData = userDoc.data();
+        const activePassword = userData.pass || userData.password;
+
+        if (activePassword === passwordInput) {
+          const userSession = {
+            username: usernameInput,
+            name: userData.name || 'المستخدم',
+            email: userData.email || '',
+            gender: userData.gender || 'male',
+            role: userData.role || 'user',
+            pass: activePassword,
+            password: activePassword,
+            avatar: userData.avatar || 'assets/images/web/default_avatar.png',
+            studentId: userData.studentId || '11011110001'
+          };
+
+          localStorage.setItem('currentUser', JSON.stringify(userSession));
+          
+          messageDiv.className = "message success";
+          messageDiv.textContent = "تم تسجيل الدخول بنجاح! جاري التوجيه...";
+
           setTimeout(() => {
-            window.location.href = "index.html";
-          }, 300);
-        }, 1200);
-  
-      } else {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+              window.location.href = "index.html";
+            }, 300);
+          }, 1000);
+
+        } else {
+          messageDiv.className = "message error";
+          messageDiv.textContent = "كلمة المرور غير صحيحة! يُرجَى المحاولة مرة أخرى";
+        }
+
+      } catch (err) {
+        console.error('Login Error:', err);
         messageDiv.className = "message error";
-        messageDiv.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة. يُرجَى المحاولة مرة أخرى";
+        messageDiv.textContent = "حدث خطأ أثناء الاتصال بقاعدة البيانات";
       }
-    });
-  
+    }
+
     function smoothNavigate(event, targetUrl) {
       event.preventDefault();
       document.body.classList.add('fade-out');
@@ -154,8 +120,6 @@
       }, 300);
     }
   </script>
-  
-  
 
 </body>
 </html>
