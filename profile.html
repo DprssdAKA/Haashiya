@@ -352,7 +352,7 @@
       targetUserDocId = snapshot.docs[0].id;
       userFound = true;
     } else {
-      // Check session fallback
+      // Check active local session fallback
       const sessionData = localStorage.getItem('currentUser');
       if (sessionData) {
         const currentUser = JSON.parse(sessionData);
@@ -368,32 +368,28 @@
       return;
     }
 
+    // Generate 6-Digit OTP Code
     generatedOtpCode = generate6DigitOTP();
-    otpExpirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes
-    console.log("👉 GENERATED OTP CODE IS:", generatedOtpCode);
+    otpExpirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes expiry
 
-    // Send request to Resend via Vercel Serverless API
-    try {
-      const response = await fetch('/api/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          otp: generatedOtpCode
-        })
-      });
+    // Send request to Resend API Route
+    const response = await fetch('/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        otp: generatedOtpCode
+      })
+    });
 
-      const resData = await response.json();
+    const resData = await response.json();
 
-      if (response.ok && resData.success) {
-        showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
-      } else {
-        console.warn('Resend API response error:', resData);
-        showToastNotification('تم توليد الرمز! تفقد Console (F12) للرمز.');
-      }
-    } catch (fetchErr) {
-      console.warn('Network error hitting /api/send-otp:', fetchErr);
-      showToastNotification('تم توليد الرمز! تفقد Console (F12) للرمز.');
+    if (response.ok && resData.success) {
+      showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
+    } else {
+      console.warn('Resend API response error:', resData);
+      showErrorToast('فشل إرسال البريد الإلكتروني، يُرجى التحقق من إعدادات Resend');
+      return;
     }
 
     // Move to verification modal
@@ -402,9 +398,10 @@
 
   } catch (err) {
     console.error('OTP Handler Error:', err);
-    showErrorToast('حدث خطأ أثناء معالجة الطلب، يُرجى المحاولة لاحقاً');
+    showErrorToast('حدث خطأ أثناء الاتصال بالخادم، يُرجى المحاولة لاحقاً');
   }
 }
+
 
 
 async function handleResetPassword(e) {
