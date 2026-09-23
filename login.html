@@ -47,7 +47,7 @@
   const passwordInput = document.getElementById('passwordInput').value.trim();
 
   try {
-    // 1. Check Firestore database for updated user credentials
+    // 1. Fetch user directly from Firestore
     const userDoc = await db.collection('users').doc(usernameInput).get();
 
     if (userDoc.exists) {
@@ -55,14 +55,12 @@
       const storedPassword = userData.pass || userData.password;
 
       if (storedPassword === passwordInput) {
-        // Successful login with updated password
         const userSession = {
           username: usernameInput,
           name: userData.name || 'المستخدم',
           email: userData.email || '',
           gender: userData.gender || 'male',
-          pass: storedPassword,
-          password: storedPassword,
+          role: userData.role || 'user',
           avatar: userData.avatar || 'assets/images/web/default_avatar.png',
           studentId: userData.studentId || '11011110001'
         };
@@ -70,9 +68,7 @@
         localStorage.setItem('currentUser', JSON.stringify(userSession));
         showToastNotification('تم تسجيل الدخول بنجاح!');
         
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 800);
+        setTimeout(() => { window.location.href = 'index.html'; }, 800);
         return;
       } else {
         showErrorToast('كلمة المرور غير صحيحة!');
@@ -80,30 +76,12 @@
       }
     }
 
-    // 2. Fallback check for session in localStorage if Firestore record isn't found
-    const sessionData = localStorage.getItem('currentUser');
-    if (sessionData) {
-      const localUser = JSON.parse(sessionData);
-      if (localUser.username.toLowerCase() === usernameInput) {
-        const localPassword = localUser.pass || localUser.password;
-        if (localPassword === passwordInput) {
-          showToastNotification('تم تسجيل الدخول بنجاح!');
-          setTimeout(() => {
-            window.location.href = 'index.html';
-          }, 800);
-          return;
-        }
-      }
-    }
-
-    showErrorToast('اسم المستخدم أو كلمة المرور غير صحيحة');
-
+    showErrorToast('اسم المستخدم غير مسجل بالمنظومة');
   } catch (err) {
     console.error('Login Error:', err);
     showErrorToast('حدث خطأ أثناء تسجيل الدخول، يُرجى المحاولة لاحقاً');
   }
 }
-
 
     async function loadUsersData() {
       try {
