@@ -382,12 +382,12 @@
       })
     });
 
-    const resData = await response.json();
-
-    if (response.ok && resData.success) {
+    if (response.ok) {
+      const resData = await response.json();
       showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
     } else {
-      console.warn('Resend API response error:', resData);
+      const errorText = await response.text();
+      console.error('Server 500 Error details:', errorText);
       showErrorToast('فشل إرسال البريد الإلكتروني، يُرجى التحقق من إعدادات Resend');
       return;
     }
@@ -401,6 +401,7 @@
     showErrorToast('حدث خطأ أثناء الاتصال بالخادم، يُرجى المحاولة لاحقاً');
   }
 }
+
 
 
 
