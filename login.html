@@ -47,39 +47,43 @@
   const passwordInput = document.getElementById('passwordInput').value.trim();
 
   try {
-    // 1. Fetch user directly from Firestore
+    const db = firebase.firestore();
     const userDoc = await db.collection('users').doc(usernameInput).get();
 
-    if (userDoc.exists) {
-      const userData = userDoc.data();
-      const storedPassword = userData.pass || userData.password;
-
-      if (storedPassword === passwordInput) {
-        const userSession = {
-          username: usernameInput,
-          name: userData.name || 'المستخدم',
-          email: userData.email || '',
-          gender: userData.gender || 'male',
-          role: userData.role || 'user',
-          avatar: userData.avatar || 'assets/images/web/default_avatar.png',
-          studentId: userData.studentId || '11011110001'
-        };
-
-        localStorage.setItem('currentUser', JSON.stringify(userSession));
-        showToastNotification('تم تسجيل الدخول بنجاح!');
-        
-        setTimeout(() => { window.location.href = 'index.html'; }, 800);
-        return;
-      } else {
-        showErrorToast('كلمة المرور غير صحيحة!');
-        return;
-      }
+    if (!userDoc.exists) {
+      showErrorToast('اسم المستخدم غير مسجل بالمنظومة');
+      return;
     }
 
-    showErrorToast('اسم المستخدم غير مسجل بالمنظومة');
+    const userData = userDoc.data();
+    
+    // Fallback check to support either field
+    const activePassword = userData.pass || userData.password;
+
+    if (activePassword === passwordInput) {
+      const userSession = {
+        username: usernameInput,
+        name: userData.name || 'المستخدم',
+        email: userData.email || '',
+        gender: userData.gender || 'male',
+        role: userData.role || 'user',
+        pass: activePassword,
+        password: activePassword,
+        avatar: userData.avatar || 'assets/images/web/default_avatar.png',
+        studentId: userData.studentId || '11011110001'
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(userSession));
+      showToastNotification('تم تسجيل الدخول بنجاح!');
+      
+      setTimeout(() => { window.location.href = 'index.html'; }, 800);
+    } else {
+      showErrorToast('كلمة المرور غير صحيحة!');
+    }
+
   } catch (err) {
     console.error('Login Error:', err);
-    showErrorToast('حدث خطأ أثناء تسجيل الدخول، يُرجى المحاولة لاحقاً');
+    showErrorToast('حدث خطأ أثناء تسجيل الدخول');
   }
 }
 

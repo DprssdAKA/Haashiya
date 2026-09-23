@@ -409,49 +409,39 @@
 
 async function handleResetPassword(e) {
   e.preventDefault();
-  const userEnteredOtp = document.getElementById('otpCodeInput').value.trim();
+  
+  const inputOtp = document.getElementById('otpCodeInput').value.trim();
   const newPassword = document.getElementById('newPasswordInput').value.trim();
-
-  if (!generatedOtpCode || userEnteredOtp !== generatedOtpCode) {
-    showErrorToast('رمز التحقق غير صحيح!');
+  
+  const sessionData = localStorage.getItem('currentUser');
+  if (!sessionData) {
+    showErrorToast('جلسة غير صالحة');
     return;
   }
-
-  if (Date.now() > otpExpirationTime) {
-    showErrorToast('انتهت صلاحية رمز التحقق، يرجى طلب رمز جديد');
-    return;
-  }
+  
+  const currentUser = JSON.parse(sessionData);
+  const username = (currentUser.username || currentUser.email.split('@')[0]).toLowerCase();
 
   try {
-    const sessionData = localStorage.getItem('currentUser');
-    if (!sessionData) {
-      showErrorToast('عذراً، لم يتم العثور على الجلسة الحالية');
-      return;
-    }
+    const db = firebase.firestore();
 
-    let currentUser = JSON.parse(sessionData);
-    const docId = targetUserDocId || currentUser.username.toLowerCase();
-
-    // 1. Update Firestore document (updating both 'pass' and 'password' keys to cover all references)
-    await db.collection('users').doc(docId).set({
+    // UPDATE BOTH FIELDS IN FIRESTORE
+    await db.collection('users').doc(username).update({
       pass: newPassword,
       password: newPassword,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    });
 
-    // 2. Update local storage session
+    // UPDATE LOCAL STORAGE SESSION
     currentUser.pass = newPassword;
     currentUser.password = newPassword;
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-    // 3. Update global reference variable for current view
-    realPassword = newPassword;
-
     closeOtpModal('verifyOtpModal');
-    showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
-    checkUserSession();
+    showToastNotification('تم تغيير كلمة المرور بنجاح في قاعدة البيانات! 🎉');
+
   } catch (err) {
-    console.error('Password Update Error:', err);
+    console.error('Failed to update password in Firestore:', err);
     showErrorToast('فشل تحديث كلمة المرور في قاعدة البيانات');
   }
 }
