@@ -340,24 +340,30 @@
 
     async function handleSendOtp(e) {
   e.preventDefault();
-  const email = document.getElementById('otpEmailInput').value.trim().toLowerCase();
+  const emailInput = document.getElementById('otpEmailInput');
+  const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+
+  if (!email) {
+    showErrorToast('يُرجَى إدخال البريد الإلكتروني');
+    return;
+  }
 
   try {
     let userFound = false;
 
-    // 1. Check Firestore first
+    // 1. Check Firestore first by matching email
     const snapshot = await db.collection('users').where('email', '==', email).get();
 
     if (!snapshot.empty) {
       targetUserDocId = snapshot.docs[0].id;
       userFound = true;
     } else {
-      // 2. Fallback to LocalStorage session
+      // 2. Fallback to LocalStorage session check
       const sessionData = localStorage.getItem('currentUser');
       if (sessionData) {
         const currentUser = JSON.parse(sessionData);
         if (currentUser.email && currentUser.email.toLowerCase() === email) {
-          targetUserDocId = currentUser.username ? currentUser.username.toLowerCase() : 'local_user';
+          targetUserDocId = (currentUser.username || email.split('@')[0]).toLowerCase();
           userFound = true;
         }
       }
@@ -374,13 +380,13 @@
 
     showToastNotification('جاري إرسال رمز التحقق...');
 
-    // EmailJS parameters matching your template variables
+    // EmailJS parameters (Ensure these match your EmailJS Template)
     const templateParams = {
       pass_code: generatedOtpCode,
-      to_email: email
+      to_email: email,
+      to_name: email.split('@')[0]
     };
 
-    // Replace YOUR_SERVICE_ID and YOUR_TEMPLATE_ID
     await emailjs.send('service_87l9tyn', 'template_jhy7wcq', templateParams);
 
     closeOtpModal('requestOtpModal');
@@ -390,13 +396,9 @@
 
   } catch (err) {
     console.error('EmailJS Send Error:', err);
-    showErrorToast('حدث خطأ أثناء إرسال البريد الإلكتروني، يُرجى المحاولة لاحقاً');
+    showErrorToast('حدث خطأ أثناء إرسال البريد الإلكتروني، يُرجى التأكد من إعدادات EmailJS');
   }
 }
-
-
-
-
 
 async function handleResetPassword(e) {
   e.preventDefault();
@@ -404,6 +406,17 @@ async function handleResetPassword(e) {
   const inputOtp = document.getElementById('otpCodeInput').value.trim();
   const newPassword = document.getElementById('newPasswordInput').value.trim();
   
+  // Validate OTP code and expiration
+  if (!generatedOtpCode || inputOtp !== generatedOtpCode) {
+    showErrorToast('رمز التحقق غير صحيح، يُرجَى التأكد وإعادة المحاولة');
+    return;
+  }
+
+  if (Date.now() > otpExpirationTime) {
+    showErrorToast('انتهت صلاحية رمز التحقق، يُرجَى طلب رمز جديد');
+    return;
+  }
+
   const sessionData = localStorage.getItem('currentUser');
   if (!sessionData) {
     showErrorToast('جلسة غير صالحة');
@@ -411,25 +424,23 @@ async function handleResetPassword(e) {
   }
   
   const currentUser = JSON.parse(sessionData);
-  const username = (currentUser.username || currentUser.email.split('@')[0]).toLowerCase();
+  const docIdToUpdate = targetUserDocId || (currentUser.username || currentUser.email.split('@')[0]).toLowerCase();
 
   try {
-    const db = firebase.firestore();
-
-    // UPDATE BOTH FIELDS IN FIRESTORE
-    await db.collection('users').doc(username).update({
+    // UPDATE BOTH FIRESTORE AND LOCAL STORAGE
+    await db.collection('users').doc(docIdToUpdate).set({
       pass: newPassword,
       password: newPassword,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    }, { merge: true });
 
-    // UPDATE LOCAL STORAGE SESSION
     currentUser.pass = newPassword;
     currentUser.password = newPassword;
+    realPassword = newPassword;
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
     closeOtpModal('verifyOtpModal');
-    showToastNotification('تم تغيير كلمة المرور بنجاح في قاعدة البيانات! 🎉');
+    showToastNotification('تم تغيير كلمة المرور بنجاح! 🎉');
 
   } catch (err) {
     console.error('Failed to update password in Firestore:', err);
