@@ -17,7 +17,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
      (function(){
-        emailjs.init("h60WtwHIiLSrbGnWB"); // Replace with your Public Key
+        emailjs.init("V-BC-AYYC2sg3dxHo"); // Replace with your Public Key
      })();
   </script>
 
@@ -345,14 +345,14 @@
   try {
     let userFound = false;
 
-    // Check Firestore user records
+    // 1. Check Firestore first
     const snapshot = await db.collection('users').where('email', '==', email).get();
 
     if (!snapshot.empty) {
       targetUserDocId = snapshot.docs[0].id;
       userFound = true;
     } else {
-      // Check active local session fallback
+      // 2. Fallback to LocalStorage session
       const sessionData = localStorage.getItem('currentUser');
       if (sessionData) {
         const currentUser = JSON.parse(sessionData);
@@ -368,39 +368,32 @@
       return;
     }
 
-    // Generate 6-Digit OTP Code
+    // Generate 6-digit OTP code & 10-minute expiration
     generatedOtpCode = generate6DigitOTP();
-    otpExpirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes expiry
+    otpExpirationTime = Date.now() + (10 * 60 * 1000);
 
-    // Send request to Resend API Route
-    const response = await fetch('/api/send-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: email,
-        otp: generatedOtpCode
-      })
-    });
+    showToastNotification('جاري إرسال رمز التحقق...');
 
-    if (response.ok) {
-      const resData = await response.json();
-      showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
-    } else {
-      const errorText = await response.text();
-      console.error('Server 500 Error details:', errorText);
-      showErrorToast('فشل إرسال البريد الإلكتروني، يُرجى التحقق من إعدادات Resend');
-      return;
-    }
+    // EmailJS parameters matching your template variables
+    const templateParams = {
+      pass_code: generatedOtpCode,
+      to_email: email
+    };
 
-    // Move to verification modal
+    // Replace YOUR_SERVICE_ID and YOUR_TEMPLATE_ID
+    await emailjs.send('service_87l9tyn', 'template_jhy7wcq', templateParams);
+
     closeOtpModal('requestOtpModal');
     document.getElementById('verifyOtpModal').classList.add('show');
+    
+    showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
 
   } catch (err) {
-    console.error('OTP Handler Error:', err);
-    showErrorToast('حدث خطأ أثناء الاتصال بالخادم، يُرجى المحاولة لاحقاً');
+    console.error('EmailJS Send Error:', err);
+    showErrorToast('حدث خطأ أثناء إرسال البريد الإلكتروني، يُرجى المحاولة لاحقاً');
   }
 }
+
 
 
 
