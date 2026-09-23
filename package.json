@@ -1,7 +1,6 @@
 {
     "name": "haashiya-web",
     "version": "1.0.0",
-    "private": true,
     "dependencies": {
       "resend": "^3.2.0"
     }
