@@ -140,25 +140,30 @@
     </div>
   </section>
 
-  <!-- PROFILE CONTENT CARD -->
+  <!-- PROFILE CONTENT -->
   <main class="library-wrapper profile-wrapper">
-    <div class="profile-card">
-      <span class="profile-label-top">الاسم المعروض</span>
-      <h2 id="profileDisplayName" class="profile-user-title">Lebah Ganteng</h2>
 
-      <!-- GENDER BADGE -->
+    <!-- 1. TOP CARD: IDENTITY & UNIVERSITY ID -->
+    <div class="profile-card identity-card">
+      <div class="card-label-row" onclick="openNameModal()" style="cursor: pointer;">
+        <span class="profile-label-top">الاسم المعروض</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      </div>
+      <h2 id="profileDisplayName" class="profile-user-title">Lebah Ganteng</h2>
+  
       <div class="gender-badge-container">
         <span id="profileGenderBadge" class="gender-badge gender-male">رجل ♂</span>
       </div>
-
-      <hr class="profile-divider">
-
-      <!-- USER DETAILS TABLE -->
+  
+      <div class="detail-row" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+        <span class="detail-value" id="profileStudentId">11011110001</span>
+        <span class="detail-label">الرقم الجامعي</span>
+      </div>
+    </div>
+  
+    <!-- 2. MIDDLE CARD: MAIN ACCOUNT DETAILS -->
+    <div class="profile-card">
       <div class="profile-details-list">
-        <div class="detail-row">
-          <span class="detail-value" id="profileStudentId">11011110001</span>
-          <span class="detail-label">الرقم الجامعي</span>
-        </div>
         <div class="detail-row">
           <span class="detail-value" id="profileEmail">lebahganteng@gmail.com</span>
           <span class="detail-label">البريد الإلكتروني</span>
@@ -170,28 +175,49 @@
         <div class="detail-row">
           <div class="password-value-container">
             <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility()" title="إظهار/إخفاء كلمة المرور">
-              <svg id="eyeOpenIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-              <svg id="eyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                <line x1="1" y1="1" x2="23" y2="23"></line>
-              </svg>
+              <svg id="eyeOpenIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg id="eyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
             </button>
             <span class="detail-value" id="profilePassword">••••••••</span>
           </div>
           <span class="detail-label">كلمة المرور</span>
         </div>
       </div>
-
-      <!-- ACTION BUTTONS -->
+  
       <div class="profile-actions">
-        <button class="btn-profile-action" onclick="openNameModal()">تغيير الاسم المعروض</button>
+        <button class="btn-profile-action" onclick="openNameModal()">تغيير اسم المستخدم</button>
         <button class="btn-profile-action" onclick="openChangePasswordModal()">تغيير كلمة المرور</button>
       </div>
     </div>
+  
+    <!-- 3. BOTTOM CARD: UNIVERSITY PORTAL CREDENTIALS -->
+    <div class="profile-card">
+      <div class="profile-details-list">
+        <div class="detail-row">
+          <span class="detail-value" id="uniUsernameValue">-</span>
+          <span class="detail-label">اسم المستخدم لموقع الجامعة</span>
+        </div>
+        <div class="detail-row">
+          <div class="password-value-container">
+            <button type="button" class="btn-toggle-password" onclick="toggleUniPasswordVisibility()" title="إظهار/إخفاء كلمة المرور">
+              <svg id="eyeOpenIconUni" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg id="eyeOffIconUni" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+            <span class="detail-value" id="uniPasswordValue">-</span>
+          </div>
+          <span class="detail-label">كلمة مرور موقع الجامعة</span>
+        </div>
+      </div>
+  
+      <div class="profile-actions">
+        <button class="btn-profile-action" onclick="openUniUsernameModal()">تغيير اسم المستخدم لموقع الجامعة</button>
+        <button class="btn-profile-action" onclick="openUniPasswordModal()">تغيير كلمة المرور لموقع الجامعة</button>
+      </div>
+    </div>
+  
   </main>
+  
+  
 
   <!-- CHANGE DISPLAY NAME MODAL -->
   <div id="nameModal" class="upload-modal-overlay">
@@ -277,6 +303,48 @@
     </div>
   </div>
 
+  <!-- MODAL: CHANGE UNIVERSITY USERNAME -->
+<div id="uniUsernameModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeUniUsernameModal()">&times;</button>
+      <h3 class="upload-modal-title">تغيير اسم المستخدم لموقع الجامعة</h3>
+      <p class="upload-modal-subtitle">أدخل اسم المستخدم الخاص بحسابك الجامعي</p>
+  
+      <form onsubmit="handleUniUsernameChange(event)">
+        <div class="modal-field">
+          <label for="newUniUsernameInput">اسم المستخدم الجامعي</label>
+          <input type="text" id="newUniUsernameInput" class="modal-input" placeholder="أدخل اسم المستخدم..." required autocomplete="off">
+        </div>
+  
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">حفظ التغييرات</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeUniUsernameModal()">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- MODAL: CHANGE UNIVERSITY PASSWORD -->
+  <div id="uniPasswordModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeUniPasswordModal()">&times;</button>
+      <h3 class="upload-modal-title">تغيير كلمة مرور موقع الجامعة</h3>
+      <p class="upload-modal-subtitle">أدخل كلمة المرور الخاصة بحسابك الجامعي</p>
+  
+      <form onsubmit="handleUniPasswordChange(event)">
+        <div class="modal-field">
+          <label for="newUniPasswordInput">كلمة المرور الجامعية</label>
+          <input type="password" id="newUniPasswordInput" class="modal-input" placeholder="••••••••" required autocomplete="off">
+        </div>
+  
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">حفظ التغييرات</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeUniPasswordModal()">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-overlay">
@@ -400,6 +468,115 @@
   }
 }
 
+let isUniPasswordVisible = false;
+let realUniPassword = '-';
+
+// --- UNIVERSITY CREDENTIAL MODAL TOGGLES ---
+function openUniUsernameModal() {
+  const modal = document.getElementById('uniUsernameModal');
+  const input = document.getElementById('newUniUsernameInput');
+  const currentVal = document.getElementById('uniUsernameValue').textContent;
+  if (modal && input) {
+    input.value = currentVal === '-' ? '' : currentVal;
+    modal.classList.add('show');
+  }
+}
+
+function closeUniUsernameModal() {
+  const modal = document.getElementById('uniUsernameModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function openUniPasswordModal() {
+  const modal = document.getElementById('uniPasswordModal');
+  if (modal) modal.classList.add('show');
+}
+
+function closeUniPasswordModal() {
+  const modal = document.getElementById('uniPasswordModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function toggleUniPasswordVisibility() {
+  const passEl = document.getElementById('uniPasswordValue');
+  const openIcon = document.getElementById('eyeOpenIconUni');
+  const offIcon = document.getElementById('eyeOffIconUni');
+
+  if (realUniPassword === '-' || !realUniPassword) return;
+
+  isUniPasswordVisible = !isUniPasswordVisible;
+  if (isUniPasswordVisible) {
+    passEl.textContent = realUniPassword;
+    openIcon.style.display = 'none';
+    offIcon.style.display = 'block';
+  } else {
+    passEl.textContent = '••••••••';
+    openIcon.style.display = 'block';
+    offIcon.style.display = 'none';
+  }
+}
+
+// --- SAVE UNIVERSITY USERNAME TO FIRESTORE ---
+async function handleUniUsernameChange(e) {
+  e.preventDefault();
+  const input = document.getElementById('newUniUsernameInput');
+  const val = input ? input.value.trim() : '';
+
+  const sessionData = localStorage.getItem('currentUser');
+  if (!sessionData) return;
+
+  let currentUser = JSON.parse(sessionData);
+  const docId = (currentUser.username || currentUser.email.split('@')[0]).toLowerCase();
+
+  try {
+    await db.collection('users').doc(docId).set({
+      uni_username: val,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    currentUser.uni_username = val;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    document.getElementById('uniUsernameValue').textContent = val || '-';
+    closeUniUsernameModal();
+    showToastNotification('تم تحديث اسم المستخدم لموقع الجامعة بنجاح!');
+  } catch (err) {
+    console.error('Firestore Update Error:', err);
+    showErrorToast('حدث خطأ أثناء التحديث في قاعدة البيانات');
+  }
+}
+
+// --- SAVE UNIVERSITY PASSWORD TO FIRESTORE ---
+async function handleUniPasswordChange(e) {
+  e.preventDefault();
+  const input = document.getElementById('newUniPasswordInput');
+  const val = input ? input.value.trim() : '';
+
+  const sessionData = localStorage.getItem('currentUser');
+  if (!sessionData) return;
+
+  let currentUser = JSON.parse(sessionData);
+  const docId = (currentUser.username || currentUser.email.split('@')[0]).toLowerCase();
+
+  try {
+    await db.collection('users').doc(docId).set({
+      uni_password: val,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    currentUser.uni_password = val;
+    realUniPassword = val;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    document.getElementById('uniPasswordValue').textContent = '••••••••';
+    closeUniPasswordModal();
+    showToastNotification('تم تحديث كلمة المرور لموقع الجامعة بنجاح!');
+  } catch (err) {
+    console.error('Firestore Update Error:', err);
+    showErrorToast('حدث خطأ أثناء التحديث في قاعدة البيانات');
+  }
+}
+
 async function handleResetPassword(e) {
   e.preventDefault();
   
@@ -489,16 +666,17 @@ async function handleResetPassword(e) {
             طالبة
           </span>`;
 
-        const formattedName = toTitleCase(user.name);
+        // const formattedName = toTitleCase(user.name);
+        const displayName = user.name || 'Alif Khaerul Anam';
         const formattedUsername = toTitleCase(user.username);
         const userEmail = user.email || 'alifkaaka@gmail.com'; 
 
         navbarRight.innerHTML = `
           <div class="user-profile-wrapper">
             <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
-              <img src="${user.avatar || 'assets/images/web/default_avatar.png'}" alt="${formattedName}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(formattedName)}&background=1565c0&color=fff'">
+              <img src="${user.avatar || 'assets/images/web/default_avatar.png'}" alt="${displayName}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=1565c0&color=fff'">
               <div class="profile-info-group">
-                <span class="profile-name">${formattedName}</span>
+                <span class="profile-name">${displayName}</span>
                 ${genderBadgeHTML}
               </div>
               <span class="nav-unread-dot" style="display: none;"></span>
@@ -545,13 +723,39 @@ async function handleResetPassword(e) {
           </button>
         `;
 
-        document.getElementById('profileDisplayName').textContent = formattedName || 'Alif Khaerul Anam';
+        document.getElementById('profileDisplayName').textContent = displayName || 'Alif Khaerul Anam';
         document.getElementById('profileUsername').textContent = formattedUsername || 'Alif Khaerul Anam';
         document.getElementById('profileEmail').textContent = userEmail;
         document.getElementById('profileStudentId').textContent = user.studentId || '11011110001';
 
         const badgeContainer = document.querySelector('.gender-badge-container');
         if (badgeContainer) badgeContainer.innerHTML = genderBadgeHTML;
+
+                // Inside checkUserSession():
+        try {
+        const doc = await db.collection('users').doc(user.username.toLowerCase()).get();
+        if (doc.exists) {
+            const data = doc.data();
+            if (data.name) user.name = data.name;
+            if (data.uni_username) user.uni_username = data.uni_username;
+            if (data.uni_password) user.uni_password = data.uni_password;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        }
+        } catch (err) {
+        console.warn('Could not sync with Firestore:', err);
+        }
+
+        // Populate UI values
+        document.getElementById('uniUsernameValue').textContent = user.uni_username || '-';
+
+        if (user.uni_password) {
+        realUniPassword = user.uni_password;
+        document.getElementById('uniPasswordValue').textContent = '••••••••';
+        } else {
+        realUniPassword = '-';
+        document.getElementById('uniPasswordValue').textContent = '-';
+        }
+
 
         updateNotificationBadge();
       }
@@ -756,32 +960,36 @@ async function handleResetPassword(e) {
     }
 
     async function handleNameChange(e) {
-      e.preventDefault();
-      const input = document.getElementById('newDisplayNameInput');
-      const newName = input ? input.value.trim() : '';
-      if (!newName) return;
+  e.preventDefault();
+  const input = document.getElementById('newDisplayNameInput');
+  const newName = input ? input.value.trim() : '';
+  if (!newName) return;
 
-      const sessionData = localStorage.getItem('currentUser');
-      if (sessionData) {
-        let user = JSON.parse(sessionData);
-        try {
-          await db.collection('users').doc(user.username.toLowerCase()).set({
-            name: newName,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
+  const sessionData = localStorage.getItem('currentUser');
+  if (sessionData) {
+    let user = JSON.parse(sessionData);
+    try {
+      showToastNotification('جاري تحديث الاسم المعروض...');
 
-          user.name = newName;
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          checkUserSession();
-        } catch (err) {
-          console.error('Firebase Update Error:', err);
-          user.name = newName;
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          checkUserSession();
-        }
-      }
+      // Save exact case to Firestore
+      await db.collection('users').doc(user.username.toLowerCase()).set({
+        name: newName,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      user.name = newName;
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      
+      // Update UI without forcing Title Case
+      checkUserSession();
       closeNameModal();
+      showToastNotification('تم تغيير الاسم المعروض بنجاح!');
+    } catch (err) {
+      console.error('Firebase Update Error:', err);
+      showErrorToast('حدث خطأ أثناء تحديث الاسم');
     }
+  }
+}
 
     function showToastNotification(messageText) {
       const toast = document.getElementById('toastNotification');
