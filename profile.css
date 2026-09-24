@@ -1,32 +1,155 @@
-/* --- PROFILE PAGE STYLES --- */
+/* --- PAGE BACKGROUND & HERO OVERRIDES --- */
 
-.profile-hero {
-    min-height: 180px;
+body {
+    background-color: #1d61d1; /* Solid royal blue background matching mockup */
+  }
+  
+  .profile-hero {
+    min-height: 120px;
+    background: transparent; /* Remove background overlay/patterns */
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
+  .profile-hero .hero-title {
+    color: #ffffff; /* White title text */
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+  }
+  
+  .profile-hero .title-dark {
+    color: #ffffff; /* Force title text to white */
+  }
+  
   .profile-wrapper {
-    margin-top: -50px;
+    margin-top: 0; /* Remove negative overlap margin */
     position: relative;
     z-index: 5;
     display: flex;
-    flex-direction: column; /* Force cards to stack vertically */
-    align-items: center;    /* Center the cards horizontally */
-    gap: 20px;              /* Vertical space between cards */
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     padding: 0 16px 60px 16px;
   }
   
-  .profile-card {
+/* --- RESPONSIVE CARD LAYOUT & MOBILE OPTIMIZATIONS --- */
+
+.profile-card {
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     width: 100%;
-    max-width: 480px;
-    padding: 32px 24px;
+    max-width: 480px; /* Constrains card width nicely on desktop */
+    padding: 24px 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Card Label Edit Button Row */
+  .card-label-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    transition: color 0.2s ease;
+  }
+  
+  .card-label-row:hover {
+    color: #1d61d1;
+  }
+  
+  /* Identity Card Adjustments */
+  .identity-card {
     text-align: center;
+  }
+  
+  .identity-card .profile-user-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 6px 0 12px 0;
+  }
+  
+  /* Detail Rows Adjustments */
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.92rem;
+    padding: 4px 0;
+  }
+  
+  .detail-label {
+    color: #64748b;
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  .detail-value {
+    color: #0f172a;
+    font-weight: 700;
+    direction: ltr;
+    text-align: left;
+    word-break: break-word;
+  }
+  
+  /* Action Buttons */
+  .profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .btn-profile-action {
+    width: 100%;
+    padding: 12px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    color: #1d61d1;
+    font-weight: 700;
+    font-size: 0.88rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-profile-action:active {
+    transform: scale(0.98);
+    background-color: #eff6ff;
+  }
+  
+  /* --- SMALL MOBILE BREAKPOINT (< 480px) --- */
+  @media (max-width: 480px) {
+    .profile-hero {
+      min-height: 90px;
+    }
+  
+    .profile-hero .hero-title {
+      font-size: 1.8rem;
+    }
+  
+    .profile-wrapper {
+      padding: 0 12px 40px 12px;
+      gap: 16px;
+    }
+  
+    .profile-card {
+      padding: 20px 16px;
+      border-radius: 16px;
+    }
+  
+    .detail-row {
+      font-size: 0.85rem;
+    }
+  
+    .btn-profile-action {
+      padding: 11px;
+      font-size: 0.85rem;
+    }
   }
   
   .profile-label-top {
