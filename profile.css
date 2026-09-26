@@ -199,6 +199,12 @@ body {
     font-weight: 600;
   }
   
+  /* Gray color for University ID Number */
+.identity-card .detail-value {
+    color: #64748b !important; /* Muted slate gray */
+    font-weight: 600;
+  }
+  
   .detail-value {
     color: #0f172a;
     font-weight: 700;
