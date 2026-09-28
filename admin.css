@@ -1,0 +1,322 @@
+/* --- ADMIN DASHBOARD STYLES --- */
+
+.admin-wrapper {
+    max-width: 800px; /* Increased from 600px for card action button clearance */
+    margin: 20px auto;
+    padding: 0 16px;
+};
+
+  
+  /* Welcome Hero Banner */
+  .admin-hero {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    border-radius: 16px;
+    padding: 24px;
+    color: #ffffff;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px -5px rgba(29, 78, 216, 0.3);
+  }
+  
+  .admin-hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 16px 0;
+  }
+  
+  .admin-hero-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .admin-badge {
+    background: #ffffff;
+    color: #1d4ed8;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+  }
+  
+  .admin-display-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  /* 4-Tab Top Navigation Grid */
+  .admin-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .admin-tab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #1d4ed8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .admin-tab-btn:hover {
+    background-color: #f1f5f9;
+  }
+  
+  .admin-tab-btn.active {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+  }
+  
+  .admin-tab-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  /* Tab Sections */
+  .tab-section {
+    display: none;
+  }
+  
+  .tab-section.active {
+    display: block;
+  }
+  
+  .tab-header-badge {
+    display: inline-block;
+    background: #1d4ed8;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.95rem;
+  }
+  
+  .tab-card-body {
+    background: #ffffff;
+    border-radius: 0 16px 16px 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    min-height: 250px;
+  }
+  
+  /* Form Controls */
+  .admin-form-group {
+    margin-bottom: 16px;
+  }
+  
+  .admin-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #1e293b;
+  }
+  
+  .admin-input,
+  .admin-select {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+  }
+  
+  .admin-btn-submit {
+    width: 100%;
+    background: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .admin-btn-submit:hover {
+    background: #1e40af;
+  }
+  
+  /* Student Table */
+  .admin-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: right;
+  }
+  
+  .admin-table th, 
+  .admin-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+  }
+  
+  .admin-table th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #475569;
+  }
+  
+  .btn-view-profile {
+    background: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+  
+  .text-restricted {
+    color: #94a3b8;
+    font-size: 0.8rem;
+  }
+  
+  /* --- MODAL OVERLAY FIX --- */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: none; /* Keeps modal hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+  }
+  
+  .admin-modal-overlay.show {
+    display: flex !important; /* Shows modal only when triggered */
+  }
+  
+  .admin-modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* --- FULL MASTER BOOK CARD STYLING --- */
+
+.admin-book-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .admin-book-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .admin-book-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Right Section: Info & Cover Image */
+  .admin-card-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: right;
+  }
+  
+  .admin-card-cover {
+    width: 52px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+  
+  .admin-book-details .admin-book-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+  }
+  
+  .admin-book-details .admin-book-author {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #2563eb;
+    margin: 0 0 4px 0;
+  }
+  
+  .admin-book-details .admin-book-subject {
+    font-size: 0.78rem;
+    color: #94a3b8;
+  }
+  
+  /* Left Section: Dark Circle Action Buttons */
+  .admin-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-circle-action {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #0f172a; /* Dark Navy matching screenshot */
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-circle-action:hover {
+    background: #2563eb; /* Highlight Blue */
+    transform: scale(1.08);
+  }
+  
+  .btn-circle-action.delete:hover {
+    background: #dc2626; /* Warning Red for Delete */
+  }
+  
+  .action-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #cbd5e1;
+    margin: 0 4px;
+  }

@@ -142,14 +142,15 @@
           <option value="2">المستوى الثاني</option>
         </select>
         <div class="category-buttons" style="margin-bottom: 0;">
-          <button class="cat-btn active" onclick="loadSubjectRecordings('balagha')">البلاغة</button>
-          <button class="cat-btn" onclick="loadSubjectRecordings('nahw')">النحو</button>
-          <button class="cat-btn">القراءة</button>
-          <button class="cat-btn">التوحيد</button>
-          <button class="cat-btn">الكتابة</button>
-          <button class="cat-btn">تاريخ الأدب</button>
-          <button class="cat-btn">اللغة الإندونيسية</button>
+          <button class="cat-btn active" onclick="switchSubject('recordings', 'balagha', this)">البلاغة</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'qiraah', this)">القراءة</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'tawheed', this)">التوحيد</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'kitaba', this)">الكتابة</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'nahw', this)">النحو</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'adab', this)">تاريخ الأدب</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'indonesian', this)">اللغة الإندونيسية</button>
         </div>
+        
       </div>
 
       <!-- Dynamic YouTube Grid Container -->
@@ -169,14 +170,15 @@
           <option value="2">المستوى الثاني</option>
         </select>
         <div class="category-buttons" style="margin-bottom: 0;">
-          <button class="cat-btn active">البلاغة</button>
-          <button class="cat-btn">القراءة</button>
-          <button class="cat-btn">التوحيد</button>
-          <button class="cat-btn">الكتابة</button>
-          <button class="cat-btn">النحو</button>
-          <button class="cat-btn">تاريخ الأدب</button>
-          <button class="cat-btn">اللغة الإندونيسية</button>
+          <button class="cat-btn active" onclick="switchSubject('assignments', 'balagha', this)">البلاغة</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'qiraah', this)">القراءة</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'tawheed', this)">التوحيد</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'kitaba', this)">الكتابة</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'nahw', this)">النحو</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'adab', this)">تاريخ الأدب</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'indonesian', this)">اللغة الإندونيسية</button>
         </div>
+        
       </div>
 
       <div id="assignmentsContainer" class="book-list-container"></div>
@@ -195,14 +197,15 @@
           <option value="2">المستوى الثاني</option>
         </select>
         <div class="category-buttons" style="margin-bottom: 0;">
-          <button class="cat-btn active">البلاغة</button>
-          <button class="cat-btn">القراءة</button>
-          <button class="cat-btn">التوحيد</button>
-          <button class="cat-btn">الكتابة</button>
-          <button class="cat-btn">النحو</button>
-          <button class="cat-btn">تاريخ الأدب</button>
-          <button class="cat-btn">اللغة الإندونيسية</button>
+          <button class="cat-btn active" onclick="switchSubject('whiteboards', 'balagha', this)">البلاغة</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'qiraah', this)">القراءة</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'tawheed', this)">التوحيد</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'kitaba', this)">الكتابة</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'nahw', this)">النحو</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'adab', this)">تاريخ الأدب</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'indonesian', this)">اللغة الإندونيسية</button>
         </div>
+        
       </div>
 
       <div id="whiteboardsContainer" class="gallery-grid"></div>
@@ -221,14 +224,15 @@
           <option value="2">المستوى الثاني</option>
         </select>
         <div class="category-buttons" style="margin-bottom: 0;">
-          <button class="cat-btn active">البلاغة</button>
-          <button class="cat-btn">القراءة</button>
-          <button class="cat-btn">التوحيد</button>
-          <button class="cat-btn">الكتابة</button>
-          <button class="cat-btn">النحو</button>
-          <button class="cat-btn">تاريخ الأدب</button>
-          <button class="cat-btn">اللغة الإندونيسية</button>
+          <button class="cat-btn active" onclick="switchSubject('photos', 'balagha', this)">البلاغة</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'qiraah', this)">القراءة</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'tawheed', this)">التوحيد</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'kitaba', this)">الكتابة</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'nahw', this)">النحو</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'adab', this)">تاريخ الأدب</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'indonesian', this)">اللغة الإندونيسية</button>
         </div>
+        
       </div>
 
       <div id="photosContainer" class="gallery-grid"></div>
@@ -287,13 +291,27 @@
   </div>
 
   <script>
-    const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
+        const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
     const YOUTUBE_API_KEY = "AIzaSyDm_N7gXYi3gJWPvHZDZBXeUrq9LhNbDac";
 
     const PLAYLIST_MAP = {
-      balagha: "PLKU5sS798fPo",
-      nahw: "PLAYLIST_ID_FOR_NAHW",
-      fiqh: "PLAYLIST_ID_FOR_FIQH"
+      balagha: "PLKU5sS798fPo", // Replace with full Balagha Playlist ID when available
+      qiraah: "PLdnR_d9WNleo",
+      tawheed: "PLPJw5eoRDYkw",
+      kitaba: "",
+      nahw: "",
+      adab: "",
+      indonesian: ""
+    };
+
+    const SUBJECT_NAMES = {
+      balagha: "البلاغة",
+      qiraah: "القراءة",
+      tawheed: "التوحيد",
+      kitaba: "الكتابة",
+      nahw: "النحو",
+      adab: "تاريخ الأدب",
+      indonesian: "اللغة الإندونيسية"
     };
 
     // --- SIDEBAR DRAWER LOGIC ---
@@ -359,90 +377,90 @@
     }
 
     // --- NOTIFICATION HELPERS ---
-function getNotifications() {
-  return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
-}
-
-function updateNotificationBadge() {
-  const dropdownBadge = document.querySelector('.unread-badge');
-  const navRedDot = document.querySelector('.nav-unread-dot');
-  
-  const notifications = getNotifications();
-  const unreadCount = notifications.filter(n => n.unread).length;
-
-  if (unreadCount > 0) {
-    if (dropdownBadge) {
-      dropdownBadge.textContent = unreadCount;
-      dropdownBadge.style.display = 'inline-block';
-    }
-    if (navRedDot) navRedDot.style.display = 'inline-block';
-  } else {
-    if (dropdownBadge) dropdownBadge.style.display = 'none';
-    if (navRedDot) navRedDot.style.display = 'none';
-  }
-}
-
-function openNotificationsModal(e) {
-  if (e) e.preventDefault();
-  const dropdown = document.getElementById('profileDropdown');
-  if (dropdown) dropdown.classList.remove('show');
-  
-  const notifications = getNotifications().map(n => ({ ...n, unread: false }));
-  localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
-  updateNotificationBadge();
-
-  renderNotificationsList();
-  const modal = document.getElementById('notificationsModal');
-  if (modal) modal.classList.add('show');
-}
-
-function closeNotificationsModal() {
-  const modal = document.getElementById('notificationsModal');
-  if (modal) modal.classList.remove('show');
-}
-
-function clearAllNotifications() {
-  localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify([]));
-  renderNotificationsList();
-  updateNotificationBadge();
-}
-
-function renderNotificationsList() {
-  const container = document.getElementById('notificationsList');
-  const notifications = getNotifications();
-
-  if (!container) return;
-  container.innerHTML = '';
-
-  if (notifications.length === 0) {
-    container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد إشعارات حالياً</p>';
-    return;
-  }
-
-  notifications.forEach(n => {
-    const card = document.createElement('div');
-    card.className = `notification-item-card ${n.unread ? 'unread' : ''}`;
-    let iconMarkup = '';
-    
-    if (n.type === 'success') {
-      iconMarkup = `<div class="notification-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
-    } else if (n.type === 'rejected' || n.type === 'deleted') {
-      iconMarkup = `<div class="notification-icon error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
-    } else {
-      iconMarkup = `<div class="notification-icon pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+    function getNotifications() {
+      return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
     }
 
-    card.innerHTML = `
-      ${iconMarkup}
-      <div class="notification-content">
-        <h4 class="notification-title">${n.title}</h4>
-        <p class="notification-body">${n.message}</p>
-        <span class="notification-time">${n.timestamp}</span>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
+    function updateNotificationBadge() {
+      const dropdownBadge = document.querySelector('.unread-badge');
+      const navRedDot = document.querySelector('.nav-unread-dot');
+      
+      const notifications = getNotifications();
+      const unreadCount = notifications.filter(n => n.unread).length;
+
+      if (unreadCount > 0) {
+        if (dropdownBadge) {
+          dropdownBadge.textContent = unreadCount;
+          dropdownBadge.style.display = 'inline-block';
+        }
+        if (navRedDot) navRedDot.style.display = 'inline-block';
+      } else {
+        if (dropdownBadge) dropdownBadge.style.display = 'none';
+        if (navRedDot) navRedDot.style.display = 'none';
+      }
+    }
+
+    function openNotificationsModal(e) {
+      if (e) e.preventDefault();
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown) dropdown.classList.remove('show');
+      
+      const notifications = getNotifications().map(n => ({ ...n, unread: false }));
+      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
+      updateNotificationBadge();
+
+      renderNotificationsList();
+      const modal = document.getElementById('notificationsModal');
+      if (modal) modal.classList.add('show');
+    }
+
+    function closeNotificationsModal() {
+      const modal = document.getElementById('notificationsModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function clearAllNotifications() {
+      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify([]));
+      renderNotificationsList();
+      updateNotificationBadge();
+    }
+
+    function renderNotificationsList() {
+      const container = document.getElementById('notificationsList');
+      const notifications = getNotifications();
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (notifications.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد إشعارات حالياً</p>';
+        return;
+      }
+
+      notifications.forEach(n => {
+        const card = document.createElement('div');
+        card.className = `notification-item-card ${n.unread ? 'unread' : ''}`;
+        let iconMarkup = '';
+        
+        if (n.type === 'success') {
+          iconMarkup = `<div class="notification-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
+        } else if (n.type === 'rejected' || n.type === 'deleted') {
+          iconMarkup = `<div class="notification-icon error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+        } else {
+          iconMarkup = `<div class="notification-icon pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+        }
+
+        card.innerHTML = `
+          ${iconMarkup}
+          <div class="notification-content">
+            <h4 class="notification-title">${n.title}</h4>
+            <p class="notification-body">${n.message}</p>
+            <span class="notification-time">${n.timestamp}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
     // --- USER SESSION & PROFILE DROPDOWN ---
     function checkUserSession() {
@@ -534,111 +552,157 @@ function renderNotificationsList() {
       setTimeout(() => { window.location.href = targetUrl; }, 300);
     }
 
+    let currentSubject = 'balagha';
+
+    // --- CATEGORY SWITCHING & ROUTING ---
+    function switchSubject(sectionId, subjectKey, btnElement) {
+      if (sectionId === 'recordings') {
+        currentSubject = subjectKey;
+      }
+
+      if (btnElement) {
+        const parentContainer = btnElement.closest('.category-buttons');
+        if (parentContainer) {
+          parentContainer.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+        }
+        btnElement.classList.add('active');
+      }
+
+      if (sectionId === 'recordings') {
+        loadSubjectRecordings(subjectKey);
+      } else {
+        filterStaticSection(sectionId, subjectKey);
+      }
+    }
+
+    function filterStaticSection(sectionId, subjectKey) {
+      const container = document.getElementById(sectionId + 'Container');
+      if (!container) return;
+
+      const cards = container.children;
+      Array.from(cards).forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+        if (!cardCategory || subjectKey === 'all' || cardCategory === subjectKey) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
     // --- YOUTUBE API LOGIC ---
     let currentSubjectVideos = [];
-let isExpanded = false;
+    let isExpanded = false;
 
-async function fetchPlaylistVideos(playlistId) {
-  if (!playlistId || playlistId.startsWith("PLAYLIST_ID")) return [];
+    async function fetchPlaylistVideos(playlistId) {
+      if (!playlistId || playlistId.length < 10 || playlistId.startsWith("PLAYLIST_ID")) {
+        console.warn("Invalid or missing Playlist ID:", playlistId);
+        return [];
+      }
 
-  const endpoint = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}`;
+      const endpoint = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${encodeURIComponent(playlistId)}&key=${YOUTUBE_API_KEY}`;
 
-  try {
-    const response = await fetch(endpoint);
-    if (!response.ok) throw new Error(`YouTube API Error: ${response.statusText}`);
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+          console.warn(`YouTube API returned ${response.status} for playlist: ${playlistId}`);
+          return [];
+        }
 
-    const data = await response.json();
+        const data = await response.json();
 
-    return data.items.map(item => {
-      const vId = item.snippet.resourceId.videoId;
-      // Use maxres quality thumbnail if available, otherwise fallback to high quality
-      const thumb = item.snippet.thumbnails.maxres?.url || item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url;
+        return data.items
+          .filter(item => item.snippet && item.snippet.title !== "Private video" && item.snippet.title !== "Deleted video")
+          .map(item => {
+            const vId = item.snippet.resourceId.videoId;
+            const thumb = item.snippet.thumbnails?.maxres?.url || 
+                          item.snippet.thumbnails?.high?.url || 
+                          item.snippet.thumbnails?.medium?.url || 
+                          'assets/images/web/default_cover.png';
+            
+            return {
+              title: item.snippet.title,
+              thumbnail: thumb,
+              videoId: vId
+            };
+          });
+      } catch (error) {
+        console.error("Failed to load recordings:", error);
+        return [];
+      }
+    }
+
+    async function loadSubjectRecordings(subjectKey) {
+      const container = document.getElementById("recordingsContainer");
+      const viewAllBtn = document.querySelector("#recordings .view-all-link");
       
-      return {
-        title: item.snippet.title,
-        thumbnail: thumb,
-        videoId: vId
-      };
-    });
-  } catch (error) {
-    console.error("Failed to load recordings:", error);
-    return [];
-  }
-}
+      if (!container) return;
 
-async function loadSubjectRecordings(subjectKey) {
-  const container = document.getElementById("recordingsContainer");
-  const viewAllBtn = document.querySelector("#recordings .view-all-link");
-  
-  if (!container) return;
+      container.innerHTML = `<p style="text-align: center; color: #64748b; grid-column: 1/-1;">جاري تحميل التسجيلات...</p>`;
 
-  container.innerHTML = `<p style="text-align: center; color: #64748b; grid-column: 1/-1;">جاري تحميل التسجيلات...</p>`;
+      const playlistId = PLAYLIST_MAP[subjectKey];
+      currentSubjectVideos = await fetchPlaylistVideos(playlistId);
+      isExpanded = false;
 
-  const playlistId = PLAYLIST_MAP[subjectKey];
-  currentSubjectVideos = await fetchPlaylistVideos(playlistId);
-  isExpanded = false;
+      if (currentSubjectVideos.length === 0) {
+        container.innerHTML = `<p style="text-align: center; color: #94a3b8; grid-column: 1/-1;">لا توجد تسجيلات متاحة حالياً لهذا المقرَّر.</p>`;
+        if (viewAllBtn) viewAllBtn.style.display = "none";
+        return;
+      }
 
-  if (currentSubjectVideos.length === 0) {
-    container.innerHTML = `<p style="text-align: center; color: #94a3b8; grid-column: 1/-1;">لا توجد تسجيلات متاحة حالياً لهذا المقرَّر.</p>`;
-    if (viewAllBtn) viewAllBtn.style.display = "none";
-    return;
-  }
+      if (viewAllBtn) {
+        viewAllBtn.style.display = currentSubjectVideos.length > 3 ? "inline-block" : "none";
+        viewAllBtn.onclick = (e) => {
+          e.preventDefault();
+          toggleViewAllRecordings();
+        };
+      }
 
-  if (viewAllBtn) {
-    viewAllBtn.style.display = currentSubjectVideos.length > 3 ? "inline-block" : "none";
-    viewAllBtn.onclick = (e) => {
-      e.preventDefault();
-      toggleViewAllRecordings();
-    };
-  }
+      renderRecordingsGrid();
+    }
 
-  renderRecordingsGrid();
-}
+    function renderRecordingsGrid() {
+      const container = document.getElementById("recordingsContainer");
+      const viewAllBtn = document.querySelector("#recordings .view-all-link");
+      if (!container) return;
 
-function renderRecordingsGrid() {
-  const container = document.getElementById("recordingsContainer");
-  const viewAllBtn = document.querySelector("#recordings .view-all-link");
-  if (!container) return;
+      container.innerHTML = "";
 
-  container.innerHTML = "";
+      const visibleVideos = isExpanded ? currentSubjectVideos : currentSubjectVideos.slice(0, 3);
+      const subjectLabel = SUBJECT_NAMES[currentSubject] || "المقرر الدراسي";
 
-  // Slice to 3 cards max when collapsed
-  const visibleVideos = isExpanded ? currentSubjectVideos : currentSubjectVideos.slice(0, 3);
+      visibleVideos.forEach(video => {
+        const card = document.createElement("div");
+        card.className = "recording-card";
+        card.onclick = () => openVideoModal(video.videoId, video.title);
 
-  visibleVideos.forEach(video => {
-    const card = document.createElement("div");
-    card.className = "recording-card";
-    card.onclick = () => openVideoModal(video.videoId, video.title);
+        card.innerHTML = `
+          <div class="recording-thumb-wrapper">
+            <img src="${video.thumbnail}" alt="${video.title}" class="recording-thumb">
+            <div class="play-icon-overlay">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </div>
+          </div>
+          <div class="recording-details">
+            <h3>${video.title}</h3>
+            <p>مادة ${subjectLabel} - المستوى الأول</p>
+          </div>
+        `;
 
-    card.innerHTML = `
-      <div class="recording-thumb-wrapper">
-        <img src="${video.thumbnail}" alt="${video.title}" class="recording-thumb">
-        <div class="play-icon-overlay">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-        </div>
-      </div>
-      <div class="recording-details">
-        <h3>${video.title}</h3>
-        <p>مادة البلاغة - المستوى الأول</p>
-      </div>
-    `;
+        container.appendChild(card);
+      });
 
-    container.appendChild(card);
-  });
+      if (viewAllBtn) {
+        viewAllBtn.textContent = isExpanded ? "عرض أقل ←" : "← عرض الكل";
+      }
+    }
 
-  if (viewAllBtn) {
-    viewAllBtn.textContent = isExpanded ? "عرض أقل ←" : "← عرض الكل";
-  }
-}
-
-function toggleViewAllRecordings() {
-  isExpanded = !isExpanded;
-  renderRecordingsGrid();
-}
-
-
+    function toggleViewAllRecordings() {
+      isExpanded = !isExpanded;
+      renderRecordingsGrid();
+    }
 
     function openVideoModal(videoId, title) {
       const modal = document.getElementById("videoPlayerModal");
@@ -684,18 +748,18 @@ function toggleViewAllRecordings() {
       checkUserSession();
       initSidebarEvents();
 
-      // Load Balagha Playlist from YouTube API automatically
-      loadSubjectRecordings('balagha');
+      // Load active playlist automatically
+      loadSubjectRecordings('tawheed');
 
       // Load static content from archive.json
       const data = await loadArchiveData();
 
-      // Render Assignments
+      // Render Assignments with Category Data Tag
       const assContainer = document.getElementById('assignmentsContainer');
       if (assContainer && data.assignments) {
         data.assignments.forEach(ass => {
           assContainer.innerHTML += `
-            <div class="book-row-card">
+            <div class="book-row-card" data-category="${ass.category || 'balagha'}">
               <div class="book-row-right">
                 <img src="${ass.coverUrl}" alt="${ass.title}" class="book-row-cover">
                 <div class="book-row-details">
@@ -717,13 +781,13 @@ function toggleViewAllRecordings() {
         });
       }
 
-      // Render Whiteboards & Photos
+      // Render Whiteboards & Photos with Category Data Tags
       ['whiteboards', 'photos'].forEach(key => {
         const container = document.getElementById(key + 'Container');
         if (container && data[key]) {
           data[key].forEach(item => {
             container.innerHTML += `
-              <div class="photo-card">
+              <div class="photo-card" data-category="${item.category || 'balagha'}">
                 <img src="${item.imageUrl}" alt="photo" class="photo-preview">
                 <div class="photo-date">${item.date}</div>
                 <div class="photo-meta">${item.meta}</div>

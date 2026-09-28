@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاشية | لوحة التحكم والإدارة</title>
+
+  <link rel="icon" type="image/png" href="assets/images/web/haashiya_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <a href="index.html" class="logo-link">
+          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+        </a>
+      </div>
+      <div class="navbar-right" id="navbarRight"></div>
+    </div>
+  </header>
+
+  <main class="admin-wrapper">
+    
+    <!-- WELCOME HERO BANNER -->
+    <section class="admin-hero">
+      <h1 class="admin-hero-title">أهلاً وسهلاً!</h1>
+      <div class="admin-hero-meta">
+        <span class="admin-badge" id="adminBadge">مشرف</span>
+        <span class="admin-display-name" id="adminDisplayName">اسم المستخدم</span>
+      </div>
+    </section>
+
+    <!-- 4-TAB NAVIGATION GRID -->
+    <nav class="admin-nav-grid">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('homeTab', this)" title="الرئيسية">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </button>
+
+      <button class="admin-tab-btn" onclick="switchAdminTab('uploadTab', this)" title="الرفع">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </button>
+
+      <button class="admin-tab-btn" onclick="switchAdminTab('approvalTab', this)" title="الموافقات">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <polyline points="9 12 11 14 15 10"></polyline>
+        </svg>
+      </button>
+
+      <button class="admin-tab-btn" onclick="switchAdminTab('databaseTab', this)" title="قاعدة البيانات">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          <path d="M21 19c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          <path d="M3 5v14"></path>
+          <path d="M21 5v14"></path>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- TAB 1: HOME SECTION -->
+    <section id="homeTab" class="tab-section active">
+      <span class="tab-header-badge">لوحة الإحصائيات العامة</span>
+      <div class="tab-card-body">
+        <p style="color: #64748b; font-size: 0.95rem;">مرحباً بك في لوحة تحكم المشرفين. استخدم الأيقونات أعلاه لإدارة المواد التعليمية، والموافقة على الكتب المرفوعة، والاطلاع على قاعدة بيانات الطلاب.</p>
+      </div>
+    </section>
+
+    <!-- TAB 2: UPLOAD SECTION -->
+    <section id="uploadTab" class="tab-section">
+      <div class="admin-section-actions">
+        <span class="tab-header-badge">المواد التعليمية</span>
+        <button class="btn-add-book" onclick="openBookModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          إضافة كتاب جديد
+        </button>
+      </div>
+    
+      <div class="tab-card-body">
+        <div id="adminBooksContainer" class="admin-book-list">
+          <p style="text-align: center; color: #94a3b8; padding: 20px 0;">جاري تحميل الكتب...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: APPROVAL SECTION -->
+    <section id="approvalTab" class="tab-section">
+      <span class="tab-header-badge">طلبات المكتبة العامة</span>
+      <div class="tab-card-body">
+        <div id="pendingApprovalsList">
+          <p style="text-align: center; color: #94a3b8;">لا توجد طلبات معلقة حالياً</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: DATABASE SECTION -->
+    <section id="databaseTab" class="tab-section">
+      <span class="tab-header-badge">قاعدة بيانات الطلاب</span>
+      <div class="tab-card-body">
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>اسم المستخدم</th>
+                <th>الرقم الجامعي</th>
+                <th>الإجراء</th>
+              </tr>
+            </thead>
+            <tbody id="studentDatabaseBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD / EDIT BOOK MODAL -->
+  <div id="bookModal" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <button class="modal-close-x" onclick="closeBookModal()" style="position: absolute; left: 16px; top: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      <h3 id="modalTitle" style="margin: 0 0 16px 0; color: #0f172a;">إضافة كتاب جديد</h3>
+      
+      <form id="bookForm" onsubmit="handleSaveBook(event)">
+        <input type="hidden" id="bookIdInput">
+        
+        <div class="admin-form-group">
+          <label>عنوان الكتاب</label>
+          <input type="text" id="bookTitleInput" class="admin-input" placeholder="مثال: البديع في ضوء أساليب القرآن" required>
+        </div>
+  
+        <div class="admin-form-group">
+          <label>المؤلف / الدكتور</label>
+          <input type="text" id="bookAuthorInput" class="admin-input" placeholder="مثال: د. عبد الفتاح لاشين" required>
+        </div>
+  
+        <div class="admin-form-group">
+          <label>المادة / المقرر</label>
+          <select id="bookCategorySelect" class="admin-select">
+            <option value="balagha">البلاغة</option>
+            <option value="qiraah">القراءة</option>
+            <option value="tawheed">التوحيد</option>
+            <option value="kitaba">الكتابة</option>
+            <option value="nahw">النحو</option>
+            <option value="adab">تاريخ الأدب</option>
+            <option value="indonesian">اللغة الإندونيسية</option>
+          </select>
+        </div>
+  
+        <div class="admin-form-group">
+          <label>رابط غلاف الكتاب (Cover Image URL)</label>
+          <input type="url" id="bookCoverInput" class="admin-input" placeholder="https://..." required>
+        </div>
+  
+        <div class="admin-form-group">
+          <label>رابط ملف الـ PDF</label>
+          <input type="url" id="bookPdfInput" class="admin-input" placeholder="https://..." required>
+        </div>
+  
+        <button type="submit" class="admin-btn-submit" style="margin-top: 10px;">حفظ الكتاب</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let currentUserRole = 'student';
+    let allEducationalBooks = [];
+
+    function switchAdminTab(tabId, btnElement) {
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    function verifyAdminAccess() {
+      const sessionData = localStorage.getItem('currentUser');
+      if (!sessionData) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const user = JSON.parse(sessionData);
+      currentUserRole = user.role || (user.isAdmin ? 'admin' : 'student');
+
+      const nameEl = document.getElementById('adminDisplayName');
+      const badgeEl = document.getElementById('adminBadge');
+
+      if (nameEl) nameEl.textContent = user.name || user.username;
+      if (badgeEl) {
+        if (currentUserRole === 'superadmin') {
+          badgeEl.textContent = 'مشرف عام';
+        } else if (currentUserRole === 'admin') {
+          badgeEl.textContent = 'مشرف';
+        } else {
+          badgeEl.textContent = 'طالب';
+        }
+      }
+
+      loadStudentDatabase();
+    }
+
+    async function loadStudentDatabase() {
+      const tbody = document.getElementById('studentDatabaseBody');
+      if (!tbody) return;
+
+      try {
+        const snapshot = await db.collection('users').get();
+        tbody.innerHTML = '';
+
+        if (snapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا يوجد طلاب مسجلون</td></tr>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const canViewFull = currentUserRole === 'superadmin';
+
+          tbody.innerHTML += `
+            <tr>
+              <td>${data.name || 'بدون اسم'}</td>
+              <td>${doc.id}</td>
+              <td>${data.studentId || '11011110001'}</td>
+              <td>
+                ${canViewFull 
+                  ? `<button class="btn-view-profile" onclick="viewStudentProfile('${doc.id}')">عرض الملف</button>` 
+                  : `<span class="text-restricted">محظور</span>`}
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error("Error loading students:", err);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ef4444;">حدث خطأ أثناء الاتصال بالخادم</td></tr>';
+      }
+    }
+
+    function viewStudentProfile(username) {
+      alert(`عرض الملف الكامل للطالب: ${username}`);
+    }
+
+    async function loadAdminEducationalBooks() {
+      const container = document.getElementById('adminBooksContainer');
+      if (!container) return;
+
+      try {
+        const snapshot = await db.collection('educational_materials').get();
+        
+        if (!snapshot.empty) {
+          allEducationalBooks = snapshot.docs.map(doc => ({ 
+            id: doc.id, 
+            ...doc.data() 
+          }));
+        } else {
+          const res = await fetch('data/books.json');
+          const jsonData = await res.json();
+          allEducationalBooks = (jsonData.educational_materials || []).map((book, idx) => ({
+            id: book.id ? String(book.id) : `json_fallback_${idx}`,
+            ...book
+          }));
+        }
+
+        renderAdminBooks();
+      } catch (err) {
+        console.error("Error loading books:", err);
+        container.innerHTML = `<p style="text-align: center; color: #ef4444; padding: 20px 0;">حدث خطأ أثناء تحميل البيانات</p>`;
+      }
+    }
+
+    function renderAdminBooks() {
+      const container = document.getElementById('adminBooksContainer');
+      if (!container) return;
+
+      if (allEducationalBooks.length === 0) {
+        container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 20px 0;">لا توجد كتب مضافة حالياً.</p>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      allEducationalBooks.forEach(book => {
+        const coverImage = book.coverUrl || book.cover || 'assets/images/web/default_cover.png';
+        const pdfUrl = book.pdfUrl || book.pdf || book.fileUrl || '#';
+
+        container.innerHTML += `
+          <div class="admin-book-card">
+            <div class="admin-card-actions">
+              <a href="${pdfUrl}" target="_blank" class="btn-circle-action view" title="معاينة (View)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </a>
+              <a href="${pdfUrl}" download class="btn-circle-action download" title="تحميل (Download)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+              </a>
+              <span class="action-divider"></span>
+              <button class="btn-circle-action edit" onclick="openBookModal('${book.id}')" title="تعديل (Edit)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="btn-circle-action delete" onclick="deleteBook('${book.id}')" title="حذف (Delete)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="admin-card-right">
+              <div class="admin-book-details">
+                <h3 class="admin-book-title">${book.title}</h3>
+                <p class="admin-book-author">${book.author || 'المحاضر'}</p>
+                <span class="admin-book-subject">${book.subjectTag || book.category || 'المرجع الرئيسي'}</span>
+              </div>
+              <img src="${coverImage}" alt="${book.title}" class="admin-card-cover" onError="this.src='assets/images/web/default_cover.png'">
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openBookModal(bookId = null) {
+      const modal = document.getElementById('bookModal');
+      const titleEl = document.getElementById('modalTitle');
+      const form = document.getElementById('bookForm');
+
+      if (!modal || !form) return;
+      form.reset();
+
+      if (bookId) {
+        const book = allEducationalBooks.find(b => String(b.id) === String(bookId));
+        if (book) {
+          titleEl.textContent = "تعديل بيانات الكتاب";
+          document.getElementById('bookIdInput').value = book.id;
+          document.getElementById('bookTitleInput').value = book.title || '';
+          document.getElementById('bookAuthorInput').value = book.author || '';
+          document.getElementById('bookCategorySelect').value = book.category || 'balagha';
+          document.getElementById('bookCoverInput').value = book.coverUrl || book.cover || '';
+          document.getElementById('bookPdfInput').value = book.pdfUrl || book.pdf || book.fileUrl || '';
+        }
+      } else {
+        titleEl.textContent = "إضافة كتاب جديد";
+        document.getElementById('bookIdInput').value = '';
+      }
+
+      modal.classList.add('show');
+    }
+
+    function closeBookModal() {
+      const modal = document.getElementById('bookModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    async function handleSaveBook(e) {
+      e.preventDefault();
+      
+      const bookId = document.getElementById('bookIdInput').value;
+      const bookData = {
+        title: document.getElementById('bookTitleInput').value.trim(),
+        author: document.getElementById('bookAuthorInput').value.trim(),
+        category: document.getElementById('bookCategorySelect').value,
+        coverUrl: document.getElementById('bookCoverInput').value.trim(),
+        pdfUrl: document.getElementById('bookPdfInput').value.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      try {
+        if (bookId && !bookId.startsWith('json_fallback_')) {
+          await db.collection('educational_materials').doc(bookId).set(bookData, { merge: true });
+        } else {
+          await db.collection('educational_materials').add(bookData);
+        }
+        
+        closeBookModal();
+        await loadAdminEducationalBooks();
+        alert('تم حفظ البيانات بنجاح!');
+      } catch (err) {
+        console.error("Failed to save book:", err);
+        alert('حدث خطأ أثناء الحفظ');
+      }
+    }
+
+    async function deleteBook(bookId) {
+      if (!confirm('هل أنت تأكد من أنك تريد حذف هذا الكتاب؟')) return;
+
+      try {
+        if (bookId && !bookId.startsWith('json_fallback_')) {
+          await db.collection('educational_materials').doc(bookId).delete();
+        } else {
+          allEducationalBooks = allEducationalBooks.filter(b => String(b.id) !== String(bookId));
+        }
+        renderAdminBooks();
+        alert('تم حذف الكتاب بنجاح!');
+      } catch (err) {
+        console.error("Failed to delete book:", err);
+        alert('حدث خطأ أثناء الحذف');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      verifyAdminAccess();
+      loadAdminEducationalBooks();
+    });
+  </script>
+</body>
+</html>
