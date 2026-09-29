@@ -4,7 +4,7 @@
         "email": "alifkaaka@gmail.com",
         "name": "Alif",
         "gender": "male",
-        "role": "admin",
+        "role": "superadmin",
         "avatar": "assets/images/web/default_avatar.png",
         "pass": "123"
     },

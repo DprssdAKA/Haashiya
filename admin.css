@@ -320,3 +320,349 @@
     background-color: #cbd5e1;
     margin: 0 4px;
   }
+
+  /* --- FANCY SEARCH BAR STYLING --- */
+
+.fancy-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .fancy-search-wrapper .search-icon {
+    position: absolute;
+    right: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+    transition: color 0.2s ease;
+  }
+  
+  .fancy-search-input {
+    width: 100%;
+    padding: 10px 42px 10px 38px; /* Padding accommodates search icon (right) & clear icon (left) */
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  }
+  
+  .fancy-search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+  
+  /* Hover & Focus States */
+  .fancy-search-input:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+  }
+  
+  .fancy-search-input:focus {
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .fancy-search-wrapper:focus-within .search-icon {
+    color: #2563eb; /* Highlights icon blue when input is active */
+  }
+  
+  /* Clear (x) Button */
+  .clear-search-btn {
+    position: absolute;
+    left: 10px;
+    background: #cbd5e1;
+    color: #ffffff;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 1;
+    display: none; /* Hidden by default until user types */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  
+  .clear-search-btn:hover {
+    background: #64748b;
+    transform: scale(1.1);
+  }
+  
+  .clear-search-btn.show {
+    display: flex;
+  }
+
+  /* Database Card Header Spacing */
+.database-card-header {
+    display: flex;
+    justify-content: flex-end; /* Aligns search bar to the right (RTL layout) */
+    margin-bottom: 16px;
+  }
+  
+  .database-card-header .fancy-search-wrapper {
+    max-width: 320px;
+    width: 100%;
+  }
+
+  /* --- GENDER TAB SWITCHER WITH SVGs --- */
+
+.gender-db-tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .gender-tab-btn {
+    border: none;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 10px 18px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.55; /* Dimmed inactive state */
+    transform: translateY(2px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Spacing between label and SVG */
+  }
+  
+  .gender-tab-svg {
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  /* Male Tab (Blue) */
+  .gender-tab-btn.male-tab {
+    background-color: #1d4ed8;
+    color: #ffffff;
+  }
+  
+  /* Female Tab (Pink) */
+  .gender-tab-btn.female-tab {
+    background-color: #db2777; /* Bright Rose Pink */
+    color: #ffffff;
+  }
+  
+  /* Active State */
+  .gender-tab-btn.active {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
+  }
+  
+  .gender-tab-btn:hover:not(.active) {
+    opacity: 0.8;
+  }
+
+  /* --- STREAMLINED STUDENT LIST ROW --- */
+.student-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  .student-row-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+  }
+  
+  .student-row-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  .student-row-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .student-list-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid #e2e8f0;
+  }
+  
+  .student-list-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+  
+  .btn-view-profile-card {
+    background-color: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-view-profile-card:hover {
+    background-color: #1e40af;
+  }
+  
+  /* Restricted view label for standard admins */
+  .text-restricted-badge {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background-color: #f8fafc;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  
+  /* --- MATCHING PROFILE MODAL STYLING --- */
+
+.profile-preview-card {
+    text-align: center;
+    padding: 28px 24px 20px 24px;
+  }
+  
+  .profile-preview-avatar {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 12px auto;
+    display: block;
+    border: 3px solid #1d4ed8;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2);
+  }
+  
+  .profile-preview-card .profile-label-top {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+  }
+  
+  .profile-preview-card .profile-user-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+  }
+  
+  /* Gender Badge Styling inside Modal */
+  .gender-badge-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  
+  .gender-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+  
+  .gender-badge.gender-male {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+  }
+  
+  .gender-badge.gender-female {
+    background-color: #fdf2f8;
+    color: #db2777;
+    border: 1px solid #fbcfe8;
+  }
+  
+  .profile-divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 16px 0;
+  }
+  
+  /* Detail Rows Layout */
+  .profile-preview-card .profile-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .profile-preview-card .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.92rem;
+  }
+  
+  .profile-preview-card .detail-label {
+    color: #64748b;
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  .profile-preview-card .detail-value {
+    color: #0f172a;
+    font-weight: 700;
+    direction: ltr;
+    text-align: left;
+  }
+  
+  /* --- EXTENDED ACTION BUTTONS FOR ADMIN CARDS --- */
+
+.book-row-actions.admin-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 16px;
+    margin-right: 8px;
+    border-right: 2px solid #e2ebd8;
+  }
+  
+  .admin-action-divider {
+    width: 1px;
+    height: 22px;
+    background-color: #cbd5e1;
+    margin: 0 4px;
+  }
+  
+  /* Edit Button Hover State */
+  .action-icon-btn.admin-btn-edit:hover {
+    background-color: #2563eb !important; /* Blue Highlight */
+    transform: scale(1.08);
+  }
+  
+  /* Delete Button Hover State */
+  .action-icon-btn.admin-btn-delete:hover {
+    background-color: #dc2626 !important; /* Red Warning */
+    transform: scale(1.08);
+  }
+  

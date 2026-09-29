@@ -109,26 +109,88 @@
       </div>
     </section>
 
-    <!-- TAB 4: DATABASE SECTION -->
-    <section id="databaseTab" class="tab-section">
-      <span class="tab-header-badge">قاعدة بيانات الطلاب</span>
-      <div class="tab-card-body">
-        <div class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>الاسم</th>
-                <th>اسم المستخدم</th>
-                <th>الرقم الجامعي</th>
-                <th>الإجراء</th>
-              </tr>
-            </thead>
-            <tbody id="studentDatabaseBody"></tbody>
-          </table>
+   <!-- TAB 4: DATABASE SECTION -->
+<section id="databaseTab" class="tab-section">
+    <!-- MALE / FEMALE TAB SWITCHER -->
+    <div class="gender-db-tabs">
+      <button type="button" class="gender-tab-btn male-tab active" onclick="switchGenderDatabase('male', this)">
+        <span>قاعدة بيانات الطلاب</span>
+        <svg class="gender-tab-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="14" r="5"></circle>
+          <path d="M19 5L13.5 10.5"></path>
+          <path d="M19 5h-5"></path>
+          <path d="M19 5v5"></path>
+        </svg>
+      </button>
+  
+      <button type="button" class="gender-tab-btn female-tab" onclick="switchGenderDatabase('female', this)">
+        <span>قاعدة بيانات الطالبات</span>
+        <svg class="gender-tab-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="10" r="5"></circle>
+          <path d="M12 15v7"></path>
+          <path d="M9 19h6"></path>
+        </svg>
+      </button>
+    </div>
+  
+    <div class="tab-card-body">
+      <!-- SEARCH BAR -->
+      <div class="database-card-header">
+        <div class="fancy-search-wrapper">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="studentSearchInput" 
+            class="fancy-search-input" 
+            placeholder="بحث باسم الطالب أو اسم المستخدم..." 
+            oninput="handleSearchInput(this)"
+          >
+          <button type="button" id="clearSearchBtn" class="clear-search-btn" onclick="clearStudentSearch()" aria-label="مسح البحث">&times;</button>
         </div>
       </div>
-    </section>
-
+  
+      <!-- CLEAN STUDENT LIST CONTAINER -->
+      <div id="studentListContainer" class="student-list-container">
+        <!-- Dynamic student rows rendered here -->
+      </div>
+    </div>
+  </section>
+  
+  <!-- STUDENT FULL PROFILE MODAL (Styled like profile.html) -->
+  <div id="studentProfileModal" class="admin-modal-overlay">
+    <div class="admin-modal-card profile-preview-card">
+      <button class="modal-close-x" onclick="closeStudentProfileModal()">&times;</button>
+      
+      <div class="profile-preview-header">
+        <img id="modalUserAvatar" src="assets/images/web/default_avatar.png" alt="Avatar" class="profile-preview-avatar">
+        <span class="profile-label-top">الاسم المعروض</span>
+        <h2 id="modalDisplayName" class="profile-user-title">اسم الطالب</h2>
+        <div id="modalGenderBadgeContainer" class="gender-badge-container"></div>
+      </div>
+  
+      <hr class="profile-divider">
+  
+      <div class="profile-details-list">
+        <div class="detail-row">
+          <span class="detail-value" id="modalStudentId">11011110001</span>
+          <span class="detail-label">الرقم الجامعي</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-value" id="modalEmail">example@domain.com</span>
+          <span class="detail-label">البريد الإلكتروني</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-value" id="modalUsername">username</span>
+          <span class="detail-label">اسم المستخدم</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
   </main>
 
   <!-- ADD / EDIT BOOK MODAL -->
@@ -232,131 +294,288 @@
       loadStudentDatabase();
     }
 
-    async function loadStudentDatabase() {
-      const tbody = document.getElementById('studentDatabaseBody');
-      if (!tbody) return;
+// LOAD STUDENT DATABASE FROM FIRESTORE
+async function loadStudentDatabase() {
+  const container = document.getElementById('studentListContainer');
+  if (!container) return;
 
-      try {
-        const snapshot = await db.collection('users').get();
-        tbody.innerHTML = '';
+  try {
+    const snapshot = await db.collection('users').get();
+    allStudentsList = [];
 
-        if (snapshot.empty) {
-          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا يوجد طلاب مسجلون</td></tr>';
-          return;
-        }
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      allStudentsList.push({
+        id: doc.id,
+        name: data.name || 'بدون اسم',
+        username: doc.id,
+        studentId: data.studentId || '11011110001',
+        email: data.email || 'غير مسجل',
+        gender: (data.gender || 'male').toLowerCase().trim(),
+        avatar: data.avatar || 'assets/images/web/default_avatar.png'
+      });
+    });
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const canViewFull = currentUserRole === 'superadmin';
+    filterStudentDatabase();
+  } catch (err) {
+    console.error("Error loading students:", err);
+    container.innerHTML = '<p style="text-align:center; color:#ef4444; padding: 20px 0;">حدث خطأ أثناء الاتصال بالخادم</p>';
+  }
+}
 
-          tbody.innerHTML += `
-            <tr>
-              <td>${data.name || 'بدون اسم'}</td>
-              <td>${doc.id}</td>
-              <td>${data.studentId || '11011110001'}</td>
-              <td>
-                ${canViewFull 
-                  ? `<button class="btn-view-profile" onclick="viewStudentProfile('${doc.id}')">عرض الملف</button>` 
-                  : `<span class="text-restricted">محظور</span>`}
-              </td>
-            </tr>
-          `;
-        });
-      } catch (err) {
-        console.error("Error loading students:", err);
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ef4444;">حدث خطأ أثناء الاتصال بالخادم</td></tr>';
-      }
-    }
+// SWITCH GENDER TAB (MALE / FEMALE)
+function switchGenderDatabase(gender, btnEl) {
+  currentGenderFilter = gender;
+
+  // Toggle active class on tab buttons
+  document.querySelectorAll('.gender-tab-btn').forEach(btn => btn.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  // Update search input placeholder dynamically
+  const searchInput = document.getElementById('studentSearchInput');
+  if (searchInput) {
+    searchInput.placeholder = gender === 'female' 
+      ? 'بحث باسم الطالبة أو اسم المستخدم...' 
+      : 'بحث باسم الطالب أو اسم المستخدم...';
+  }
+
+  filterStudentDatabase();
+}
+
+// FILTER DATABASE BASED ON ACTIVE GENDER TAB & SEARCH QUERY
+function filterStudentDatabase() {
+  const searchInput = document.getElementById('studentSearchInput');
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+  const filtered = allStudentsList.filter(student => {
+    // 1. Direct match against Firestore gender value
+    const matchesGender = student.gender === currentGenderFilter;
+
+    // 2. Search query filter
+    const matchesQuery = 
+      student.name.toLowerCase().includes(query) ||
+      student.id.toLowerCase().includes(query) ||
+      student.studentId.toString().includes(query);
+
+    return matchesGender && matchesQuery;
+  });
+
+  renderStudentDatabase(filtered);
+}
+
+// RENDER FILTERED ROWS TO DOM TABLE
+function renderStudentDatabase(studentsToRender) {
+  const container = document.getElementById('studentListContainer');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  if (studentsToRender.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 24px 0;">لا توجد نتائج مطابقة للبحث</p>';
+    return;
+  }
+
+  studentsToRender.forEach(student => {
+    const canViewFull = currentUserRole === 'superadmin';
+    const studentName = student.name || 'طالب';
+    const avatarUrl = student.avatar && student.avatar.trim() !== '' 
+      ? student.avatar 
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
+
+    container.innerHTML += `
+      <div class="student-row-item">
+        <div class="student-row-info">
+          <img src="${avatarUrl}" alt="${studentName}" class="student-list-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff'">
+          <h4 class="student-list-name">${studentName}</h4>
+        </div>
+        <div>
+          ${canViewFull 
+            ? `<button class="btn-view-profile-card" onclick="openStudentProfileModal('${student.id}')">عرض الملف</button>` 
+            : `<span class="text-restricted-badge">محظور</span>`}
+        </div>
+      </div>
+    `;
+  });
+}
+
+// OPEN FULL PROFILE MODAL FOR SUPERADMIN
+function openStudentProfileModal(username) {
+  const student = allStudentsList.find(s => s.id === username);
+  if (!student) return;
+
+  const modal = document.getElementById('studentProfileModal');
+  const avatarEl = document.getElementById('modalUserAvatar');
+  const nameEl = document.getElementById('modalDisplayName');
+  const idEl = document.getElementById('modalStudentId');
+  const emailEl = document.getElementById('modalEmail');
+  const usernameEl = document.getElementById('modalUsername');
+  const badgeContainer = document.getElementById('modalGenderBadgeContainer');
+
+  const studentName = student.name || 'طالب';
+  const avatarUrl = student.avatar && student.avatar.trim() !== '' 
+    ? student.avatar 
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
+
+  if (avatarEl) {
+    avatarEl.src = avatarUrl;
+    avatarEl.onerror = function() {
+      this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
+    };
+  }
+
+  if (nameEl) nameEl.textContent = studentName;
+  if (idEl) idEl.textContent = student.studentId || '11011110001';
+  if (emailEl) emailEl.textContent = student.email || 'غير مسجل';
+  if (usernameEl) usernameEl.textContent = student.username || student.id;
+
+  const isMale = student.gender === 'male';
+  if (badgeContainer) {
+    badgeContainer.innerHTML = isMale 
+      ? `<span class="gender-badge gender-male">
+          <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="10" cy="14" r="5"></circle>
+            <path d="M19 5L13.5 10.5"></path>
+            <path d="M19 5h-5"></path>
+            <path d="M19 5v5"></path>
+          </svg>
+          طالب ♂
+        </span>` 
+      : `<span class="gender-badge gender-female">
+          <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="10" r="5"></circle>
+            <path d="M12 15v7"></path>
+            <path d="M9 19h6"></path>
+          </svg>
+          طالبة ♀
+        </span>`;
+  }
+
+  if (modal) modal.classList.add('show');
+}
+
+
+function closeStudentProfileModal() {
+  const modal = document.getElementById('studentProfileModal');
+  if (modal) modal.classList.remove('show');
+}
+
+
 
     function viewStudentProfile(username) {
       alert(`عرض الملف الكامل للطالب: ${username}`);
     }
 
     async function loadAdminEducationalBooks() {
-      const container = document.getElementById('adminBooksContainer');
-      if (!container) return;
+  const container = document.getElementById('adminBooksContainer');
+  if (!container) return;
 
-      try {
-        const snapshot = await db.collection('educational_materials').get();
-        
-        if (!snapshot.empty) {
-          allEducationalBooks = snapshot.docs.map(doc => ({ 
-            id: doc.id, 
-            ...doc.data() 
-          }));
-        } else {
-          const res = await fetch('data/books.json');
-          const jsonData = await res.json();
-          allEducationalBooks = (jsonData.educational_materials || []).map((book, idx) => ({
-            id: book.id ? String(book.id) : `json_fallback_${idx}`,
-            ...book
-          }));
-        }
+  try {
+    // 1. Attempt to fetch from Firestore collection
+    const snapshot = await db.collection('educational_materials').get();
+    
+    if (!snapshot.empty) {
+      allEducationalBooks = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data() 
+      }));
+    } else {
+      // 2. Fallback to data/books.json
+      const res = await fetch('data/books.json');
+      const jsonData = await res.json();
 
-        renderAdminBooks();
-      } catch (err) {
-        console.error("Error loading books:", err);
-        container.innerHTML = `<p style="text-align: center; color: #ef4444; padding: 20px 0;">حدث خطأ أثناء تحميل البيانات</p>`;
-      }
+      // Handles both direct array [...] or wrapped { educational_materials: [...] }
+      const booksList = Array.isArray(jsonData) ? jsonData : (jsonData.educational_materials || []);
+
+      allEducationalBooks = booksList.map((book, idx) => ({
+        id: book.id ? String(book.id) : `json_fallback_${idx}`,
+        title: book.title || 'بدون عنوان',
+        author: book.author || 'المحاضر',
+        coverUrl: book.coverUrl || book.cover || 'assets/images/web/default_cover.png',
+        pdfUrl: book.pdfUrl || book.pdf || book.fileUrl || '#',
+        meta: book.meta || book.subjectTag || 'المواد التعليمية'
+      }));
     }
 
-    function renderAdminBooks() {
-      const container = document.getElementById('adminBooksContainer');
-      if (!container) return;
+    renderAdminBooks();
+  } catch (err) {
+    console.error("Error loading books:", err);
+    container.innerHTML = `<p style="text-align: center; color: #ef4444; padding: 20px 0;">حدث خطأ أثناء تحميل البيانات</p>`;
+  }
+}
 
-      if (allEducationalBooks.length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 20px 0;">لا توجد كتب مضافة حالياً.</p>`;
-        return;
-      }
 
-      container.innerHTML = '';
-      allEducationalBooks.forEach(book => {
-        const coverImage = book.coverUrl || book.cover || 'assets/images/web/default_cover.png';
-        const pdfUrl = book.pdfUrl || book.pdf || book.fileUrl || '#';
+    // RENDER ALL EDUCATIONAL BOOKS (Using Exact Dashboard.css Layout)
+function renderAdminBooks() {
+  const container = document.getElementById('adminBooksContainer');
+  if (!container) return;
 
-        container.innerHTML += `
-          <div class="admin-book-card">
-            <div class="admin-card-actions">
-              <a href="${pdfUrl}" target="_blank" class="btn-circle-action view" title="معاينة (View)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </a>
-              <a href="${pdfUrl}" download class="btn-circle-action download" title="تحميل (Download)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-              </a>
-              <span class="action-divider"></span>
-              <button class="btn-circle-action edit" onclick="openBookModal('${book.id}')" title="تعديل (Edit)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-              </button>
-              <button class="btn-circle-action delete" onclick="deleteBook('${book.id}')" title="حذف (Delete)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
-            </div>
+  if (allEducationalBooks.length === 0) {
+    container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 20px 0;">لا توجد كتب مضافة حالياً.</p>`;
+    return;
+  }
 
-            <div class="admin-card-right">
-              <div class="admin-book-details">
-                <h3 class="admin-book-title">${book.title}</h3>
-                <p class="admin-book-author">${book.author || 'المحاضر'}</p>
-                <span class="admin-book-subject">${book.subjectTag || book.category || 'المرجع الرئيسي'}</span>
-              </div>
-              <img src="${coverImage}" alt="${book.title}" class="admin-card-cover" onError="this.src='assets/images/web/default_cover.png'">
-            </div>
+  container.innerHTML = '';
+  allEducationalBooks.forEach(book => {
+    const coverImage = book.coverUrl || book.cover || 'assets/images/web/default_cover.png';
+    const pdfUrl = book.pdfUrl || book.pdf || book.fileUrl || '#';
+    const authorName = book.author || 'المحاضر';
+    const metaTag = book.meta || book.subjectTag || (book.category ? `المادة - ${book.category}` : 'المرجع الرئيسي');
+
+    container.innerHTML += `
+      <div class="book-row-card">
+        <!-- RIGHT: BOOK COVER & DETAILS (Exact layout from category-view.html) -->
+        <div class="book-row-right">
+          <img src="${coverImage}" alt="${book.title}" class="book-row-cover" onError="this.src='assets/images/web/default_cover.png'">
+          <div class="book-row-details">
+            <h3 class="book-row-title">${book.title}</h3>
+            <p class="book-row-author">${authorName}</p>
+            <span class="book-row-meta">${metaTag}</span>
           </div>
-        `;
-      });
-    }
+        </div>
+
+        <!-- LEFT: ACTION BUTTONS (View, Download + Admin Edit & Delete) -->
+        <div class="book-row-actions admin-row-actions">
+          <!-- View Button -->
+          <a href="${pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </a>
+
+          <!-- Download Button -->
+          <a href="${pdfUrl}" download class="action-icon-btn" title="تحميل">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </a>
+
+          <!-- Divider -->
+          <span class="admin-action-divider"></span>
+
+          <!-- Edit Button -->
+          <button class="action-icon-btn admin-btn-edit" onclick="openBookModal('${book.id}')" title="تعديل">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+
+          <!-- Delete Button -->
+          <button class="action-icon-btn admin-btn-delete" onclick="deleteBook('${book.id}')" title="حذف">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
 
     function openBookModal(bookId = null) {
       const modal = document.getElementById('bookModal');
@@ -440,6 +659,117 @@
       verifyAdminAccess();
       loadAdminEducationalBooks();
     });
+
+    let allStudentsList = []; // Global array to store fetched students
+
+
+// RENDER STUDENT TABLE ROWS
+function renderStudentDatabase(studentsToRender) {
+  const container = document.getElementById('studentListContainer');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  if (studentsToRender.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 24px 0;">لا توجد نتائج مطابقة للبحث</p>';
+    return;
+  }
+
+  studentsToRender.forEach(student => {
+    const canViewFull = currentUserRole === 'superadmin';
+
+    container.innerHTML += `
+      <div class="student-row-item">
+        <div class="student-row-info">
+          <img src="${student.avatar}" alt="${student.name}" class="student-list-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1d4ed8&color=fff'">
+          <h4 class="student-list-name">${student.name}</h4>
+        </div>
+        <div>
+          ${canViewFull 
+            ? `<button class="btn-view-profile-card" onclick="openStudentProfileModal('${student.id}')">عرض الملف</button>` 
+            : `<span class="text-restricted-badge">محظور</span>`}
+        </div>
+      </div>
+    `;
+  });
+}
+
+// SEARCH FILTER FUNCTION (Real-time filtering as you type)
+let currentGenderFilter = 'male'; // Default active view
+
+// Switch Gender Tab
+function switchGenderDatabase(gender, btnEl) {
+  currentGenderFilter = gender;
+
+  // Toggle active class on buttons
+  document.querySelectorAll('.gender-tab-btn').forEach(btn => btn.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  // Update search input placeholder text dynamically
+  const searchInput = document.getElementById('studentSearchInput');
+  if (searchInput) {
+    searchInput.placeholder = gender === 'female' 
+      ? 'بحث باسم الطالبة أو اسم المستخدم...' 
+      : 'بحث باسم الطالب أو اسم المستخدم...';
+  }
+
+  filterStudentDatabase();
+}
+
+// Filter Database Function
+function filterStudentDatabase() {
+  const searchInput = document.getElementById('studentSearchInput');
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+  const filtered = allStudentsList.filter(student => {
+    // Direct match against Firestore gender value
+    const matchesGender = student.gender === currentGenderFilter;
+
+    // Search query filter
+    const matchesQuery = 
+      student.name.toLowerCase().includes(query) ||
+      student.id.toLowerCase().includes(query) ||
+      student.studentId.toString().includes(query);
+
+    return matchesGender && matchesQuery;
+  });
+
+  renderStudentDatabase(filtered);
+}
+
+
+
+
+// Handle real-time filtering & toggle clear button
+function handleSearchInput(inputEl) {
+  const clearBtn = document.getElementById('clearSearchBtn');
+  if (clearBtn) {
+    if (inputEl.value.length > 0) {
+      clearBtn.classList.add('show');
+    } else {
+      clearBtn.classList.remove('show');
+    }
+  }
+  filterStudentDatabase();
+}
+
+// Clear search input on 'x' click
+function clearStudentSearch() {
+  const searchInput = document.getElementById('studentSearchInput');
+  const clearBtn = document.getElementById('clearSearchBtn');
+  
+  if (searchInput) {
+    searchInput.value = '';
+    searchInput.focus();
+  }
+  if (clearBtn) {
+    clearBtn.classList.remove('show');
+  }
+  filterStudentDatabase();
+}
+
+
+
   </script>
 </body>
 </html>
