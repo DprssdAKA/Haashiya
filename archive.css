@@ -323,3 +323,131 @@
     }
   }
   
+  /* --- ASSIGNMENT BLUE ACTIVE BANNERS & WHITE ARCHIVED CARDS --- */
+
+.assignment-card {
+  display: flex;
+  justify-content: space-between; /* Pushes Title (Right) & Actions (Left) */
+  align-items: center;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  direction: rtl;
+}
+
+.assignment-card:hover {
+  transform: translateY(-2px);
+}
+
+/* 1. ACTIVE BLUE BANNER CARD */
+.assignment-card.active-blue-card {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(29, 78, 216, 0.25);
+  border: none;
+}
+
+/* 2. ARCHIVED WHITE CARD */
+.assignment-card.archived-white-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+/* RIGHT SIDE: TITLE & METADATA */
+.assignment-right-info {
+  text-align: right;
+  flex-grow: 1;
+}
+
+.assignment-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.assignment-title.dark-text {
+  color: #0f172a;
+}
+
+.assignment-meta {
+  font-size: 0.82rem;
+  opacity: 0.9;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.assignment-meta.muted-text {
+  color: #64748b;
+  opacity: 1;
+}
+
+/* LEFT SIDE: ACTIONS & TIMER */
+.assignment-left-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+/* SOLID WHITE CIRCLE FOR 'i' ICON */
+.btn-info-icon {
+  background-color: #ffffff;
+  border: none;
+  color: #1d4ed8; /* Brand blue SVG */
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-info-icon:hover {
+  transform: scale(1.08);
+  background-color: #f8fafc;
+}
+
+.btn-info-icon.dark {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+/* COUNTDOWN BADGE WITH WHITESPACE */
+.assignment-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.18); /* Semi-transparent white pill */
+  backdrop-filter: blur(4px);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  min-width: 65px;
+}
+
+.stopwatch-icon {
+  flex-shrink: 0;
+}
+
+.archived-date-stamp {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 10px;
+}

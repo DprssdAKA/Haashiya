@@ -316,12 +316,26 @@
     }
   
     function smoothNavigate(event, targetUrl) {
-      event.preventDefault();
-      document.body.classList.add('fade-out');
-      setTimeout(() => {
-        window.location.href = targetUrl;
-      }, 300);
-    }
+  event.preventDefault();
+
+  const sessionData = localStorage.getItem('currentUser');
+
+  // If navigating to archive page/section and user is not logged in, redirect to login page
+  if (targetUrl.includes('archive.html') && !sessionData) {
+    document.body.classList.add('fade-out');
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 300);
+    return;
+  }
+
+  // Normal navigation for logged-in users or public pages
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    window.location.href = targetUrl;
+  }, 300);
+}
+
   
     let activeCategory = 'balagha';
   

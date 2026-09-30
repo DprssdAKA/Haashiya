@@ -9,14 +9,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="admin.css">
 
   <!-- Firebase Compatibility SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+     (function(){
+        emailjs.init("V-BC-AYYC2sg3dxHo");
+     })();
+  </script>
 </head>
+
 <body class="login-page">
 
+  <!-- MAIN LOGIN CARD -->
   <div class="login-card">
     <h2>مرحباً بك!</h2>
     <p class="subtitle">يُرجَى تسجيل الدخول باستخدام البيانات المزوَّدة لك</p>
@@ -30,6 +43,11 @@
       <div class="input-group">
         <label for="password">كلمة المرور</label>
         <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+        <div style="text-align: left; margin-top: 6px;">
+          <a href="#" onclick="openLoginOtpModal(event)" style="font-size: 0.82rem; color: #1565c0; text-decoration: none; font-weight: 600;">
+            نسيت كلمة المرور؟
+          </a>
+        </div>
       </div>
 
       <button type="submit" class="login-btn">تسجيل الدخول</button>
@@ -39,6 +57,63 @@
     <a href="index.html#educational-materials" class="back-home-link" onclick="smoothNavigate(event, 'index.html#educational-materials')">
       &rarr; العودة للرئيسية
     </a>
+  </div>
+
+  <!-- MODAL 1: REQUEST OTP CODE -->
+  <div id="loginRequestOtpModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeLoginOtpModal('loginRequestOtpModal')">&times;</button>
+      <h3 class="upload-modal-title">استعادة كلمة المرور</h3>
+      <p class="upload-modal-subtitle">أدخل بريدك الإلكتروني المسجل ليصلك رمز التحقق</p>
+
+      <form id="loginRequestOtpForm" onsubmit="handleSendLoginOtp(event)">
+        <div class="modal-field">
+          <label for="loginOtpEmailInput">البريد الإلكتروني</label>
+          <input type="email" id="loginOtpEmailInput" class="modal-input" placeholder="example@domain.com" required>
+        </div>
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">إرسال رمز التحقق</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeLoginOtpModal('loginRequestOtpModal')">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ENTER OTP & NEW PASSWORD -->
+  <div id="loginVerifyOtpModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeLoginOtpModal('loginVerifyOtpModal')">&times;</button>
+      <h3 class="upload-modal-title">إدخال رمز التحقق</h3>
+      <p class="upload-modal-subtitle">أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك</p>
+
+      <form id="loginVerifyOtpForm" onsubmit="handleResetLoginPassword(event)">
+        <div class="modal-field">
+          <label for="loginOtpCodeInput">رمز التحقق (OTP)</label>
+          <input type="text" id="loginOtpCodeInput" class="modal-input" maxlength="6" placeholder="123456" required style="letter-spacing: 4px; text-align: center; font-weight: bold;">
+        </div>
+
+        <div class="modal-field">
+          <label for="loginNewPasswordInput">كلمة المرور الجديدة</label>
+          <input type="password" id="loginNewPasswordInput" class="modal-input" placeholder="••••••••" required minlength="6">
+        </div>
+
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">تأكيد وتغيير كلمة المرور</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeLoginOtpModal('loginVerifyOtpModal')">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toastNotification" class="toast-notification">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastMessage">تمت العملية بنجاح!</span>
+  </div>
+
+  <div id="errorToastNotification" class="toast-notification toast-error">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+    <span id="errorToastMessage">حدث خطأ في المدخلات!</span>
   </div>
 
   <script>
@@ -55,6 +130,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    let generatedLoginOtpCode = null;
+    let loginOtpExpirationTime = null;
+    let targetUserDocId = null;
+
     async function handleLoginSubmit(e) {
       e.preventDefault();
       
@@ -63,7 +142,6 @@
       const passwordInput = document.getElementById('password').value.trim();
 
       try {
-        // Query Firestore document by username
         const userDoc = await db.collection('users').doc(usernameInput).get();
 
         if (!userDoc.exists) {
@@ -119,7 +197,138 @@
         window.location.href = targetUrl;
       }, 300);
     }
-  </script>
 
+    function openLoginOtpModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById('loginRequestOtpModal').classList.add('show');
+    }
+
+    function closeLoginOtpModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.remove('show');
+    }
+
+    function generate6DigitOTP() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    function showToastNotification(messageText) {
+      const toast = document.getElementById('toastNotification');
+      const messageSpan = document.getElementById('toastMessage');
+      if (toast && messageSpan) {
+        messageSpan.textContent = messageText;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    function showErrorToast(messageText) {
+      const toast = document.getElementById('errorToastNotification');
+      const messageSpan = document.getElementById('errorToastMessage');
+      if (toast && messageSpan) {
+        messageSpan.textContent = messageText;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    async function handleSendLoginOtp(e) {
+      e.preventDefault();
+      const emailInput = document.getElementById('loginOtpEmailInput');
+      const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+
+      if (!email) {
+        showErrorToast('يُرجَى إدخال البريد الإلكتروني');
+        return;
+      }
+
+      try {
+        const snapshot = await db.collection('users').where('email', '==', email).get();
+
+        if (snapshot.empty) {
+          showErrorToast('عذراً، البريد الإلكتروني غير مسجل بالمنظومة');
+          return;
+        }
+
+        const userDoc = snapshot.docs[0];
+        targetUserDocId = userDoc.id;
+        const userData = userDoc.data();
+
+        if (userData && userData.lastPasswordChange) {
+          const lastChangeDate = userData.lastPasswordChange.toDate 
+            ? userData.lastPasswordChange.toDate() 
+            : new Date(userData.lastPasswordChange);
+
+          const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
+          const timeSinceLastChange = Date.now() - lastChangeDate.getTime();
+
+          if (timeSinceLastChange < twoWeeksMs) {
+            const remainingDays = Math.ceil((twoWeeksMs - timeSinceLastChange) / (1000 * 60 * 60 * 24));
+            showErrorToast(`عذراً، يمكن تغيير كلمة المرور مرة واحدة كل أسبوعين. يمكنك المحاولة بعد ${remainingDays} يوم/أيام.`);
+            return;
+          }
+        }
+
+        generatedLoginOtpCode = generate6DigitOTP();
+        loginOtpExpirationTime = Date.now() + (10 * 60 * 1000);
+
+        showToastNotification('جاري إرسال رمز التحقق...');
+
+        const templateParams = {
+          pass_code: generatedLoginOtpCode,
+          to_email: email,
+          to_name: userData.name || email.split('@')[0]
+        };
+
+        await emailjs.send('service_87l9tyn', 'template_jhy7wcq', templateParams);
+
+        closeLoginOtpModal('loginRequestOtpModal');
+        document.getElementById('loginVerifyOtpModal').classList.add('show');
+        showToastNotification('تم إرسال رمز التحقق إلى بريدك الإلكتروني!');
+
+      } catch (err) {
+        console.error('EmailJS Send Error:', err);
+        showErrorToast('حدث خطأ أثناء إرسال البريد الإلكتروني، يُرجى المحاولة لاحقاً');
+      }
+    }
+
+    async function handleResetLoginPassword(e) {
+      e.preventDefault();
+
+      const inputOtp = document.getElementById('loginOtpCodeInput').value.trim();
+      const newPassword = document.getElementById('loginNewPasswordInput').value.trim();
+
+      if (!generatedLoginOtpCode || inputOtp !== generatedLoginOtpCode) {
+        showErrorToast('رمز التحقق غير صحيح، يُرجَى التأكد وإعادة المحاولة');
+        return;
+      }
+
+      if (Date.now() > loginOtpExpirationTime) {
+        showErrorToast('انتهت صلاحية رمز التحقق، يُرجَى طلب رمز جديد');
+        return;
+      }
+
+      if (!targetUserDocId) {
+        showErrorToast('حدث خطأ في تحديد الحساب');
+        return;
+      }
+
+      try {
+        await db.collection('users').doc(targetUserDocId).set({
+          pass: newPassword,
+          password: newPassword,
+          lastPasswordChange: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        closeLoginOtpModal('loginVerifyOtpModal');
+        showToastNotification('تم تغيير كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول 🎉');
+
+      } catch (err) {
+        console.error('Failed to update password in Firestore:', err);
+        showErrorToast('فشل تحديث كلمة المرور في قاعدة البيانات');
+      }
+    }
+  </script>
 </body>
 </html>

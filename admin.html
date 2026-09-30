@@ -267,32 +267,50 @@
       btnElement.classList.add('active');
     }
 
-    function verifyAdminAccess() {
-      const sessionData = localStorage.getItem('currentUser');
-      if (!sessionData) {
-        window.location.href = 'login.html';
-        return;
-      }
+    async function verifyAdminAccess() {
+  const sessionData = localStorage.getItem('currentUser');
+  if (!sessionData) {
+    window.location.href = 'login.html';
+    return;
+  }
 
-      const user = JSON.parse(sessionData);
-      currentUserRole = user.role || (user.isAdmin ? 'admin' : 'student');
+  let user = JSON.parse(sessionData);
+  const username = (user.username || user.email.split('@')[0]).toLowerCase();
 
-      const nameEl = document.getElementById('adminDisplayName');
-      const badgeEl = document.getElementById('adminBadge');
-
-      if (nameEl) nameEl.textContent = user.name || user.username;
-      if (badgeEl) {
-        if (currentUserRole === 'superadmin') {
-          badgeEl.textContent = 'مشرف عام';
-        } else if (currentUserRole === 'admin') {
-          badgeEl.textContent = 'مشرف';
-        } else {
-          badgeEl.textContent = 'طالب';
-        }
-      }
-
-      loadStudentDatabase();
+  try {
+    // Fetch fresh user role directly from Firestore on load
+    const userDoc = await db.collection('users').doc(username).get();
+    
+    if (userDoc.exists) {
+      const dbData = userDoc.data();
+      user.role = dbData.role || 'student';
+      user.name = dbData.name || user.name;
+      // Persist corrected role back to local storage
+      localStorage.setItem('currentUser', JSON.stringify(user));
     }
+  } catch (err) {
+    console.warn("Could not refresh role from Firestore:", err);
+  }
+
+  currentUserRole = user.role || 'student';
+
+  const nameEl = document.getElementById('adminDisplayName');
+  const badgeEl = document.getElementById('adminBadge');
+
+  if (nameEl) nameEl.textContent = user.name || user.username;
+  if (badgeEl) {
+    if (currentUserRole === 'superadmin') {
+      badgeEl.textContent = 'مشرف عام';
+    } else if (currentUserRole === 'admin') {
+      badgeEl.textContent = 'مشرف';
+    } else {
+      badgeEl.textContent = 'طالب';
+    }
+  }
+
+  // Reload student database with verified role permissions
+  await loadStudentDatabase();
+}
 
 // LOAD STUDENT DATABASE FROM FIRESTORE
 async function loadStudentDatabase() {
@@ -655,8 +673,8 @@ function renderAdminBooks() {
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      verifyAdminAccess();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await verifyAdminAccess();
       loadAdminEducationalBooks();
     });
 

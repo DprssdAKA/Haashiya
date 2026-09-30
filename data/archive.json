@@ -21,13 +21,13 @@
     ],
     "assignments": [
       {
-        "id": 1,
-        "title": "علم البديع دراسة تاريخية وفنية",
-        "author": "د. بسيوني عبد الفتاح فيود",
-        "meta": "مادة البلاغة",
+        "id": "hw_01",
+        "title": "إعادة التركيب (التقاطية)",
+        "author": "مادة البلاغة",
         "category": "balagha",
-        "coverUrl": "assets/images/covers/badee3tareekh.png",
-        "pdfUrl": "assets/pdfs/badee3tareekh.pdf"
+        "meta": "02/10/2026",
+        "dueDate": "2026-10-24T23:59:59Z",
+        "instructions": "قم بإعداد بحث شامل وتسليمه بصيغة PDF."
       }
     ],
     "whiteboards": [

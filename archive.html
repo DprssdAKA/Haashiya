@@ -290,513 +290,664 @@
     </div>
   </div>
 
-  <script>
-        const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
-    const YOUTUBE_API_KEY = "AIzaSyDm_N7gXYi3gJWPvHZDZBXeUrq9LhNbDac";
+  <!-- TASK DETAILS & CREDENTIALS MODAL (Triggered by 'i' button) -->
+<div id="taskDetailsModal" class="upload-modal-overlay">
+  <div class="upload-modal-card">
+    <button class="modal-close-x" onclick="closeModal('taskDetailsModal')">&times;</button>
+    <h3 id="detailTaskTitle" class="upload-modal-title">تفاصيل الواجب</h3>
+    <p id="detailTaskMeta" class="upload-modal-subtitle">المادة والتعليمات الخاصة بالمشروع</p>
 
-    const PLAYLIST_MAP = {
-      balagha: "PLKU5sS798fPo", // Replace with full Balagha Playlist ID when available
-      qiraah: "PLdnR_d9WNleo",
-      tawheed: "PLPJw5eoRDYkw",
-      kitaba: "",
-      nahw: "",
-      adab: "",
-      indonesian: ""
+    <div class="modal-field">
+      <label>تعليمات ومتطلبات التسليم</label>
+      <pre id="detailTaskInstructions">جاري تحميل البيانات...</pre>
+    </div>
+
+    <div class="upload-modal-actions">
+      <button type="button" class="btn-submit-upload" onclick="openUploadFromDetails()">رفع الملف الآن</button>
+      <button type="button" class="btn-cancel-upload" onclick="closeModal('taskDetailsModal')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT SUBMISSION UPLOAD MODAL -->
+<div id="taskUploadModal" class="upload-modal-overlay">
+  <div class="upload-modal-card">
+    <button class="modal-close-x" onclick="closeModal('taskUploadModal')">&times;</button>
+    <h3 class="upload-modal-title">تسليم الواجب</h3>
+    <p id="uploadTaskSubTitle" class="upload-modal-subtitle">اختر الملف المراد تسليمه (PDF / ZIP)</p>
+
+    <form id="submissionUploadForm" onsubmit="handleAssignmentUpload(event)">
+      <input type="hidden" id="selectedAssignmentId">
+
+      <div class="drop-zone" onclick="document.getElementById('assignmentFileInput').click()">
+        <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <span class="drop-zone-text" id="dropZoneFileName">اضغط هنا لاختيار <b>ملف الواجب</b></span>
+        <input type="file" id="assignmentFileInput" style="display: none;" accept=".pdf,.zip,.rar,.docx" onchange="updateFileName(this)">
+      </div>
+
+      <div class="upload-modal-actions">
+        <button type="submit" class="btn-submit-upload">تأكيد إرسال الواجب</button>
+        <button type="button" class="btn-cancel-upload" onclick="closeModal('taskUploadModal')">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // --- AUTH GUARD (RUNS IMMEDIATELY ON PAGE LOAD) ---
+(function enforceAuthGuard() {
+  const sessionData = localStorage.getItem('currentUser');
+  if (!sessionData) {
+    // Save intended URL so you can redirect back after login if desired
+    window.location.href = 'login.html';
+  }
+})();
+
+  const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
+  const YOUTUBE_API_KEY = "AIzaSyDm_N7gXYi3gJWPvHZDZBXeUrq9LhNbDac";
+
+  const PLAYLIST_MAP = {
+    balagha: "PLKU5sS798fPo",
+    qiraah: "PLdnR_d9WNleo",
+    tawheed: "PLPJw5eoRDYkw",
+    kitaba: "PLGELkd3mgXnk",
+    nahw: "",
+    adab: "",
+    indonesian: "PLBh8NviWZoXw"
+  };
+
+  const SUBJECT_NAMES = {
+    balagha: "البلاغة",
+    qiraah: "القراءة",
+    tawheed: "التوحيد",
+    kitaba: "الكتابة",
+    nahw: "النحو",
+    adab: "تاريخ الأدب",
+    indonesian: "اللغة الإندونيسية"
+  };
+
+  let activeAssignmentList = [];
+  let currentSelectedTask = null;
+  let currentSubjectVideos = [];
+  let isExpanded = false;
+  let currentSubject = 'balagha';
+
+  // --- SIDEBAR DRAWER LOGIC ---
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    if (sb && ov) { 
+      sb.classList.toggle('open'); 
+      ov.classList.toggle('active'); 
+    }
+  }
+
+  function initSidebarEvents() {
+    const openSidebarBtn = document.getElementById('open-sidebar-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    const archiveBtn = document.getElementById('archive-btn');
+    const archiveSubmenu = document.getElementById('archive-submenu');
+    const libraryBtn = document.getElementById('library-btn');
+    const librarySubmenu = document.getElementById('library-submenu');
+
+    const closeSidebar = () => {
+      if (sidebar && overlay) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+      }
     };
 
-    const SUBJECT_NAMES = {
-      balagha: "البلاغة",
-      qiraah: "القراءة",
-      tawheed: "التوحيد",
-      kitaba: "الكتابة",
-      nahw: "النحو",
-      adab: "تاريخ الأدب",
-      indonesian: "اللغة الإندونيسية"
-    };
-
-    // --- SIDEBAR DRAWER LOGIC ---
-    function toggleSidebar() {
-      const sb = document.getElementById('sidebar');
-      const ov = document.getElementById('sidebar-overlay');
-      if (sb && ov) { 
-        sb.classList.toggle('open'); 
-        ov.classList.toggle('active'); 
-      }
-    }
-
-    function initSidebarEvents() {
-      const openSidebarBtn = document.getElementById('open-sidebar-btn');
-      const closeSidebarBtn = document.getElementById('close-sidebar-btn');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-
-      const archiveBtn = document.getElementById('archive-btn');
-      const archiveSubmenu = document.getElementById('archive-submenu');
-      const libraryBtn = document.getElementById('library-btn');
-      const librarySubmenu = document.getElementById('library-submenu');
-
-      const closeSidebar = () => {
-        if (sidebar && overlay) {
-          sidebar.classList.remove('open');
-          overlay.classList.remove('active');
-        }
-      };
-
-      if (openSidebarBtn && sidebar && overlay) {
-        openSidebarBtn.addEventListener('click', () => {
-          sidebar.classList.add('open');
-          overlay.classList.add('active');
-        });
-      }
-
-      if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
-      if (overlay) overlay.addEventListener('click', closeSidebar);
-
-      const toggleDropdown = (button, submenu) => {
-        if (!button || !submenu) return;
-        const isOpen = submenu.classList.contains('open');
-        const arrow = button.querySelector('.arrow-icon');
-
-        if (isOpen) {
-          submenu.classList.remove('open');
-          button.classList.remove('active');
-          if (arrow) arrow.classList.remove('open');
-        } else {
-          submenu.classList.add('open');
-          button.classList.add('active');
-          if (arrow) arrow.classList.add('open');
-        }
-      };
-
-      if (archiveBtn && archiveSubmenu) {
-        archiveBtn.addEventListener('click', () => toggleDropdown(archiveBtn, archiveSubmenu));
-      }
-      if (libraryBtn && librarySubmenu) {
-        libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
-      }
-    }
-
-    // --- NOTIFICATION HELPERS ---
-    function getNotifications() {
-      return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
-    }
-
-    function updateNotificationBadge() {
-      const dropdownBadge = document.querySelector('.unread-badge');
-      const navRedDot = document.querySelector('.nav-unread-dot');
-      
-      const notifications = getNotifications();
-      const unreadCount = notifications.filter(n => n.unread).length;
-
-      if (unreadCount > 0) {
-        if (dropdownBadge) {
-          dropdownBadge.textContent = unreadCount;
-          dropdownBadge.style.display = 'inline-block';
-        }
-        if (navRedDot) navRedDot.style.display = 'inline-block';
-      } else {
-        if (dropdownBadge) dropdownBadge.style.display = 'none';
-        if (navRedDot) navRedDot.style.display = 'none';
-      }
-    }
-
-    function openNotificationsModal(e) {
-      if (e) e.preventDefault();
-      const dropdown = document.getElementById('profileDropdown');
-      if (dropdown) dropdown.classList.remove('show');
-      
-      const notifications = getNotifications().map(n => ({ ...n, unread: false }));
-      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
-      updateNotificationBadge();
-
-      renderNotificationsList();
-      const modal = document.getElementById('notificationsModal');
-      if (modal) modal.classList.add('show');
-    }
-
-    function closeNotificationsModal() {
-      const modal = document.getElementById('notificationsModal');
-      if (modal) modal.classList.remove('show');
-    }
-
-    function clearAllNotifications() {
-      localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify([]));
-      renderNotificationsList();
-      updateNotificationBadge();
-    }
-
-    function renderNotificationsList() {
-      const container = document.getElementById('notificationsList');
-      const notifications = getNotifications();
-
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (notifications.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد إشعارات حالياً</p>';
-        return;
-      }
-
-      notifications.forEach(n => {
-        const card = document.createElement('div');
-        card.className = `notification-item-card ${n.unread ? 'unread' : ''}`;
-        let iconMarkup = '';
-        
-        if (n.type === 'success') {
-          iconMarkup = `<div class="notification-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
-        } else if (n.type === 'rejected' || n.type === 'deleted') {
-          iconMarkup = `<div class="notification-icon error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
-        } else {
-          iconMarkup = `<div class="notification-icon pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
-        }
-
-        card.innerHTML = `
-          ${iconMarkup}
-          <div class="notification-content">
-            <h4 class="notification-title">${n.title}</h4>
-            <p class="notification-body">${n.message}</p>
-            <span class="notification-time">${n.timestamp}</span>
-          </div>
-        `;
-        container.appendChild(card);
+    if (openSidebarBtn && sidebar && overlay) {
+      openSidebarBtn.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
       });
     }
 
-    // --- USER SESSION & PROFILE DROPDOWN ---
-    function checkUserSession() {
-      const sessionData = localStorage.getItem('currentUser');
-      const navbarRight = document.querySelector('.navbar-right');
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
 
-      if (sessionData && navbarRight) {
-        const user = JSON.parse(sessionData);
-        const isMale = user.gender === 'male';
+    const toggleDropdown = (button, submenu) => {
+      if (!button || !submenu) return;
+      const isOpen = submenu.classList.contains('open');
+      const arrow = button.querySelector('.arrow-icon');
 
-        const genderBadgeHTML = isMale ? `
-          <span class="gender-badge gender-male">
-            <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="10" cy="14" r="5"></circle><path d="M19 5L13.5 10.5"></path><path d="M19 5h-5"></path><path d="M19 5v5"></path></svg>
-            طالب
-          </span>` : `
-          <span class="gender-badge gender-female">
-            <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="5"></circle><path d="M12 15v7"></path><path d="M9 19h6"></path></svg>
-            طالبة
-          </span>`;
-
-        navbarRight.innerHTML = `
-          <div class="user-profile-wrapper">
-            <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
-              <img src="${user.avatar || 'assets/images/web/default_avatar.png'}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
-              <div class="profile-info-group">
-                <span class="profile-name">${user.name}</span>
-                ${genderBadgeHTML}
-              </div>
-              <span class="nav-unread-dot" style="display: none;"></span>
-              <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </button>
-
-            <div id="profileDropdown" class="profile-dropdown-menu">
-              <a href="profile.html" class="dropdown-item" onclick="smoothNavigate(event, 'profile.html')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                الملف الشخصي
-              </a>
-              <a href="#" class="dropdown-item" onclick="openNotificationsModal(event)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                الإشعارات
-                <span class="unread-badge" style="display: none;">0</span>
-              </a>
-              <div class="dropdown-divider"></div>
-              <button class="dropdown-item logout-item" onclick="logoutUser()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                تسجيل الخروج
-              </button>
-            </div>
-          </div>
-
-          <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-            <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor"><path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/><path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/><path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/></svg>
-          </button>
-        `;
-
-        updateNotificationBadge();
+      if (isOpen) {
+        submenu.classList.remove('open');
+        button.classList.remove('active');
+        if (arrow) arrow.classList.remove('open');
+      } else {
+        submenu.classList.add('open');
+        button.classList.add('active');
+        if (arrow) arrow.classList.add('open');
       }
+    };
+
+    if (archiveBtn && archiveSubmenu) {
+      archiveBtn.addEventListener('click', () => toggleDropdown(archiveBtn, archiveSubmenu));
+    }
+    if (libraryBtn && librarySubmenu) {
+      libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
+    }
+  }
+
+  // --- NOTIFICATION HELPERS ---
+  function getNotifications() {
+    return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
+  }
+
+  function updateNotificationBadge() {
+    const dropdownBadge = document.querySelector('.unread-badge');
+    const navRedDot = document.querySelector('.nav-unread-dot');
+    
+    const notifications = getNotifications();
+    const unreadCount = notifications.filter(n => n.unread).length;
+
+    if (unreadCount > 0) {
+      if (dropdownBadge) {
+        dropdownBadge.textContent = unreadCount;
+        dropdownBadge.style.display = 'inline-block';
+      }
+      if (navRedDot) navRedDot.style.display = 'inline-block';
+    } else {
+      if (dropdownBadge) dropdownBadge.style.display = 'none';
+      if (navRedDot) navRedDot.style.display = 'none';
+    }
+  }
+
+  function openNotificationsModal(e) {
+    if (e) e.preventDefault();
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) dropdown.classList.remove('show');
+    
+    const notifications = getNotifications().map(n => ({ ...n, unread: false }));
+    localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify(notifications));
+    updateNotificationBadge();
+
+    renderNotificationsList();
+    const modal = document.getElementById('notificationsModal');
+    if (modal) modal.classList.add('show');
+  }
+
+  function closeNotificationsModal() {
+    const modal = document.getElementById('notificationsModal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  function clearAllNotifications() {
+    localStorage.setItem(STORAGE_NOTIFS_KEY, JSON.stringify([]));
+    renderNotificationsList();
+    updateNotificationBadge();
+  }
+
+  function renderNotificationsList() {
+    const container = document.getElementById('notificationsList');
+    const notifications = getNotifications();
+
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (notifications.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد إشعارات حالياً</p>';
+      return;
     }
 
-    function toggleProfileDropdown(e) {
-      e.stopPropagation();
-      const dropdown = document.getElementById('profileDropdown');
-      if (dropdown) dropdown.classList.toggle('show');
+    notifications.forEach(n => {
+      const card = document.createElement('div');
+      card.className = `notification-item-card ${n.unread ? 'unread' : ''}`;
+      let iconMarkup = '';
+      
+      if (n.type === 'success') {
+        iconMarkup = `<div class="notification-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
+      } else if (n.type === 'rejected' || n.type === 'deleted') {
+        iconMarkup = `<div class="notification-icon error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+      } else {
+        iconMarkup = `<div class="notification-icon pending"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+      }
+
+      card.innerHTML = `
+        ${iconMarkup}
+        <div class="notification-content">
+          <h4 class="notification-title">${n.title}</h4>
+          <p class="notification-body">${n.message}</p>
+          <span class="notification-time">${n.timestamp}</span>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // --- USER SESSION & PROFILE DROPDOWN ---
+  function checkUserSession() {
+    const sessionData = localStorage.getItem('currentUser');
+    const navbarRight = document.querySelector('.navbar-right');
+
+    if (sessionData && navbarRight) {
+      const user = JSON.parse(sessionData);
+      const isMale = user.gender === 'male';
+
+      const genderBadgeHTML = isMale ? `
+        <span class="gender-badge gender-male">
+          <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="10" cy="14" r="5"></circle><path d="M19 5L13.5 10.5"></path><path d="M19 5h-5"></path><path d="M19 5v5"></path></svg>
+          طالب
+        </span>` : `
+        <span class="gender-badge gender-female">
+          <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="5"></circle><path d="M12 15v7"></path><path d="M9 19h6"></path></svg>
+          طالبة
+        </span>`;
+
+      navbarRight.innerHTML = `
+        <div class="user-profile-wrapper">
+          <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
+            <img src="${user.avatar || 'assets/images/web/default_avatar.png'}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
+            <div class="profile-info-group">
+              <span class="profile-name">${user.name}</span>
+              ${genderBadgeHTML}
+            </div>
+            <span class="nav-unread-dot" style="display: none;"></span>
+            <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+
+          <div id="profileDropdown" class="profile-dropdown-menu">
+            <a href="profile.html" class="dropdown-item" onclick="smoothNavigate(event, 'profile.html')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              الملف الشخصي
+            </a>
+            <a href="#" class="dropdown-item" onclick="openNotificationsModal(event)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              الإشعارات
+              <span class="unread-badge" style="display: none;">0</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout-item" onclick="logoutUser()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+
+        <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor"><path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/><path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/><path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/></svg>
+        </button>
+      `;
+
+      updateNotificationBadge();
+    }
+  }
+
+  function toggleProfileDropdown(e) {
+    e.stopPropagation();
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) dropdown.classList.toggle('show');
+  }
+
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
+  });
+
+  function logoutUser() {
+    const modal = document.getElementById('logoutModal');
+    if (modal) modal.classList.add('show');
+  }
+
+  function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  function confirmLogout() {
+    localStorage.removeItem('currentUser');
+    location.reload();
+  }
+
+  function smoothNavigate(event, targetUrl) {
+  event.preventDefault();
+
+  const sessionData = localStorage.getItem('currentUser');
+
+  // If navigating to archive page/section and user is not logged in, redirect to login page
+  if (targetUrl.includes('archive.html') && !sessionData) {
+    document.body.classList.add('fade-out');
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 300);
+    return;
+  }
+
+  // Normal navigation for logged-in users or public pages
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    window.location.href = targetUrl;
+  }, 300);
+}
+
+
+  // --- CATEGORY SWITCHING & ROUTING ---
+  function switchSubject(sectionId, subjectKey, btnElement) {
+    if (sectionId === 'recordings') {
+      currentSubject = subjectKey;
     }
 
-    document.addEventListener('click', (e) => {
-      const dropdown = document.getElementById('profileDropdown');
-      if (dropdown && dropdown.classList.contains('show')) dropdown.classList.remove('show');
+    if (btnElement) {
+      const parentContainer = btnElement.closest('.category-buttons');
+      if (parentContainer) {
+        parentContainer.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      }
+      btnElement.classList.add('active');
+    }
+
+    if (sectionId === 'recordings') {
+      loadSubjectRecordings(subjectKey);
+    } else {
+      filterStaticSection(sectionId, subjectKey);
+    }
+  }
+
+  function filterStaticSection(sectionId, subjectKey) {
+    const container = document.getElementById(sectionId + 'Container');
+    if (!container) return;
+
+    const cards = container.children;
+    Array.from(cards).forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      if (!cardCategory || subjectKey === 'all' || cardCategory === subjectKey) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // --- YOUTUBE API LOGIC ---
+  async function fetchPlaylistVideos(playlistId) {
+    if (!playlistId || playlistId.length < 10 || playlistId.startsWith("PLAYLIST_ID")) {
+      return [];
+    }
+
+    const endpoint = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${encodeURIComponent(playlistId)}&key=${YOUTUBE_API_KEY}`;
+
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) return [];
+
+      const data = await response.json();
+      return data.items
+        .filter(item => item.snippet && item.snippet.title !== "Private video" && item.snippet.title !== "Deleted video")
+        .map(item => ({
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails?.maxres?.url || item.snippet.thumbnails?.high?.url || 'assets/images/web/default_cover.png',
+          videoId: item.snippet.resourceId.videoId
+        }));
+    } catch (error) {
+      console.error("Failed to load recordings:", error);
+      return [];
+    }
+  }
+
+  async function loadSubjectRecordings(subjectKey) {
+    const container = document.getElementById("recordingsContainer");
+    const viewAllBtn = document.querySelector("#recordings .view-all-link");
+    
+    if (!container) return;
+    container.innerHTML = `<p style="text-align: center; color: #64748b; grid-column: 1/-1;">جاري تحميل التسجيلات...</p>`;
+
+    const playlistId = PLAYLIST_MAP[subjectKey];
+    currentSubjectVideos = await fetchPlaylistVideos(playlistId);
+    isExpanded = false;
+
+    if (currentSubjectVideos.length === 0) {
+      container.innerHTML = `<p style="text-align: center; color: #94a3b8; grid-column: 1/-1;">لا توجد تسجيلات متاحة حالياً لهذا المقرَّر.</p>`;
+      if (viewAllBtn) viewAllBtn.style.display = "none";
+      return;
+    }
+
+    if (viewAllBtn) {
+      viewAllBtn.style.display = currentSubjectVideos.length > 3 ? "inline-block" : "none";
+      viewAllBtn.onclick = (e) => {
+        e.preventDefault();
+        toggleViewAllRecordings();
+      };
+    }
+
+    renderRecordingsGrid();
+  }
+
+  function renderRecordingsGrid() {
+    const container = document.getElementById("recordingsContainer");
+    const viewAllBtn = document.querySelector("#recordings .view-all-link");
+    if (!container) return;
+
+    container.innerHTML = "";
+    const visibleVideos = isExpanded ? currentSubjectVideos : currentSubjectVideos.slice(0, 3);
+    const subjectLabel = SUBJECT_NAMES[currentSubject] || "المقرر الدراسي";
+
+    visibleVideos.forEach(video => {
+      const card = document.createElement("div");
+      card.className = "recording-card";
+      card.onclick = () => openVideoModal(video.videoId, video.title);
+
+      card.innerHTML = `
+        <div class="recording-thumb-wrapper">
+          <img src="${video.thumbnail}" alt="${video.title}" class="recording-thumb">
+          <div class="play-icon-overlay">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+        </div>
+        <div class="recording-details">
+          <h3>${video.title}</h3>
+          <p>مادة ${subjectLabel} - المستوى الأول</p>
+        </div>
+      `;
+      container.appendChild(card);
     });
 
-    function logoutUser() {
-      const modal = document.getElementById('logoutModal');
-      if (modal) modal.classList.add('show');
+    if (viewAllBtn) {
+      viewAllBtn.textContent = isExpanded ? "عرض أقل ←" : "← عرض الكل";
     }
+  }
 
-    function closeLogoutModal() {
-      const modal = document.getElementById('logoutModal');
-      if (modal) modal.classList.remove('show');
+  function toggleViewAllRecordings() {
+    isExpanded = !isExpanded;
+    renderRecordingsGrid();
+  }
+
+  function openVideoModal(videoId, title) {
+    const modal = document.getElementById("videoPlayerModal");
+    const iframe = document.getElementById("youtubeIframe");
+    const titleEl = document.getElementById("modalVideoTitle");
+
+    if (modal && iframe) {
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      if (titleEl) titleEl.textContent = title || "مشاهدة التسجيل";
+      modal.classList.add("show");
     }
+  }
 
-    function confirmLogout() {
-      localStorage.removeItem('currentUser');
-      location.reload();
+  function closeVideoModal() {
+    const modal = document.getElementById("videoPlayerModal");
+    const iframe = document.getElementById("youtubeIframe");
+
+    if (modal && iframe) {
+      iframe.src = "";
+      modal.classList.remove("show");
     }
+  }
 
-    function smoothNavigate(event, targetUrl) {
-      event.preventDefault();
-      document.body.classList.add('fade-out');
-      setTimeout(() => { window.location.href = targetUrl; }, 300);
+  function handleModalBackdropClick(event) {
+    if (event.target.id === 'videoPlayerModal') {
+      closeVideoModal();
     }
+  }
 
-    let currentSubject = 'balagha';
-
-    // --- CATEGORY SWITCHING & ROUTING ---
-    function switchSubject(sectionId, subjectKey, btnElement) {
-      if (sectionId === 'recordings') {
-        currentSubject = subjectKey;
-      }
-
-      if (btnElement) {
-        const parentContainer = btnElement.closest('.category-buttons');
-        if (parentContainer) {
-          parentContainer.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-        }
-        btnElement.classList.add('active');
-      }
-
-      if (sectionId === 'recordings') {
-        loadSubjectRecordings(subjectKey);
-      } else {
-        filterStaticSection(sectionId, subjectKey);
-      }
+  // --- OTHER DATA FETCHING ---
+  async function loadArchiveData() {
+    try {
+      const res = await fetch('data/archive.json');
+      return await res.json();
+    } catch (err) {
+      console.error('Error fetching archive.json:', err);
+      return { assignments: [], whiteboards: [], photos: [] };
     }
+  }
 
-    function filterStaticSection(sectionId, subjectKey) {
-      const container = document.getElementById(sectionId + 'Container');
-      if (!container) return;
+  // --- RENDER DYNAMIC ASSIGNMENTS ---
+  function renderAssignments(assignments) {
+  const container = document.getElementById('assignmentsContainer');
+  if (!container) return;
 
-      const cards = container.children;
-      Array.from(cards).forEach(card => {
-        const cardCategory = card.getAttribute('data-category');
-        if (!cardCategory || subjectKey === 'all' || cardCategory === subjectKey) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
+  container.innerHTML = '';
+  activeAssignmentList = assignments;
 
-    // --- YOUTUBE API LOGIC ---
-    let currentSubjectVideos = [];
-    let isExpanded = false;
+  if (assignments.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px 0;">لا توجد واجبات متاحة حالياً</p>';
+    return;
+  }
 
-    async function fetchPlaylistVideos(playlistId) {
-      if (!playlistId || playlistId.length < 10 || playlistId.startsWith("PLAYLIST_ID")) {
-        console.warn("Invalid or missing Playlist ID:", playlistId);
-        return [];
-      }
+  assignments.forEach(task => {
+    const now = new Date();
+    const dueDate = new Date(task.dueDate || Date.now() + 86400000);
+    const isExpired = now > dueDate;
 
-      const endpoint = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${encodeURIComponent(playlistId)}&key=${YOUTUBE_API_KEY}`;
+    if (!isExpired) {
+      const diffTime = Math.abs(dueDate - now);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      try {
-        const response = await fetch(endpoint);
-        if (!response.ok) {
-          console.warn(`YouTube API returned ${response.status} for playlist: ${playlistId}`);
-          return [];
-        }
+      container.innerHTML += `
+        <div class="assignment-card active-blue-card" onclick="openSubmissionModal('${task.id}')" data-category="${task.category || 'balagha'}">
+          <!-- RIGHT SIDE: TITLE & METADATA -->
+          <div class="assignment-right-info">
+            <h3 class="assignment-title">${task.title}</h3>
+            <p class="assignment-meta">مادة ${task.author || task.subject || 'المقرر'} • موعد التسليم: ${task.meta || 'قريباً'}</p>
+          </div>
 
-        const data = await response.json();
-
-        return data.items
-          .filter(item => item.snippet && item.snippet.title !== "Private video" && item.snippet.title !== "Deleted video")
-          .map(item => {
-            const vId = item.snippet.resourceId.videoId;
-            const thumb = item.snippet.thumbnails?.maxres?.url || 
-                          item.snippet.thumbnails?.high?.url || 
-                          item.snippet.thumbnails?.medium?.url || 
-                          'assets/images/web/default_cover.png';
-            
-            return {
-              title: item.snippet.title,
-              thumbnail: thumb,
-              videoId: vId
-            };
-          });
-      } catch (error) {
-        console.error("Failed to load recordings:", error);
-        return [];
-      }
-    }
-
-    async function loadSubjectRecordings(subjectKey) {
-      const container = document.getElementById("recordingsContainer");
-      const viewAllBtn = document.querySelector("#recordings .view-all-link");
-      
-      if (!container) return;
-
-      container.innerHTML = `<p style="text-align: center; color: #64748b; grid-column: 1/-1;">جاري تحميل التسجيلات...</p>`;
-
-      const playlistId = PLAYLIST_MAP[subjectKey];
-      currentSubjectVideos = await fetchPlaylistVideos(playlistId);
-      isExpanded = false;
-
-      if (currentSubjectVideos.length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: #94a3b8; grid-column: 1/-1;">لا توجد تسجيلات متاحة حالياً لهذا المقرَّر.</p>`;
-        if (viewAllBtn) viewAllBtn.style.display = "none";
-        return;
-      }
-
-      if (viewAllBtn) {
-        viewAllBtn.style.display = currentSubjectVideos.length > 3 ? "inline-block" : "none";
-        viewAllBtn.onclick = (e) => {
-          e.preventDefault();
-          toggleViewAllRecordings();
-        };
-      }
-
-      renderRecordingsGrid();
-    }
-
-    function renderRecordingsGrid() {
-      const container = document.getElementById("recordingsContainer");
-      const viewAllBtn = document.querySelector("#recordings .view-all-link");
-      if (!container) return;
-
-      container.innerHTML = "";
-
-      const visibleVideos = isExpanded ? currentSubjectVideos : currentSubjectVideos.slice(0, 3);
-      const subjectLabel = SUBJECT_NAMES[currentSubject] || "المقرر الدراسي";
-
-      visibleVideos.forEach(video => {
-        const card = document.createElement("div");
-        card.className = "recording-card";
-        card.onclick = () => openVideoModal(video.videoId, video.title);
-
-        card.innerHTML = `
-          <div class="recording-thumb-wrapper">
-            <img src="${video.thumbnail}" alt="${video.title}" class="recording-thumb">
-            <div class="play-icon-overlay">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          <!-- LEFT SIDE: INFO BUTTON & TIMER -->
+          <div class="assignment-left-actions">
+            <!-- WHITE CIRCLE 'i' BUTTON -->
+            <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openTaskDetailsModal('${task.id}')" title="تفاصيل الواجب">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
+            </button>
+
+            <!-- COUNTDOWN TIMER BADGE -->
+            <div class="assignment-timer">
+              <svg class="stopwatch-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>${diffDays} يوم</span>
             </div>
           </div>
-          <div class="recording-details">
-            <h3>${video.title}</h3>
-            <p>مادة ${subjectLabel} - المستوى الأول</p>
+        </div>
+      `;
+    } else {
+      container.innerHTML += `
+        <div class="assignment-card archived-white-card" data-category="${task.category || 'balagha'}">
+          <!-- RIGHT SIDE: TITLE & METADATA -->
+          <div class="assignment-right-info">
+            <h3 class="assignment-title dark-text">${task.title}</h3>
+            <p class="assignment-meta muted-text">مادة ${task.author || task.subject || 'المقرر'} • انتهى الموعد</p>
           </div>
-        `;
 
-        container.appendChild(card);
-      });
+          <!-- LEFT SIDE: INFO BUTTON & DATE -->
+          <div class="assignment-left-actions">
+            <button type="button" class="btn-info-icon dark" onclick="openTaskDetailsModal('${task.id}')" title="عرض التفاصيل">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </button>
+            <span class="archived-date-stamp">${task.meta || 'المنصرم'}</span>
+          </div>
+        </div>
+      `;
+    }
+  });
+}
 
-      if (viewAllBtn) {
-        viewAllBtn.textContent = isExpanded ? "عرض أقل ←" : "← عرض الكل";
-      }
+
+  // --- MODAL HELPERS ---
+  function openTaskDetailsModal(taskId) {
+    const task = activeAssignmentList.find(t => String(t.id) === String(taskId));
+    if (!task) return;
+
+    currentSelectedTask = task;
+    document.getElementById('detailTaskTitle').textContent = task.title;
+    document.getElementById('detailTaskMeta').textContent = `مادة ${task.author || task.subject || ''}`;
+    document.getElementById('detailTaskInstructions').textContent = task.instructions || task.meta || 'يرجى رفع إجابة البحث بالصيغة المطلوبة قبل انتهاء الموعد المحدد.';
+
+    document.getElementById('taskDetailsModal').classList.add('show');
+  }
+
+  function openSubmissionModal(taskId) {
+    const task = activeAssignmentList.find(t => String(t.id) === String(taskId));
+    if (!task) return;
+
+    currentSelectedTask = task;
+    document.getElementById('selectedAssignmentId').value = task.id;
+    document.getElementById('uploadTaskSubTitle').textContent = `تسليم ملف: ${task.title}`;
+    document.getElementById('taskUploadModal').classList.add('show');
+  }
+
+  function openUploadFromDetails() {
+    closeModal('taskDetailsModal');
+    if (currentSelectedTask) openSubmissionModal(currentSelectedTask.id);
+  }
+
+  function closeModal(modalId) {
+    const m = document.getElementById(modalId);
+    if (m) m.classList.remove('show');
+  }
+
+  function updateFileName(input) {
+    const label = document.getElementById('dropZoneFileName');
+    if (input.files && input.files[0]) {
+      label.innerHTML = `الملف المحدد: <b>${input.files[0].name}</b>`;
+    }
+  }
+
+  // --- INITIALIZATION ---
+  document.addEventListener('DOMContentLoaded', async () => {
+    checkUserSession();
+    initSidebarEvents();
+
+    loadSubjectRecordings('tawheed');
+
+    const data = await loadArchiveData();
+
+    if (data && data.assignments) {
+      renderAssignments(data.assignments);
     }
 
-    function toggleViewAllRecordings() {
-      isExpanded = !isExpanded;
-      renderRecordingsGrid();
-    }
-
-    function openVideoModal(videoId, title) {
-      const modal = document.getElementById("videoPlayerModal");
-      const iframe = document.getElementById("youtubeIframe");
-      const titleEl = document.getElementById("modalVideoTitle");
-
-      if (modal && iframe) {
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-        if (titleEl) titleEl.textContent = title || "مشاهدة التسجيل";
-        modal.classList.add("show");
-      }
-    }
-
-    function closeVideoModal() {
-      const modal = document.getElementById("videoPlayerModal");
-      const iframe = document.getElementById("youtubeIframe");
-
-      if (modal && iframe) {
-        iframe.src = "";
-        modal.classList.remove("show");
-      }
-    }
-
-    function handleModalBackdropClick(event) {
-      if (event.target.id === 'videoPlayerModal') {
-        closeVideoModal();
-      }
-    }
-
-    // --- OTHER DATA FETCHING ---
-    async function loadArchiveData() {
-      try {
-        const res = await fetch('data/archive.json');
-        return await res.json();
-      } catch (err) {
-        console.error('Error fetching archive.json:', err);
-        return { assignments: [], whiteboards: [], photos: [] };
-      }
-    }
-
-    // --- INITIALIZATION ---
-    document.addEventListener('DOMContentLoaded', async () => {
-      checkUserSession();
-      initSidebarEvents();
-
-      // Load active playlist automatically
-      loadSubjectRecordings('tawheed');
-
-      // Load static content from archive.json
-      const data = await loadArchiveData();
-
-      // Render Assignments with Category Data Tag
-      const assContainer = document.getElementById('assignmentsContainer');
-      if (assContainer && data.assignments) {
-        data.assignments.forEach(ass => {
-          assContainer.innerHTML += `
-            <div class="book-row-card" data-category="${ass.category || 'balagha'}">
-              <div class="book-row-right">
-                <img src="${ass.coverUrl}" alt="${ass.title}" class="book-row-cover">
-                <div class="book-row-details">
-                  <h3 class="book-row-title">${ass.title}</h3>
-                  <p class="book-row-author">${ass.author}</p>
-                  <span class="book-row-meta">${ass.meta}</span>
-                </div>
-              </div>
-              <div class="book-row-actions">
-                <a href="${ass.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </a>
-                <a href="${ass.pdfUrl}" download class="action-icon-btn" title="تحميل">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                </a>
-              </div>
+    ['whiteboards', 'photos'].forEach(key => {
+      const container = document.getElementById(key + 'Container');
+      if (container && data[key]) {
+        data[key].forEach(item => {
+          container.innerHTML += `
+            <div class="photo-card" data-category="${item.category || 'balagha'}">
+              <img src="${item.imageUrl}" alt="photo" class="photo-preview">
+              <div class="photo-date">${item.date}</div>
+              <div class="photo-meta">${item.meta}</div>
             </div>
           `;
         });
       }
-
-      // Render Whiteboards & Photos with Category Data Tags
-      ['whiteboards', 'photos'].forEach(key => {
-        const container = document.getElementById(key + 'Container');
-        if (container && data[key]) {
-          data[key].forEach(item => {
-            container.innerHTML += `
-              <div class="photo-card" data-category="${item.category || 'balagha'}">
-                <img src="${item.imageUrl}" alt="photo" class="photo-preview">
-                <div class="photo-date">${item.date}</div>
-                <div class="photo-meta">${item.meta}</div>
-              </div>
-            `;
-          });
-        }
-      });
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
