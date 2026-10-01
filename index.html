@@ -39,7 +39,7 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
   
   // Make supabase global across the app
-  window.supabaseClient = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </script>
 
 </head>
