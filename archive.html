@@ -149,6 +149,8 @@
           <button class="cat-btn" onclick="switchSubject('recordings', 'nahw', this)">النحو</button>
           <button class="cat-btn" onclick="switchSubject('recordings', 'adab', this)">تاريخ الأدب</button>
           <button class="cat-btn" onclick="switchSubject('recordings', 'indonesian', this)">اللغة الإندونيسية</button>
+          <button class="cat-btn" onclick="switchSubject('recordings', 'pkn', this)">الوطنية الإندونيسية</button>
+
         </div>
         
       </div>
@@ -177,6 +179,8 @@
           <button class="cat-btn" onclick="switchSubject('assignments', 'nahw', this)">النحو</button>
           <button class="cat-btn" onclick="switchSubject('assignments', 'adab', this)">تاريخ الأدب</button>
           <button class="cat-btn" onclick="switchSubject('assignments', 'indonesian', this)">اللغة الإندونيسية</button>
+          <button class="cat-btn" onclick="switchSubject('assignments', 'pkn', this)">الوطنية الإندونيسية</button>
+
         </div>
         
       </div>
@@ -204,6 +208,8 @@
           <button class="cat-btn" onclick="switchSubject('whiteboards', 'nahw', this)">النحو</button>
           <button class="cat-btn" onclick="switchSubject('whiteboards', 'adab', this)">تاريخ الأدب</button>
           <button class="cat-btn" onclick="switchSubject('whiteboards', 'indonesian', this)">اللغة الإندونيسية</button>
+          <button class="cat-btn" onclick="switchSubject('whiteboards', 'pkn', this)">الوطنية الإندونيسيةbutton>
+
         </div>
         
       </div>
@@ -231,6 +237,8 @@
           <button class="cat-btn" onclick="switchSubject('photos', 'nahw', this)">النحو</button>
           <button class="cat-btn" onclick="switchSubject('photos', 'adab', this)">تاريخ الأدب</button>
           <button class="cat-btn" onclick="switchSubject('photos', 'indonesian', this)">اللغة الإندونيسية</button>
+          <button class="cat-btn" onclick="switchSubject('photos', 'pkn', this)">الوطنية الإندونيسيةbutton>
+
         </div>
         
       </div>
@@ -355,9 +363,10 @@
     qiraah: "PLdnR_d9WNleo",
     tawheed: "PLPJw5eoRDYkw",
     kitaba: "PLGELkd3mgXnk",
-    nahw: "",
-    adab: "",
-    indonesian: "PLBh8NviWZoXw"
+    nahw: "PLe4mglMAFyMI",
+    adab: "PLdJKXXyPk4G0",
+    indonesian: "PLBh8NviWZoXw",
+    pkn: "PLKDrouyi9c0I"
   };
 
   const SUBJECT_NAMES = {
@@ -367,7 +376,8 @@
     kitaba: "الكتابة",
     nahw: "النحو",
     adab: "تاريخ الأدب",
-    indonesian: "اللغة الإندونيسية"
+    indonesian: "اللغة الإندونيسية",
+    pkn: "الوطنية الإندونيسية"
   };
 
   let activeAssignmentList = [];
@@ -822,52 +832,48 @@
       const diffTime = Math.abs(dueDate - now);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+      // 1. ACTIVE BLUE CARD (Outlined Info Button)
       container.innerHTML += `
         <div class="assignment-card active-blue-card" onclick="openSubmissionModal('${task.id}')" data-category="${task.category || 'balagha'}">
-          <!-- RIGHT SIDE: TITLE & METADATA -->
-          <div class="assignment-right-info">
-            <h3 class="assignment-title">${task.title}</h3>
-            <p class="assignment-meta">مادة ${task.author || task.subject || 'المقرر'} • موعد التسليم: ${task.meta || 'قريباً'}</p>
-          </div>
+          <div class="assignment-right-wrapper">
+            <div class="assignment-right-info">
+              <h3 class="assignment-title">${task.title}</h3>
+              <p class="assignment-meta">مادة ${task.author || task.subject || 'المقرر'} • الموعد النهائي ${task.meta || 'قريباً'}</p>
+            </div>
 
-          <!-- LEFT SIDE: INFO BUTTON & TIMER -->
-          <div class="assignment-left-actions">
-            <!-- WHITE CIRCLE 'i' BUTTON -->
+            <!-- Outlined Circle 'i' Button -->
             <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openTaskDetailsModal('${task.id}')" title="تفاصيل الواجب">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="16" x2="12" y2="12"></line>
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
             </button>
+          </div>
 
-            <!-- COUNTDOWN TIMER BADGE -->
-            <div class="assignment-timer">
-              <svg class="stopwatch-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span>${diffDays} يوم</span>
-            </div>
+          <div class="assignment-left-whitebox">
+            <svg class="stopwatch-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="timer-text">[${diffDays} أيام]</span>
           </div>
         </div>
       `;
     } else {
+      // 2. ARCHIVED WHITE CARD (Solid Dark 'i' Icon)
       container.innerHTML += `
         <div class="assignment-card archived-white-card" data-category="${task.category || 'balagha'}">
-          <!-- RIGHT SIDE: TITLE & METADATA -->
           <div class="assignment-right-info">
             <h3 class="assignment-title dark-text">${task.title}</h3>
             <p class="assignment-meta muted-text">مادة ${task.author || task.subject || 'المقرر'} • انتهى الموعد</p>
           </div>
 
-          <!-- LEFT SIDE: INFO BUTTON & DATE -->
           <div class="assignment-left-actions">
+            <!-- Solid Dark Filled 'i' Icon -->
             <button type="button" class="btn-info-icon dark" onclick="openTaskDetailsModal('${task.id}')" title="عرض التفاصيل">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#0f172a">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
               </svg>
             </button>
             <span class="archived-date-stamp">${task.meta || 'المنصرم'}</span>
@@ -877,6 +883,7 @@
     }
   });
 }
+
 
 
   // --- MODAL HELPERS ---

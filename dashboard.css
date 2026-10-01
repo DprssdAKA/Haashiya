@@ -372,6 +372,8 @@ input, button, select, textarea {
 }
 
 .book-row-author {
+  direction: ltr;
+  unicode-bidi: embed;
   font-size: 0.85rem;
   color: #3b82f6;
   margin: 0 0 4px 0;

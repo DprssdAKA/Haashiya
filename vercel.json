@@ -1,5 +1,9 @@
 {
+    "cleanUrls": true,
     "rewrites": [
-        { "source": "/library", "destination": "/index.html" }
+      { "source": "/library", "destination": "/index.html" }
+    ],
+    "redirects": [
+      { "source": "/index.html", "destination": "/library", "permanent": true }
     ]
-}
+  }

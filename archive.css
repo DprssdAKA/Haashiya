@@ -343,10 +343,24 @@
 
 /* 1. ACTIVE BLUE BANNER CARD */
 .assignment-card.active-blue-card {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(29, 78, 216, 0.25);
-  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Makes left and right sides equal height */
+  background-color: #ffffff; /* White background for the outer card */
+  border: 1px solid #e2e8f0; /* Thin subtle border around the whole card */
+  border-radius: 16px;
+  overflow: hidden; /* Clips the blue inner block to the rounded corners */
+  padding: 0; /* Important: padding is handled by inner elements */
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  cursor: pointer;
+  direction: rtl;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assignment-card.active-blue-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
 /* 2. ARCHIVED WHITE CARD */
@@ -357,10 +371,21 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
-/* RIGHT SIDE: TITLE & METADATA */
+
+/* RIGHT SIDE (Solid Blue Area) */
+.assignment-right-wrapper {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  color: #ffffff;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-radius: 14px 0 0 14px; /* Rounded corners on left inner edge */
+}
+
 .assignment-right-info {
   text-align: right;
-  flex-grow: 1;
 }
 
 .assignment-title {
@@ -376,9 +401,8 @@
 
 .assignment-meta {
   font-size: 0.82rem;
-  opacity: 0.9;
-  margin: 0;
   color: rgba(255, 255, 255, 0.85);
+  margin: 0;
 }
 
 .assignment-meta.muted-text {
@@ -392,6 +416,29 @@
   align-items: center;
   gap: 16px;
   flex-shrink: 0;
+}
+
+/* LEFT SIDE (Pure White Countdown Box) */
+.assignment-left-whitebox {
+  width: 85px; /* Fixed width for the white countdown column */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background-color: #ffffff;
+  padding: 12px;
+  flex-shrink: 0;
+}
+
+.assignment-left-whitebox .stopwatch-icon {
+  color: #1d4ed8; /* Blue stopwatch icon */
+}
+
+.assignment-left-whitebox .timer-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1d4ed8; /* Blue text for [7 أيام] */
 }
 
 /* SOLID WHITE CIRCLE FOR 'i' ICON */

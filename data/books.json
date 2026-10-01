@@ -70,6 +70,24 @@
       "meta": "المرجع الرئيسي - مادة تاريخ الأدب",
       "coverUrl": "assets/images/covers/adab3rby_1.png",
       "pdfUrl": "assets/pdfs/adab3rby_1.pdf"
+    },
+    {
+      "id": "bindoakademik",
+      "title": "Bahasa Indonesia Akademik",
+      "author": "Dr. Resnita Dewi, S.S., M.Hum.",
+      "category": "indonesian",
+      "meta": "المرجع الرئيسي - مادة اللغة الإندونيسية",
+      "coverUrl": "assets/images/covers/bindoakademik.png",
+      "pdfUrl": "assets/pdfs/bindoakademik.pdf"
+    },
+    {
+      "id": "pkn",
+      "title": "Pendidikan Kewarganegaraan",
+      "author": "Sri Suning Kusumawardani, dkk",
+      "category": "pkn",
+      "meta": "المرجع الرئيسي - مادة الوطنية الإندونيسية",
+      "coverUrl": "assets/images/covers/pkn.png",
+      "pdfUrl": "assets/pdfs/pkn.pdf"
     }
   ]
   
