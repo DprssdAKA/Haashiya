@@ -1,0 +1,43 @@
+[
+    {
+        "id": "pres_01",
+        "title": "مجموعة ٢ [الطلاب]",
+        "subtitle": "علم البديع",
+        "subject": "مادة البلاغة",
+        "category": "balagha",
+        "level": "1",
+        "thumbnail": "assets/presentations/balagha_group2_m.png",
+        "fileUrl": "assets/presentations/balagha_group2_m.pdf"
+    },
+    {
+      "id": "pres_02",
+      "title": "مجموعة ٢ [الطالبات]",
+      "subtitle": "علم البديع",
+      "subject": "مادة البلاغة",
+      "category": "balagha",
+      "level": "1",
+      "thumbnail": "assets/presentations/balagha_group2_f.png",
+      "fileUrl": "assets/presentations/balagha_group2_f.pdf"
+    },
+    {
+      "id": "pres_03",
+      "title": "مجموعة ٣ [الطلاب]",
+      "subtitle": "مراعة النظير",
+      "subject": "مادة البلاغة",
+      "category": "balagha",
+      "level": "1",
+      "thumbnail": "assets/presentations/balagha_group3_m.png",
+      "fileUrl": "assets/presentations/balagha_group3_m.pdf"
+    },
+    {
+        "id": "pres_04",
+        "title": "مجموعة ٣ [الطالبات]",
+        "subtitle": "المحسنات المعنوية",
+        "subject": "مادة البلاغة",
+        "category": "balagha",
+        "level": "1",
+        "thumbnail": "assets/presentations/balagha_group3_f.png",
+        "fileUrl": "assets/presentations/balagha_group3_f.pdf"
+      }
+  ]
+  

@@ -418,17 +418,25 @@
   flex-shrink: 0;
 }
 
-/* LEFT SIDE (Pure White Countdown Box) */
+/* COUNTDOWN WHITE BOX CONTAINER */
 .assignment-left-whitebox {
-  width: 85px; /* Fixed width for the white countdown column */
+  width: 110px; /* Expanded slightly to fit DD:HH:MM:SS comfortably */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
   background-color: #ffffff;
-  padding: 12px;
+  padding: 12px 8px;
   flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.assignment-left-whitebox:hover {
+  background-color: #f8fafc;
 }
 
 .assignment-left-whitebox .stopwatch-icon {
@@ -440,12 +448,64 @@
   height: 22px;
   object-fit: contain;
   display: block;
+  transition: transform 0.25s ease;
+}
+
+.assignment-left-whitebox:hover .stopwatch-img {
+  transform: scale(1.1);
 }
 
 .assignment-left-whitebox .timer-text {
   font-size: 0.8rem;
   font-weight: 700;
   color: #1d4ed8; /* Blue text for [7 أيام] */
+}
+
+/* TEXT WRAPPER FOR SMOOTH SWAP */
+.timer-text-wrapper {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* DEFAULT SIMPLE TIMER (Visible by default) */
+.timer-text-simple {
+  position: absolute;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  white-space: nowrap;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* HOVER DETAILED TIMER (Hidden by default) */
+.timer-text-detailed {
+  position: absolute;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-family: 'Work Sans', monospace, sans-serif; /* Monospace prevents numbers from jittering */
+  color: #1d4ed8;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* HOVER STATES */
+.assignment-left-whitebox:hover .timer-text-simple {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.assignment-left-whitebox:hover .timer-text-detailed {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* SOLID WHITE CIRCLE FOR 'i' ICON */
@@ -510,4 +570,220 @@
   background: #f1f5f9;
   padding: 6px 14px;
   border-radius: 10px;
+}
+
+/* --- PRESENTATIONS CARD LAYOUT --- */
+.presentation-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px 20px;
+  margin-bottom: 14px;
+  direction: rtl;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.presentation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* RIGHT SIDE: THUMBNAIL & TEXT INFO */
+.presentation-right-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.presentation-thumb {
+  width: 140px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  flex-shrink: 0;
+}
+
+.presentation-info {
+  text-align: right;
+}
+
+.presentation-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.presentation-subtitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin: 0 0 2px 0;
+}
+
+.presentation-subject {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* LEFT SIDE: ACTION CIRCLE BUTTONS */
+.presentation-left-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-right: 16px;
+  border-right: 1px solid #e2e8f0; /* Divider line matching mockup */
+}
+
+.btn-circle-action {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #0f172a; /* Dark navy circle buttons */
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-circle-action:hover {
+  transform: scale(1.08);
+  background-color: #1d4ed8; /* Highlight blue on hover */
+}
+
+/* --- MOBILE RESPONSIVE FIX FOR PRESENTATIONS (< 600px) --- */
+@media screen and (max-width: 600px) {
+  .presentation-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .presentation-right-group {
+    gap: 10px;
+    flex: 1; /* Allows text to expand dynamically */
+    min-width: 0; /* Prevents flex children from pushing bounds */
+  }
+
+  /* Shrink slide preview thumbnail for mobile screens */
+  .presentation-thumb {
+    width: 85px;
+    height: 55px;
+    border-radius: 6px;
+  }
+
+  /* Text adjustments to prevent awkward word wrapping */
+  .presentation-title {
+    font-size: 0.95rem;
+    white-space: nowrap; /* Keeps 'مجموعة ٢ [الطلاب]' on 1 line */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .presentation-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .presentation-subject {
+    font-size: 0.72rem;
+  }
+
+  /* Compact button actions section */
+  .presentation-left-actions {
+    gap: 6px;
+    padding-right: 8px;
+  }
+
+  .btn-circle-action {
+    width: 32px;
+    height: 32px;
+  }
+
+  .btn-circle-action svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+/* --- COMPACT MOBILE TIMER FIX (< 600px) --- */
+@media screen and (max-width: 600px) {
+  .assignment-left-whitebox {
+    width: 60px !important;
+    min-width: 60px !important;
+    padding: 6px 2px !important;
+    overflow: hidden !important; /* Prevents any overflow text from leaking */
+  }
+
+  .assignment-left-whitebox .stopwatch-img {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .timer-text-wrapper {
+    width: 100% !important;
+    height: 18px !important;
+  }
+
+  /* Simple text ([X أيام]) */
+  .timer-text-simple {
+    font-size: 0.65rem !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  /* Detailed text (00d:00h:00m:00s) */
+  .timer-text-detailed {
+    font-size: 0.48rem !important; /* Scaled down to prevent horizontal overflow */
+    letter-spacing: -0.5px !important; /* Tightened letter spacing */
+    font-weight: 700 !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* --- RECORDINGS 2x2 MOBILE GRID (< 600px) --- */
+@media screen and (max-width: 600px) {
+  .recordings-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Forces 2 columns */
+    gap: 10px !important;
+  }
+
+  .recording-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px !important;
+    overflow: hidden;
+  }
+
+  .recording-thumb-wrapper {
+    width: 100% !important;
+    aspect-ratio: 16 / 9; /* Maintains video thumbnail ratio */
+  }
+
+  .recording-details {
+    padding: 6px 4px !important;
+  }
+
+  .recording-details h3 {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 2px !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limits title to 2 lines with ellipsis */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .recording-details p {
+    font-size: 0.65rem !important;
+  }
 }

@@ -12,159 +12,159 @@
   <link rel="stylesheet" href="dashboard.css">
 
   <!-- Firebase Compatibility SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase JS Client for Storage -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
-    authDomain: "haashiya-web.firebaseapp.com",
-    projectId: "haashiya-web",
-    storageBucket: "haashiya-web.firebasestorage.app",
-    messagingSenderId: "340726241497",
-    appId: "1:340726241497:web:b5f62320301fc724fac6c8"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-
+    // Initialize Supabase Storage
+    const SUPABASE_URL = 'https://pdfripacgcbgggspxjyo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
+    const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
 </head>
 
 <body>
   
   <!-- NAVBAR -->
-<header class="navbar">
-  <div class="navbar-container">
-    
-    <!-- LEFT: LOGO -->
-    <div class="navbar-left">
-      <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
-        <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
-      </a>
-    </div>
-
-    <!-- CENTER: DESKTOP HORIZONTAL MENU (Hidden on Mobile) -->
-    <nav class="desktop-nav">
-      <ul class="nav-links">
-        <li>
-          <a href="index.html" class="nav-item-link" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
-        </li>
-
-        <!-- DROPDOWN: معرض الأرشيف -->
-        <li class="nav-dropdown">
-          <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
-            <span>معرض الأرشيف</span>
-            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
-            <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
-            <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
-            <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
-          </ul>
-        </li>
-
-        <!-- DROPDOWN: المكتبة الرقمية -->
-        <li class="nav-dropdown">
-          <a href="index.html#educational-materials" class="nav-item-link dropdown-trigger">
-            <span>المكتبة الرقمية</span>
-            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="index.html#educational-materials" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a></li>
-            <li><a href="index.html#general-library" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a></li>
-          </ul>
-        </li>
-
-        <li><a href="#" class="nav-item-link">معجم المصطلحات</a></li>
-        <li><a href="#" class="nav-item-link">التقويم الأكاديمي</a></li>
-        <li><a href="#" class="nav-item-link">التعلم بالذكاء الاصطناعي</a></li>
-      </ul>
-    </nav>
-
-    <!-- RIGHT: LOGIN / USER PROFILE & MOBILE HAMBURGER BUTTON -->
-    <div class="navbar-right">
-      <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+  <header class="navbar">
+    <div class="navbar-container">
       
-      <!-- Mobile Sidebar Toggle Button (Only visible on screens < 992px) -->
-      <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
-        <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
-          <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
-          <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
-          <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
-        </svg>
+      <!-- LEFT: LOGO -->
+      <div class="navbar-left">
+        <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
+          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+        </a>
+      </div>
+
+      <!-- CENTER: DESKTOP HORIZONTAL MENU (Hidden on Mobile) -->
+      <nav class="desktop-nav">
+        <ul class="nav-links">
+          <li>
+            <a href="index.html" class="nav-item-link" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+          </li>
+
+          <!-- DROPDOWN: معرض الأرشيف -->
+          <li class="nav-dropdown">
+            <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
+              <span>معرض الأرشيف</span>
+              <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
+              <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
+              <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
+              <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
+              <li><a href="archive.html#presentations" onclick="smoothNavigate(event, 'archive.html#presentations')">العرض التقديمي</a></li>
+            </ul>
+          </li>
+
+          <!-- DROPDOWN: المكتبة الرقمية -->
+          <li class="nav-dropdown">
+            <a href="index.html#educational-materials" class="nav-item-link dropdown-trigger">
+              <span>المكتبة الرقمية</span>
+              <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="index.html#educational-materials" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a></li>
+              <li><a href="index.html#general-library" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a></li>
+            </ul>
+          </li>
+
+          <li><a href="#" class="nav-item-link">معجم المصطلحات</a></li>
+          <li><a href="#" class="nav-item-link">التقويم الأكاديمي</a></li>
+          <li><a href="#" class="nav-item-link">التعلم بالذكاء الاصطناعي</a></li>
+        </ul>
+      </nav>
+
+      <!-- RIGHT: LOGIN / USER PROFILE & MOBILE HAMBURGER BUTTON -->
+      <div class="navbar-right">
+        <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+        
+        <!-- Mobile Sidebar Toggle Button -->
+        <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+            <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
+            <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
+            <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <!-- Sidebar Container -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <button id="close-sidebar-btn" class="btn-close" aria-label="Tutup">
+        <img src="assets/images/web/sidebar_icon.png" alt="Logo" class="sidebar-logo-img">
       </button>
     </div>
 
-  </div>
-</header>
+    <div class="sidebar-divider"></div>
 
-   <!-- Sidebar Overlay -->
-   <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <div class="menu-items">
+      <a href="#" class="menu-link menu-home">الرئيسية</a>
 
-   <!-- Sidebar Container -->
-   <aside id="sidebar" class="sidebar">
-     <!-- Header Sidebar -->
-     <div class="sidebar-header">
-       <button id="close-sidebar-btn" class="btn-close" aria-label="Tutup">
-         <img src="assets/images/web/sidebar_icon.png" alt="Logo" class="sidebar-logo-img">
-       </button>
-     </div>
- 
-     <!-- Garis Pembatas -->
-     <div class="sidebar-divider"></div>
- 
-     <!-- Menu Items -->
-     <div class="menu-items">
-       <a href="#" class="menu-link menu-home">الرئيسية</a>
- 
-       <!-- Menu Dropdown: معرض الأرشيف -->
-<div class="dropdown">
-  <button id="archive-btn" class="dropdown-btn active">
-    <span>معرض الأرشيف</span>
-    <svg class="arrow-icon open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  </button>
-  
-  <div id="archive-submenu" class="submenu open">
-    <a href="archive.html#recordings" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a>
-    <a href="archive.html#whiteboards" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a>
-    <a href="archive.html#assignments" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a>
-    <a href="archive.html#photos" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a>
-  </div>
-</div>
+      <!-- Menu Dropdown: معرض الأرشيف -->
+      <div class="dropdown">
+        <button id="archive-btn" class="dropdown-btn active">
+          <span>معرض الأرشيف</span>
+          <svg class="arrow-icon open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        
+        <div id="archive-submenu" class="submenu open">
+          <a href="archive.html#recordings" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a>
+          <a href="archive.html#whiteboards" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a>
+          <a href="archive.html#assignments" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a>
+          <a href="archive.html#photos" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a>
+          <a href="archive.html#presentations" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#presentations')">العرض التقديمي</a>
+        </div>
+      </div>
 
+      <!-- Menu Dropdown: المكتبة الرقمية -->
+      <div class="dropdown">
+        <button id="library-btn" class="dropdown-btn">
+          <span>المكتبة الرقمية</span>
+          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div id="library-submenu" class="submenu">
+          <a href="#educational-materials" class="submenu-link" onclick="toggleSidebar()">المواد التعليمية</a>
+          <a href="#general-library" class="submenu-link" onclick="toggleSidebar()">المكتبة العامة</a>
+        </div>
+      </div>
 
- 
-       <!-- Menu Dropdown: المكتبة الرقمية -->
-       <div class="dropdown">
-         <button id="library-btn" class="dropdown-btn">
-           <span>المكتبة الرقمية</span>
-           <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-             <polyline points="6 9 12 15 18 9"></polyline>
-           </svg>
-         </button>
-         <div id="library-submenu" class="submenu">
-           <a href="#educational-materials" class="submenu-link" onclick="toggleSidebar()">المواد التعليمية</a>
-           <a href="#general-library" class="submenu-link" onclick="toggleSidebar()">المكتبة العامة</a>
-         </div>
-       </div>
- 
-       <!-- Menu Tambahan -->
-       <a href="#" class="menu-link">معجم المصطلحات</a>
-       <a href="#" class="menu-link">التقويم الأكاديمي</a>
-       <a href="#" class="menu-link">التعلم المدعوم بالذكاء الاصطناعي</a>
-     </div>
-   </aside>
+      <a href="#" class="menu-link">معجم المصطلحات</a>
+      <a href="#" class="menu-link">التقويم الأكاديمي</a>
+      <a href="#" class="menu-link">التعلم المدعوم بالذكاء الاصطناعي</a>
+    </div>
+  </aside>
 
   <!-- Hero Banner Section -->
   <section class="hero-banner">
@@ -219,56 +219,63 @@
       </div>
   
       <!-- Horizontal Book List Container -->
-      <div id="educationalBooksContainer" class="book-list-container">
-        
-      </div>
+      <div id="educationalBooksContainer" class="book-list-container"></div>
     </section>
   
     <!-- SECTION 2: المكتبة العامة -->
-<section id="general-library" class="main-card-section">
-  <div class="section-header">
-    <h2 class="section-title">المكتبة العامة</h2>
-    
-    <!-- Right side action buttons container -->
-    <div class="section-actions">
-      <!-- Sandglass Admin Button (Hidden by default, shown via JS for Admins) -->
-      <button id="adminQueueBtn" class="btn-pending-queue" onclick="openAdminQueueModal()" style="display: none;" title="قائمة المراجعة">
-        <img src="assets/images/web/approvalqueue_icon.png" alt="Pending Queue" class="sandglass-icon">
-        <span id="pendingBadgeCount" class="pending-count">0</span>
-      </button>
-    
-      <button class="btn-add-book" onclick="openUploadModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        طلب إضافة كتاب
-      </button>
-      
-      <a href="category-view.html?cat=general" class="view-all-link" onclick="smoothNavigate(event, 'category-view.html?cat=general')">
-        عرض الكل &rarr;</a>
-    </div>
-    
-  </div>
+    <section id="general-library" class="main-card-section">
+      <div class="section-header">
+        <h2 class="section-title">المكتبة العامة</h2>
+        
+        <div class="section-actions">
+          <button id="adminQueueBtn" class="btn-pending-queue" onclick="openAdminQueueModal()" style="display: none;" title="قائمة المراجعة">
+            <img src="assets/images/web/approvalqueue_icon.png" alt="Pending Queue" class="sandglass-icon">
+            <span id="pendingBadgeCount" class="pending-count">0</span>
+          </button>
+        
+          <button class="btn-add-book" onclick="openUploadModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            طلب إضافة كتاب
+          </button>
+          
+          <a href="category-view.html?cat=general" class="view-all-link" onclick="smoothNavigate(event, 'category-view.html?cat=general')">
+            عرض الكل &rarr;</a>
+        </div>
+      </div>
 
-  <div class="book-list-container">
-    <!-- General library row items go here -->
-  </div>
-</section>
+      <div class="book-list-container">
+        <!-- General library row items render here -->
+      </div>
+    </section>
 
-  
   </main>
 
   <script>
-    // --- DATA LOADERS ---
-    async function loadUsersData() {
-      try {
-        const response = await fetch('data/users.json');
-        if (!response.ok) throw new Error('Failed to fetch users.json');
-        return await response.json();
-      } catch (error) {
-        console.error('Error loading users JSON data:', error);
-        return [];
+    // --- SUPABASE STORAGE UPLOAD HELPER ---
+    async function uploadToSupabase(file, folder = 'uploads') {
+      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const filePath = `${folder}/${Date.now()}_${cleanFileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('library_books')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error('Supabase Upload Error:', error);
+        throw new Error('فشل رفع الملف إلى Supabase Storage');
       }
+
+      const { data: urlData } = supabase.storage
+        .from('library_books')
+        .getPublicUrl(filePath);
+
+      return urlData.publicUrl;
     }
-  
+
+    // --- DATA LOADERS ---
     async function loadBooksData() {
       try {
         const response = await fetch('data/books.json');
@@ -317,27 +324,23 @@
     }
   
     function smoothNavigate(event, targetUrl) {
-  event.preventDefault();
+      event.preventDefault();
+      const sessionData = localStorage.getItem('currentUser');
 
-  const sessionData = localStorage.getItem('currentUser');
+      if (targetUrl.includes('archive.html') && !sessionData) {
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 300);
+        return;
+      }
 
-  // If navigating to archive page/section and user is not logged in, redirect to login page
-  if (targetUrl.includes('archive.html') && !sessionData) {
-    document.body.classList.add('fade-out');
-    setTimeout(() => {
-      window.location.href = 'login.html';
-    }, 300);
-    return;
-  }
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 300);
+    }
 
-  // Normal navigation for logged-in users or public pages
-  document.body.classList.add('fade-out');
-  setTimeout(() => {
-    window.location.href = targetUrl;
-  }, 300);
-}
-
-  
     let activeCategory = 'balagha';
   
     function filterCategory(categoryKey, btnElement) {
@@ -356,7 +359,7 @@
         const rowCat = row.getAttribute('data-category');
         const title = row.querySelector('.book-row-title')?.textContent.toLowerCase() || '';
         const author = row.querySelector('.book-row-author')?.textContent.toLowerCase() || '';
-  
+
         const matchesCategory = (activeCategory === 'all' || rowCat === activeCategory);
         const matchesSearch = title.includes(searchTerm) || author.includes(searchTerm);
   
@@ -367,13 +370,9 @@
         }
       });
     }
-  
-    // --- LOCALSTORAGE KEYS ---
-    const STORAGE_PENDING_KEY = 'pendingBooksDB';
-    const STORAGE_APPROVED_KEY = 'approvedBooksDB';
+
     const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
-  
-    // --- USER LOGIN SESSION & DROPDOWN ---
+
     function checkUserSession() {
       const sessionData = localStorage.getItem('currentUser');
       const navbarRight = document.querySelector('.navbar-right');
@@ -414,7 +413,7 @@
             </button>
   
             <div id="profileDropdown" class="profile-dropdown-menu">
-              <a href="profile.html" class="dropdown-item" onclick=smoothNavigate(event, 'profile.html')">
+              <a href="profile.html" class="dropdown-item" onclick="smoothNavigate(event, 'profile.html')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
@@ -444,8 +443,8 @@
             </div>
           </div>
   
-          <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-            <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
+            <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
               <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
               <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
               <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
@@ -468,7 +467,7 @@
       if (dropdown) dropdown.classList.toggle('show');
     }
   
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', () => {
       const dropdown = document.getElementById('profileDropdown');
       if (dropdown && dropdown.classList.contains('show')) {
         dropdown.classList.remove('show');
@@ -581,284 +580,244 @@
     function closeAdminQueueModal() {
       document.getElementById('adminQueueModal').classList.remove('show');
     }
-  
-    function getPendingBooks() {
-      return JSON.parse(localStorage.getItem(STORAGE_PENDING_KEY) || '[]');
+
+    async function updatePendingBadgeCount() {
+      try {
+        const snapshot = await db.collection('pending_books').get();
+        const badge = document.getElementById('pendingBadgeCount');
+        if (badge) badge.textContent = snapshot.size;
+      } catch (err) {
+        console.warn('Could not fetch pending books count:', err);
+      }
     }
   
-    function updatePendingBadgeCount() {
-      const badge = document.getElementById('pendingBadgeCount');
-      if (badge) badge.textContent = getPendingBooks().length;
-    }
-  
-    function renderPendingQueueList() {
+    async function renderPendingQueueList() {
       const container = document.getElementById('pendingBooksList');
-      const pendingBooks = getPendingBooks();
-  
       if (!container) return;
       container.innerHTML = '';
-  
-      if (pendingBooks.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد كتب معلقة حالياً</p>';
-        return;
-      }
-  
-      pendingBooks.forEach((book, index) => {
-        const card = document.createElement('div');
-        card.className = 'pending-item-card';
-        const coverImage = book.coverUrl || 'assets/images/covers/badee3tareekh.png';
-  
-        card.innerHTML = `
-          <div class="pending-item-left">
-            <img src="${coverImage}" alt="${book.title}" class="pending-book-cover">
-            <div class="pending-book-info">
-              <strong class="pending-book-title">${book.title}</strong>
-              <span class="pending-book-meta">المؤلف: ${book.author} | الفن: ${book.theme}</span>
+
+      try {
+        const snapshot = await db.collection('pending_books').orderBy('createdAt', 'desc').get();
+
+        if (snapshot.empty) {
+          container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:0.88rem; padding: 20px 0;">لا توجد كتب معلقة حالياً</p>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const book = doc.data();
+          const docId = doc.id;
+          const card = document.createElement('div');
+          card.className = 'pending-item-card';
+          const coverImage = book.coverUrl || 'assets/images/covers/badee3tareekh.png';
+
+          card.innerHTML = `
+            <div class="pending-item-left">
+              <img src="${coverImage}" alt="${book.title}" class="pending-book-cover">
+              <div class="pending-book-info">
+                <strong class="pending-book-title">${book.title}</strong>
+                <span class="pending-book-meta">المؤلف: ${book.author} | الفن: ${book.theme}</span>
+              </div>
             </div>
-          </div>
-  
-          <div class="pending-action-btns">
-            <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn btn-view-pending" title="معاينة الكتاب">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            </a>
-            <button class="btn-approve" onclick="approveBook(${index})" title="قبول الطلب">قبول</button>
-            <button class="btn-reject" onclick="rejectBook(${index})" title="رفض الطلب">رفض</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-  
-    function approveBook(index) {
-      let pending = getPendingBooks();
-      let approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
-  
-      const bookToApprove = pending.splice(index, 1)[0];
-      if (!bookToApprove) return;
-  
-      approved.unshift(bookToApprove);
-  
-      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(pending));
-      localStorage.setItem(STORAGE_APPROVED_KEY, JSON.stringify(approved));
-  
-      addNotification(
-        'تم القبول بنجاح! 🎉', 
-        `تمت الموافقة على كتاب "${bookToApprove.title}" وهو متاح الآن في المكتبة العامة.`, 
-        'success'
-      );
-  
-      renderPendingQueueList();
-      updatePendingBadgeCount();
-      renderApprovedBooksOnSurface();
-    }
-  
-    function rejectBook(index) {
-      let pending = getPendingBooks();
-      const bookToReject = pending.splice(index, 1)[0];
-      
-      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(pending));
-  
-      if (bookToReject) {
-        addNotification(
-          'تم رفض الطلب ❌', 
-          `عذراً، لم تتم الموافقة على كتاب "${bookToReject.title}" من قبل الإدارة.`, 
-          'rejected'
-        );
+
+            <div class="pending-action-btns">
+              <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn btn-view-pending" title="معاينة الكتاب">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </a>
+              <button class="btn-approve" onclick="approveBook('${docId}')" title="قبول الطلب">قبول</button>
+              <button class="btn-reject" onclick="rejectBook('${docId}')" title="رفض الطلب">رفض</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Error fetching pending queue:', err);
       }
+    }
   
-      renderPendingQueueList();
-      updatePendingBadgeCount();
+    async function approveBook(docId) {
+      try {
+        const docRef = db.collection('pending_books').doc(docId);
+        const docSnap = await docRef.get();
+
+        if (!docSnap.exists) return;
+        const bookData = docSnap.data();
+
+        // 1. Add to approved_books collection
+        await db.collection('approved_books').add({
+          ...bookData,
+          approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 2. Remove from pending_books collection
+        await docRef.delete();
+
+        addNotification(
+          'تم القبول بنجاح! 🎉', 
+          `تمت الموافقة على كتاب "${bookData.title}" وهو متاح الآن في المكتبة العامة.`, 
+          'success'
+        );
+
+        renderPendingQueueList();
+        updatePendingBadgeCount();
+        showToastNotification();
+      } catch (err) {
+        console.error('Approve Error:', err);
+        showErrorToast('حدث خطأ أثناء موافقة الكتاب');
+      }
+    }
+  
+    async function rejectBook(docId) {
+      try {
+        const docRef = db.collection('pending_books').doc(docId);
+        const docSnap = await docRef.get();
+
+        if (docSnap.exists) {
+          const bookData = docSnap.data();
+          await docRef.delete();
+
+          addNotification(
+            'تم رفض الطلب ❌', 
+            `عذراً، لم تتم الموافقة على كتاب "${bookData.title}" من قبل الإدارة.`, 
+            'rejected'
+          );
+        }
+
+        renderPendingQueueList();
+        updatePendingBadgeCount();
+      } catch (err) {
+        console.error('Reject Error:', err);
+        showErrorToast('حدث خطأ أثناء رفض الكتاب');
+      }
     }
   
     function listenToApprovedBooks() {
-  const container = document.querySelector('.main-card-section:last-of-type .book-list-container');
-  if (!container) return;
+      const container = document.querySelector('#general-library .book-list-container');
+      if (!container) return;
 
-  const sessionData = localStorage.getItem('currentUser');
-  const user = sessionData ? JSON.parse(sessionData) : null;
-  const isAdmin = user && user.role === 'admin';
+      const sessionData = localStorage.getItem('currentUser');
+      const user = sessionData ? JSON.parse(sessionData) : null;
+      const isAdmin = user && user.role === 'admin';
 
-  db.collection('approved_books')
-    .orderBy('createdAt', 'desc')
-    .onSnapshot((snapshot) => {
-      document.querySelectorAll('.user-approved-card').forEach(el => el.remove());
+      db.collection('approved_books')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot((snapshot) => {
+          container.innerHTML = '';
 
-      snapshot.forEach((doc) => {
-        const book = doc.data();
-        const card = document.createElement('div');
-        card.className = 'book-row-card user-approved-card';
-        card.setAttribute('data-category', 'general');
+          snapshot.forEach((doc) => {
+            const book = doc.data();
+            const card = document.createElement('div');
+            card.className = 'book-row-card user-approved-card';
+            card.setAttribute('data-category', 'general');
 
-        const adminActions = isAdmin ? `
-          <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook('${doc.id}')" title="حذف الكتاب">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-          </button>
-        ` : '';
+            const adminActions = isAdmin ? `
+              <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook('${doc.id}')" title="حذف الكتاب">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            ` : '';
 
-        card.innerHTML = `
-          <div class="book-row-right">
-            <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
-            <div class="book-row-details">
-              <h3 class="book-row-title">${book.title}</h3>
-              <p class="book-row-author">${book.author}</p>
-              <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}</span>
-            </div>
-          </div>
-          <div class="book-row-actions">
-            ${adminActions}
-            <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </a>
-            <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            </a>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    });
-}
-
-  // --- HELPER FUNCTION FOR FIREBASE STORAGE ---
-async function uploadFileToStorage(file, folderName) {
-  // Creates a unique path in bucket e.g., 'pdfs/1726732000000_book.pdf'
-  const fileRef = storage.ref(`${folderName}/${Date.now()}_${file.name}`);
-  const snapshot = await fileRef.put(file);
-  return await snapshot.getDownloadURL();
-}
-
-function convertFileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
-}
-
-  // --- UPDATED SUBMIT HANDLER ---
-  async function handleBookSubmit(e) {
-  e.preventDefault();
-
-  const title = document.getElementById('bookTitle').value.trim();
-  const author = document.getElementById('bookAuthor').value.trim();
-  const theme = document.getElementById('bookCategory').value;
-  const pdfFile = document.getElementById('pdfInput').files[0];
-  const coverFile = document.getElementById('coverInput').files[0];
-
-  if (!title || !author || !pdfFile) {
-    showErrorToast('يُرجَى ملء جميع الحقول المطلوبة ورفع ملف PDF');
-    return;
-  }
-
-  // Firestore documents have a 1MB size limit per document
-  if (pdfFile.size > 800 * 1024) {
-    showErrorToast('حجم ملف PDF يجب أن يكون أقل من 800 كيلوبايت');
-    return;
-  }
-
-  try {
-    showToastNotification('جاري تجهيز الملفات...');
-
-    // Convert PDF to Base64 string
-    const pdfUrl = await convertFileToBase64(pdfFile);
-
-    // Convert Cover to Base64 string if present, else fallback
-    let coverUrl = 'assets/images/covers/badee3tareekh.png';
-    if (coverFile) {
-      coverUrl = await convertFileToBase64(coverFile);
+            card.innerHTML = `
+              <div class="book-row-right">
+                <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
+                <div class="book-row-details">
+                  <h3 class="book-row-title">${book.title}</h3>
+                  <p class="book-row-author">${book.author}</p>
+                  <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}</span>
+                </div>
+              </div>
+              <div class="book-row-actions">
+                ${adminActions}
+                <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </a>
+                <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </a>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        });
     }
 
-    // Save directly to Firestore
-    await db.collection('pending_books').add({
-      title,
-      author,
-      theme,
-      pdfUrl,
-      coverUrl,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    addNotification('طلب إضافة كتاب', `تم إرسال طلب إضافة كتاب "${title}" بنجاح، وهو قيد مراجعة الإدارة.`, 'pending');
-    closeUploadModal();
-    showToastNotification('تم طلب رفع الكتاب بنجاح!');
-  } catch (err) {
-    console.error('Base64 Upload Error:', err);
-    showErrorToast('حدث خطأ أثناء حفظ الكتاب');
-  }
-}
-  
-    let currentEditingIndex = null;
-  
-    function openEditBookModal(index) {
-      const approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
-      const book = approved[index];
-  
-      if (!book) return;
-      currentEditingIndex = index;
-  
-      document.getElementById('editBookTitle').value = book.title;
-      document.getElementById('editBookAuthor').value = book.author;
-      document.getElementById('editBookCategory').value = book.theme;
-  
-      document.getElementById('editBookModal').classList.add('show');
-    }
-  
-    function closeEditBookModal() {
-      document.getElementById('editBookModal').classList.remove('show');
-      currentEditingIndex = null;
-    }
-  
-    function handleEditBookSubmit(e) {
+    // --- SUBMIT HANDLER WITH SUPABASE STORAGE ---
+    async function handleBookSubmit(e) {
       e.preventDefault();
-  
-      if (currentEditingIndex === null) return;
-  
-      let approved = JSON.parse(localStorage.getItem(STORAGE_APPROVED_KEY) || '[]');
-      
-      approved[currentEditingIndex].title = document.getElementById('editBookTitle').value.trim();
-      approved[currentEditingIndex].author = document.getElementById('editBookAuthor').value.trim();
-      approved[currentEditingIndex].theme = document.getElementById('editBookCategory').value;
-  
-      localStorage.setItem(STORAGE_APPROVED_KEY, JSON.stringify(approved));
-  
-      closeEditBookModal();
-      renderApprovedBooksOnSurface();
-      showToastNotification();
+
+      const title = document.getElementById('bookTitle').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+      const theme = document.getElementById('bookCategory').value;
+      const pdfFile = document.getElementById('pdfInput').files[0];
+      const coverFile = document.getElementById('coverInput').files[0];
+
+      if (!title || !author || !pdfFile) {
+        showErrorToast('يُرجَى ملء جميع الحقول المطلوبة ورفع ملف PDF');
+        return;
+      }
+
+      try {
+        showToastNotification('جاري رفع الملفات إلى الخادم...');
+
+        // 1. Upload PDF to Supabase Storage
+        const pdfUrl = await uploadToSupabase(pdfFile, 'pdfs');
+
+        // 2. Upload Cover image if provided, else fallback
+        let coverUrl = 'assets/images/covers/badee3tareekh.png';
+        if (coverFile) {
+          coverUrl = await uploadToSupabase(coverFile, 'covers');
+        }
+
+        // 3. Save direct public URLs to Firestore
+        await db.collection('pending_books').add({
+          title,
+          author,
+          theme,
+          pdfUrl,
+          coverUrl,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        addNotification('طلب إضافة كتاب', `تم إرسال طلب إضافة كتاب "${title}" بنجاح، وهو قيد مراجعة الإدارة.`, 'pending');
+        closeUploadModal();
+        showToastNotification('تم طلب رفع الكتاب بنجاح! 🎉');
+      } catch (err) {
+        console.error('Book Submission Error:', err);
+        showErrorToast('حدث خطأ أثناء رفع الكتاب إلى الخادم');
+      }
     }
   
     let currentDeletingDocId = null;
 
-function removeApprovedBook(docId) {
-  currentDeletingDocId = docId;
-  const modal = document.getElementById('deleteBookModal');
-  if (modal) modal.classList.add('show');
-}
-
-function closeDeleteBookModal() {
-  const modal = document.getElementById('deleteBookModal');
-  if (modal) modal.classList.remove('show');
-  currentDeletingDocId = null;
-}
-
-async function confirmDeleteBook() {
-  if (currentDeletingDocId) {
-    try {
-      await db.collection('approved_books').doc(currentDeletingDocId).delete();
-      closeDeleteBookModal();
-      showErrorToast('تم حذف الكتاب بنجاح من المكتبة العامة');
-    } catch (err) {
-      console.error('Delete Error:', err);
-      showErrorToast('حدث خطأ أثناء حذف الكتاب');
+    function removeApprovedBook(docId) {
+      currentDeletingDocId = docId;
+      const modal = document.getElementById('deleteBookModal');
+      if (modal) modal.classList.add('show');
     }
-  }
-}
+
+    function closeDeleteBookModal() {
+      const modal = document.getElementById('deleteBookModal');
+      if (modal) modal.classList.remove('show');
+      currentDeletingDocId = null;
+    }
+
+    async function confirmDeleteBook() {
+      if (currentDeletingDocId) {
+        try {
+          await db.collection('approved_books').doc(currentDeletingDocId).delete();
+          closeDeleteBookModal();
+          showErrorToast('تم حذف الكتاب بنجاح من المكتبة العامة');
+        } catch (err) {
+          console.error('Delete Error:', err);
+          showErrorToast('حدث خطأ أثناء حذف الكتاب');
+        }
+      }
+    }
   
     function getNotifications() {
       return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
@@ -976,7 +935,6 @@ async function confirmDeleteBook() {
     }
   
     function initSidebarEvents() {
-      const openSidebarBtn = document.getElementById('open-sidebar-btn');
       const closeSidebarBtn = document.getElementById('close-sidebar-btn');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
@@ -1038,208 +996,163 @@ async function confirmDeleteBook() {
     });
   </script>
 
-<footer class="site-footer">
-  <div class="footer-overlay">
-    <div class="footer-container">
-      <img src="assets/images/web/footer_preview.png" alt="footer" class="footer-logo">
+  <footer class="site-footer">
+    <div class="footer-overlay">
+      <div class="footer-container">
+        <img src="assets/images/web/footer_preview.png" alt="footer" class="footer-logo">
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
 
   <!-- LOGOUT CONFIRMATION MODAL -->
-<div id="logoutModal" class="logout-modal-overlay">
-  <div class="logout-modal-card">
-    <div class="logout-modal-icon">⚠️</div>
-    <h3 class="logout-modal-title">تسجيل الخروج</h3>
-    <p class="logout-modal-text">هل أنت تأكد من أنك تريد تسجيل الخروج؟</p>
-    <div class="logout-modal-actions">
-      <button class="logout-confirm-btn" onclick="confirmLogout()">نعم، تسجيل الخروج</button>
-      <button class="logout-cancel-btn" onclick="closeLogoutModal()">إلغاء</button>
+  <div id="logoutModal" class="logout-modal-overlay">
+    <div class="logout-modal-card">
+      <div class="logout-modal-icon">⚠️</div>
+      <h3 class="logout-modal-title">تسجيل الخروج</h3>
+      <p class="logout-modal-text">هل أنت تأكد من أنك تريد تسجيل الخروج؟</p>
+      <div class="logout-modal-actions">
+        <button class="logout-confirm-btn" onclick="confirmLogout()">نعم، تسجيل الخروج</button>
+        <button class="logout-cancel-btn" onclick="closeLogoutModal()">إلغاء</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- UPLOAD BOOK MODAL -->
-<div id="uploadModal" class="upload-modal-overlay">
-  <div class="upload-modal-card">
-    <button class="modal-close-x" onclick="closeUploadModal()">&times;</button>
+  <!-- UPLOAD BOOK MODAL -->
+  <div id="uploadModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeUploadModal()">&times;</button>
 
-    <h3 class="upload-modal-title">إضافة كتاب جديد</h3>
-    <p class="upload-modal-subtitle">قم برفع ملف PDF وصورة الغلاف للمساهمة في المكتبة العامة</p>
+      <h3 class="upload-modal-title">إضافة كتاب جديد</h3>
+      <p class="upload-modal-subtitle">قم برفع ملف PDF وصورة الغلاف للمساهمة في المكتبة العامة</p>
 
-    <form id="uploadBookForm" onsubmit="handleBookSubmit(event)">
-      <!-- Book Title -->
-      <div class="modal-field">
-        <label for="bookTitle">عنوان الكتاب</label>
-        <input type="text" id="bookTitle" class="modal-input" placeholder="أدخل اسم الكتاب..." required autocomplete="off">
-      </div>
+      <form id="uploadBookForm" onsubmit="handleBookSubmit(event)">
+        <!-- Book Title -->
+        <div class="modal-field">
+          <label for="bookTitle">عنوان الكتاب</label>
+          <input type="text" id="bookTitle" class="modal-input" placeholder="أدخل اسم الكتاب..." required autocomplete="off">
+        </div>
 
-      <!-- Author -->
-      <div class="modal-field">
-        <label for="bookAuthor">اسم المؤلف</label>
-        <input type="text" id="bookAuthor" class="modal-input" placeholder="أدخل اسم المؤلف..." required autocomplete="off">
-      </div>
+        <!-- Author -->
+        <div class="modal-field">
+          <label for="bookAuthor">اسم المؤلف</label>
+          <input type="text" id="bookAuthor" class="modal-input" placeholder="أدخل اسم المؤلف..." required autocomplete="off">
+        </div>
 
-      <!-- Theme / Topic Category -->
-      <div class="modal-field">
-        <label for="bookCategory">موضوع الكتاب / الفن</label>
-        <select id="bookCategory" class="modal-select" required>
-          <option value="العقيدة">العقيدة</option>
-          <option value="الشرح">الشرح</option>
-          <option value="المتن">المتن</option>
-          <option value="اللغة">اللغة</option>
-          <option value="الأحكام الشرعية">الأحكام الشرعية</option>
-          <option value="التفسير">التفسير</option>
-          <option value="الحديث">الحديث</option>
-          <option value="أخرى" selected>أخرى</option>
-        </select>
-      </div>
+        <!-- Theme / Topic Category -->
+        <div class="modal-field">
+          <label for="bookCategory">موضوع الكتاب / الفن</label>
+          <select id="bookCategory" class="modal-select" required>
+            <option value="العقيدة">العقيدة</option>
+            <option value="الشرح">الشرح</option>
+            <option value="المتن">المتن</option>
+            <option value="اللغة">اللغة</option>
+            <option value="الأحكام الشرعية">الأحكام الشرعية</option>
+            <option value="التفسير">التفسير</option>
+            <option value="الحديث">الحديث</option>
+            <option value="أخرى" selected>أخرى</option>
+          </select>
+        </div>
 
-      <!-- 1st Zone: PDF File -->
-      <div class="drop-zone" id="pdfDropZone" onclick="document.getElementById('pdfInput').click()">
-        <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="12" y1="18" x2="12" y2="12"></line>
-          <line x1="9" y1="15" x2="12" y2="12"></line>
-          <line x1="15" y1="15" x2="12" y2="12"></line>
-        </svg>
-        <span class="drop-zone-text" id="pdfDropText">اسحب ملف PDF الكتاب هنا أو <b>اختر من الجهاز</b></span>
-        <input 
-          type="file" 
-          id="pdfInput" 
-          accept="application/pdf" 
-          style="display: none;" 
-          onchange="validateFileSelect(this, 'pdfDropText', ['application/pdf', '.pdf'], 'PDF')"
+        <!-- 1st Zone: PDF File -->
+        <div class="drop-zone" id="pdfDropZone" onclick="document.getElementById('pdfInput').click()">
+          <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="12" y2="12"></line>
+            <line x1="15" y1="15" x2="12" y2="12"></line>
+          </svg>
+          <span class="drop-zone-text" id="pdfDropText">اسحب ملف PDF الكتاب هنا أو <b>اختر من الجهاز</b></span>
+          <input 
+            type="file" 
+            id="pdfInput" 
+            accept="application/pdf" 
+            style="display: none;" 
+            onchange="validateFileSelect(this, 'pdfDropText', ['application/pdf', '.pdf'], 'PDF')"
           >
-      </div>
+        </div>
 
-      <!-- 2nd Zone: Book Cover Image -->
-      <div class="drop-zone" id="coverDropZone" onclick="document.getElementById('coverInput').click()">
-        <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <circle cx="8.5" cy="8.5" r="1.5"></circle>
-          <polyline points="21 15 16 10 5 21"></polyline>
-        </svg>
-        <span class="drop-zone-text" id="coverDropText">اسحب صورة الغلاف (PNG/JPG) أو <b>اختر صورة</b></span>
-        <input 
-        type="file" 
-        id="coverInput" 
-        accept="image/png, image/jpeg, image/jpg" 
-        style="display: none;" 
-        onchange="validateFileSelect(this, 'coverDropText', ['image/png', 'image/jpeg', 'image/jpg'], 'صور (PNG/JPG)')"
-        >
-      </div>
+        <!-- 2nd Zone: Book Cover Image -->
+        <div class="drop-zone" id="coverDropZone" onclick="document.getElementById('coverInput').click()">
+          <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <span class="drop-zone-text" id="coverDropText">اسحب صورة الغلاف (PNG/JPG) أو <b>اختر صورة</b></span>
+          <input 
+            type="file" 
+            id="coverInput" 
+            accept="image/png, image/jpeg, image/jpg" 
+            style="display: none;" 
+            onchange="validateFileSelect(this, 'coverDropText', ['image/png', 'image/jpeg', 'image/jpg'], 'صور (PNG/JPG)')"
+          >
+        </div>
 
-      <div class="upload-modal-actions">
-        <button type="submit" class="btn-submit-upload">طلب رفع كتاب</button>
-        <button type="button" class="btn-cancel-upload" onclick="closeUploadModal()">إلغاء</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- SUCCESS TOAST NOTIFICATION -->
-<div id="toastNotification" class="toast-notification">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="20 6 9 17 4 12"></polyline>
-  </svg>
-  <span>تم طلب رفع الكتاب بنجاح! سيتم عرضه فور الموافقة عليه</span>
-</div>
-
-<!-- ERROR TOAST NOTIFICATION (SLIDES FROM RIGHT) -->
-<div id="errorToastNotification" class="toast-notification toast-error">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="15" y1="9" x2="9" y2="15"></line>
-    <line x1="9" y1="9" x2="15" y2="15"></line>
-  </svg>
-  <span id="errorToastMessage">حدث خطأ في المدخلات!</span>
-</div>
-
-<!-- ADMIN APPROVAL QUEUE MODAL -->
-<div id="adminQueueModal" class="upload-modal-overlay">
-  <div class="upload-modal-card queue-modal-card">
-    <button class="modal-close-x" onclick="closeAdminQueueModal()">&times;</button>
-    <h3 class="upload-modal-title">طلبات المراجعة المعلقة</h3>
-    <p class="upload-modal-subtitle">الموافقة أو الرفض على الكتب المرسلة من المستخدمين</p>
-
-    <div id="pendingBooksList" class="pending-books-container">
-      <!-- Pending items populate here dynamically -->
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">طلب رفع كتاب</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeUploadModal()">إلغاء</button>
+        </div>
+      </form>
     </div>
   </div>
-</div>
 
-<!-- EDIT BOOK MODAL -->
-<div id="editBookModal" class="upload-modal-overlay">
-  <div class="upload-modal-card">
-    <button class="modal-close-x" onclick="closeEditBookModal()">&times;</button>
-
-    <h3 class="upload-modal-title">تعديل معلومات الكتاب</h3>
-    <p class="upload-modal-subtitle">تعديل اسم الكتاب، المؤلف، أو التصنيف</p>
-
-    <form id="editBookForm" onsubmit="handleEditBookSubmit(event)">
-      <div class="modal-field">
-        <label for="editBookTitle">عنوان الكتاب</label>
-        <input type="text" id="editBookTitle" class="modal-input" required autocomplete="off">
-      </div>
-
-      <div class="modal-field">
-        <label for="editBookAuthor">اسم المؤلف</label>
-        <input type="text" id="editBookAuthor" class="modal-input" required autocomplete="off">
-      </div>
-
-      <div class="modal-field">
-        <label for="editBookCategory">موضوع الكتاب / الفن</label>
-        <select id="editBookCategory" class="modal-select" required>
-          <option value="العقيدة">العقيدة</option>
-          <option value="الشرح">الشرح</option>
-          <option value="المتن">المتن</option>
-          <option value="اللغة">اللغة</option>
-          <option value="الأحكام الشرعية">الأحكام الشرعية</option>
-          <option value="التفسير">التفسير</option>
-          <option value="الحديث">الحديث</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-      </div>
-
-      <div class="upload-modal-actions">
-        <button type="submit" class="btn-submit-upload">حفظ التغييرات</button>
-        <button type="button" class="btn-cancel-upload" onclick="closeEditBookModal()">إلغاء</button>
-      </div>
-    </form>
+  <!-- SUCCESS TOAST NOTIFICATION -->
+  <div id="toastNotification" class="toast-notification">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span>تم طلب رفع الكتاب بنجاح! سيتم عرضه فور الموافقة عليه</span>
   </div>
-</div>
 
-<!-- DELETE CONFIRMATION MODAL -->
-<div id="deleteBookModal" class="logout-modal-overlay">
-  <div class="logout-modal-card">
-    <div class="logout-modal-icon">🗑️</div>
-    <h3 class="logout-modal-title">حذف الكتاب</h3>
-    <p class="logout-modal-text">هل أنت تأكد من رغبتك في حذف هذا الكتاب بشكل نهائي من المكتبة العامة؟</p>
-    <div class="logout-modal-actions">
-      <button class="logout-confirm-btn" onclick="confirmDeleteBook()">نعم، احذف الكتاب</button>
-      <button class="logout-cancel-btn" onclick="closeDeleteBookModal()">إلغاء</button>
+  <!-- ERROR TOAST NOTIFICATION -->
+  <div id="errorToastNotification" class="toast-notification toast-error">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+    <span id="errorToastMessage">حدث خطأ في المدخلات!</span>
+  </div>
+
+  <!-- ADMIN APPROVAL QUEUE MODAL -->
+  <div id="adminQueueModal" class="upload-modal-overlay">
+    <div class="upload-modal-card queue-modal-card">
+      <button class="modal-close-x" onclick="closeAdminQueueModal()">&times;</button>
+      <h3 class="upload-modal-title">طلبات المراجعة المعلقة</h3>
+      <p class="upload-modal-subtitle">الموافقة أو الرفض على الكتب المرسلة من المستخدمين</p>
+
+      <div id="pendingBooksList" class="pending-books-container"></div>
     </div>
   </div>
-</div>
 
-<!-- NOTIFICATIONS MODAL -->
-<div id="notificationsModal" class="upload-modal-overlay">
-  <div class="upload-modal-card notifications-modal-card">
-    <button class="modal-close-x" onclick="closeNotificationsModal()">&times;</button>
-
-    <div class="notifications-header">
-      <h3 class="upload-modal-title">الإشعارات</h3>
-      <button class="btn-clear-notifications" onclick="clearAllNotifications()">مسح الكل</button>
-    </div>
-    <p class="upload-modal-subtitle">سجل التحديثات وحالة طلبات إضافة الكتب</p>
-
-    <div id="notificationsList" class="notifications-list-container">
-      <!-- Dynamic notification cards render here -->
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="deleteBookModal" class="logout-modal-overlay">
+    <div class="logout-modal-card">
+      <div class="logout-modal-icon">🗑️️</div>
+      <h3 class="logout-modal-title">حذف الكتاب</h3>
+      <p class="logout-modal-text">هل أنت تأكد من رغبتك في حذف هذا الكتاب بشكل نهائي من المكتبة العامة؟</p>
+      <div class="logout-modal-actions">
+        <button class="logout-confirm-btn" onclick="confirmDeleteBook()">نعم، احذف الكتاب</button>
+        <button class="logout-cancel-btn" onclick="closeDeleteBookModal()">إلغاء</button>
+      </div>
     </div>
   </div>
-</div>
+
+  <!-- NOTIFICATIONS MODAL -->
+  <div id="notificationsModal" class="upload-modal-overlay">
+    <div class="upload-modal-card notifications-modal-card">
+      <button class="modal-close-x" onclick="closeNotificationsModal()">&times;</button>
+
+      <div class="notifications-header">
+        <h3 class="upload-modal-title">الإشعارات</h3>
+        <button class="btn-clear-notifications" onclick="clearAllNotifications()">مسح الكل</button>
+      </div>
+      <p class="upload-modal-subtitle">سجل التحديثات وحالة طلبات إضافة الكتب</p>
+
+      <div id="notificationsList" class="notifications-list-container"></div>
+    </div>
+  </div>
 
 </body>
 </html>

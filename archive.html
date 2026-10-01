@@ -38,6 +38,7 @@
             <ul class="dropdown-menu">
               <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
               <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
+              <li><a href="archive.html#presentations" onclick="smoothNavigate(event, 'archive.html#presentations')">العرض التقديمي</a></li>
               <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
               <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
             </ul>
@@ -96,6 +97,7 @@
         <div id="archive-submenu" class="submenu open">
           <a href="#recordings" class="submenu-link" onclick="toggleSidebar()">التسجيلات</a>
           <a href="#assignments" class="submenu-link" onclick="toggleSidebar()">الواجبات</a>
+          <a href="#presentations" class="submenu-link" onclick="toggleSidebar()">العرض التقديمي</a>
           <a href="#whiteboards" class="submenu-link" onclick="toggleSidebar()">السبورات</a>
           <a href="#photos" class="submenu-link" onclick="toggleSidebar()">الصور</a>
         </div>
@@ -188,7 +190,29 @@
       <div id="assignmentsContainer" class="book-list-container"></div>
     </section>
 
-        <!-- 3. WHITEBOARDS SECTION -->
+    <!-- 3. PRESENTATIONS SECTION -->
+<section id="presentations" class="main-card-section">
+  <div class="section-header">
+    <h2 class="section-title">العرض التقديمي</h2>
+    <a href="#" class="view-all-link">&rarr; عرض الكل</a>
+  </div>
+
+  <div class="archive-filter-bar">
+    <select class="level-select">
+      <option value="1">المستوى الأول</option>
+      <option value="2">المستوى الثاني</option>
+    </select>
+    <div class="category-buttons" style="margin-bottom: 0;">
+      <button class="cat-btn active" onclick="switchSubject('presentations', 'balagha', this)">البلاغة</button>
+      <button class="cat-btn" onclick="switchSubject('presentations', 'indonesian', this)">اللغة الإندونيسية</button>
+      <button class="cat-btn" onclick="switchSubject('presentations', 'pkn', this)">الوطنية الإندونيسية</button>
+    </div>
+  </div>
+
+  <div id="presentationsContainer"></div>
+</section>
+
+        <!-- 4. WHITEBOARDS SECTION -->
         <section id="whiteboards" class="main-card-section">
           <div class="section-header">
             <h2 class="section-title">السبورات</h2>
@@ -215,7 +239,7 @@
           <div id="whiteboardsContainer" class="gallery-grid"></div>
         </section>
     
-        <!-- 4. OTHER PHOTOS SECTION -->
+        <!-- 5. OTHER PHOTOS SECTION -->
         <section id="photos" class="main-card-section">
           <div class="section-header">
             <h2 class="section-title">الصور الأخرى</h2>
@@ -620,7 +644,7 @@
 
   const sessionData = localStorage.getItem('currentUser');
 
-  // If navigating to archive page/section and user is not logged in, redirect to login page
+  // Auth Guard check
   if (targetUrl.includes('archive.html') && !sessionData) {
     document.body.classList.add('fade-out');
     setTimeout(() => {
@@ -629,12 +653,33 @@
     return;
   }
 
-  // Normal navigation for logged-in users or public pages
+  // --- FIX: HANDLE SAME-PAGE HASH NAVIGATION ---
+  const currentPath = window.location.pathname.split('/').pop() || 'archive.html';
+  const isSamePageHash = targetUrl.includes('#') && (
+    targetUrl.startsWith('#') || targetUrl.startsWith(currentPath)
+  );
+
+  if (isSamePageHash) {
+    const hash = targetUrl.substring(targetUrl.indexOf('#'));
+    const targetElement = document.querySelector(hash);
+
+    if (targetElement) {
+      // Cleanly update URL without breaking history stack
+      history.pushState(null, null, hash);
+
+      // Scroll smoothly to section
+      targetElement.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+  }
+
+  // Normal navigation for external pages
   document.body.classList.add('fade-out');
   setTimeout(() => {
     window.location.href = targetUrl;
   }, 300);
 }
+
 
 
   // --- CATEGORY SWITCHING & ROUTING ---
@@ -728,40 +773,46 @@
   }
 
   function renderRecordingsGrid() {
-    const container = document.getElementById("recordingsContainer");
-    const viewAllBtn = document.querySelector("#recordings .view-all-link");
-    if (!container) return;
+  const container = document.getElementById("recordingsContainer");
+  const viewAllBtn = document.querySelector("#recordings .view-all-link");
+  if (!container) return;
 
-    container.innerHTML = "";
-    const visibleVideos = isExpanded ? currentSubjectVideos : currentSubjectVideos.slice(0, 3);
-    const subjectLabel = SUBJECT_NAMES[currentSubject] || "المقرر الدراسي";
+  container.innerHTML = "";
 
-    visibleVideos.forEach(video => {
-      const card = document.createElement("div");
-      card.className = "recording-card";
-      card.onclick = () => openVideoModal(video.videoId, video.title);
+  // Check if screen is mobile to default to 4 items (2x2 grid)
+  const defaultCount = window.innerWidth <= 600 ? 4 : 3;
+  const visibleVideos = isExpanded ? currentSubjectVideos : currentSubjectVideos.slice(0, defaultCount);
 
-      card.innerHTML = `
-        <div class="recording-thumb-wrapper">
-          <img src="${video.thumbnail}" alt="${video.title}" class="recording-thumb">
-          <div class="play-icon-overlay">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffffff">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
-          </div>
+  const subjectLabel = SUBJECT_NAMES[currentSubject] || "المقرر الدراسي";
+
+  visibleVideos.forEach(video => {
+    const card = document.createElement("div");
+    card.className = "recording-card";
+    card.onclick = () => openVideoModal(video.videoId, video.title);
+
+    card.innerHTML = `
+      <div class="recording-thumb-wrapper">
+        <img src="${video.thumbnail}" alt="${video.title}" class="recording-thumb">
+        <div class="play-icon-overlay">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffffff">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
         </div>
-        <div class="recording-details">
-          <h3>${video.title}</h3>
-          <p>مادة ${subjectLabel} - المستوى الأول</p>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+      </div>
+      <div class="recording-details">
+        <h3>${video.title}</h3>
+        <p>مادة ${subjectLabel} - المستوى الأول</p>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 
-    if (viewAllBtn) {
-      viewAllBtn.textContent = isExpanded ? "عرض أقل ←" : "← عرض الكل";
-    }
+  if (viewAllBtn) {
+    viewAllBtn.style.display = currentSubjectVideos.length > defaultCount ? "inline-block" : "none";
+    viewAllBtn.textContent = isExpanded ? "عرض أقل ←" : "← عرض الكل";
   }
+}
+
 
   function toggleViewAllRecordings() {
     isExpanded = !isExpanded;
@@ -826,33 +877,33 @@
     const isExpired = now > dueDate;
 
     if (!isExpired) {
-      const diffTime = Math.abs(dueDate - now);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffTime = Math.abs(dueDate - now);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      // 1. ACTIVE BLUE CARD (Uses active_info.png & clock_icon.png)
-container.innerHTML += `
-  <div class="assignment-card active-blue-card" onclick="openSubmissionModal('${task.id}')" data-category="${task.category || 'balagha'}">
-    <div class="assignment-right-wrapper">
-      <div class="assignment-right-info">
-        <h3 class="assignment-title">${task.title}</h3>
-        <p class="assignment-meta">مادة ${task.author || task.subject || 'المقرر'} • الموعد النهائي ${task.meta || 'قريباً'}</p>
+  container.innerHTML += `
+    <div class="assignment-card active-blue-card" onclick="openSubmissionModal('${task.id}')" data-category="${task.category || 'balagha'}">
+      <div class="assignment-right-wrapper">
+        <div class="assignment-right-info">
+          <h3 class="assignment-title">${task.title}</h3>
+          <p class="assignment-meta">مادة ${task.author || task.subject || 'المقرر'} • الموعد النهائي ${task.meta || 'قريباً'}</p>
+        </div>
+
+        <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openTaskDetailsModal('${task.id}')" title="تفاصيل الواجب">
+          <img src="assets/images/web/active_info.png" alt="info" class="info-icon-img">
+        </button>
       </div>
 
-      <!-- Custom Active Info Icon PNG -->
-      <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openTaskDetailsModal('${task.id}')" title="تفاصيل الواجب">
-        <img src="assets/images/web/active_info.png" alt="info" class="info-icon-img">
-      </button>
+      <!-- WHITE BOX WITH HOVER TRANSITION -->
+      <div class="assignment-left-whitebox" title="انقر لتسليم الواجب">
+        <img src="assets/images/web/clock_icon.png" alt="timer" class="stopwatch-img">
+        <div class="timer-text-wrapper">
+          <span class="timer-text-simple">[${diffDays} أيام]</span>
+          <span class="timer-text-detailed" data-duedate="${dueDate.toISOString()}">00d:00h:00m:00s</span>
+        </div>
+      </div>
     </div>
-
-    <!-- PURE WHITE COUNTDOWN BOX WITH CLOCK IMAGE -->
-    <div class="assignment-left-whitebox">
-      <img src="assets/images/web/clock_icon.png" alt="timer" class="stopwatch-img">
-      <span class="timer-text">[${diffDays} أيام]</span>
-    </div>
-  </div>
-`;
-
-    } else {
+  `;
+} else {
       // 2. ARCHIVED WHITE CARD (Uses archive_info.png)
       container.innerHTML += `
         <div class="assignment-card archived-white-card" data-category="${task.category || 'balagha'}">
@@ -920,6 +971,7 @@ container.innerHTML += `
   document.addEventListener('DOMContentLoaded', async () => {
     checkUserSession();
     initSidebarEvents();
+    await loadPresentations();
 
     loadSubjectRecordings('tawheed');
 
@@ -927,6 +979,7 @@ container.innerHTML += `
 
     if (data && data.assignments) {
       renderAssignments(data.assignments);
+      startLiveCountdowns();
     }
 
     ['whiteboards', 'photos'].forEach(key => {
@@ -944,6 +997,149 @@ container.innerHTML += `
       }
     });
   });
+
+  // --- LIVE COUNTDOWN TIMER ENGINE ---
+let liveCountdownInterval = null;
+
+function startLiveCountdowns() {
+  if (liveCountdownInterval) clearInterval(liveCountdownInterval);
+
+  liveCountdownInterval = setInterval(() => {
+    const detailedElements = document.querySelectorAll('.timer-text-detailed');
+    const now = new Date().getTime();
+
+    detailedElements.forEach(el => {
+      const rawDueDate = el.getAttribute('data-duedate');
+      if (!rawDueDate) return;
+
+      const targetTime = new Date(rawDueDate).getTime();
+      const distance = targetTime - now;
+
+      if (distance < 0) {
+        el.textContent = '00d:00h:00m:00s';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Format digits to always have 2 numbers (e.g. 02d:05h:09m:01s)
+      const dStr = String(days).padStart(2, '0');
+      const hStr = String(hours).padStart(2, '0');
+      const mStr = String(minutes).padStart(2, '0');
+      const sStr = String(seconds).padStart(2, '0');
+
+      el.textContent = `${dStr}d:${hStr}h:${mStr}m:${sStr}s`;
+    });
+  }, 1000);
+}
+
+let allPresentations = [];
+let isPresentationsExpanded = false;
+
+async function loadPresentations() {
+  const container = document.getElementById('presentationsContainer');
+  const viewAllBtn = document.querySelector("#presentations .view-all-link");
+  if (!container) return;
+
+  try {
+    const res = await fetch('data/presentations.json');
+    allPresentations = await res.json();
+    isPresentationsExpanded = false;
+
+    if (allPresentations.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px 0;">لا توجد العروض التقديمية متاحة حالياً</p>';
+      if (viewAllBtn) viewAllBtn.style.display = "none";
+      return;
+    }
+
+    // Show or hide "عرض الكل" button based on item count
+    if (viewAllBtn) {
+      viewAllBtn.style.display = allPresentations.length > 3 ? "inline-block" : "none";
+      viewAllBtn.onclick = (e) => {
+        e.preventDefault();
+        toggleViewAllPresentations();
+      };
+    }
+
+    renderPresentationsGrid();
+
+  } catch (err) {
+    console.error('Error loading presentations.json:', err);
+  }
+}
+
+function renderPresentationsGrid() {
+  const container = document.getElementById('presentationsContainer');
+  const viewAllBtn = document.querySelector("#presentations .view-all-link");
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  // Slice array to 3 items if not expanded
+  const visiblePresentations = isPresentationsExpanded ? allPresentations : allPresentations.slice(0, 3);
+
+  visiblePresentations.forEach(item => {
+    container.innerHTML += `
+      <div class="presentation-card" data-category="${item.category || 'balagha'}">
+        
+        <!-- RIGHT GROUP: THUMBNAIL & TEXT DETAILS -->
+        <div class="presentation-right-group">
+          <img src="${item.thumbnail || 'assets/images/web/default_cover.png'}" alt="cover" class="presentation-thumb">
+          <div class="presentation-info">
+            <h3 class="presentation-title">${item.title}</h3>
+            <p class="presentation-subtitle">${item.subtitle}</p>
+            <p class="presentation-subject">${item.subject}</p>
+          </div>
+        </div>
+
+        <!-- LEFT GROUP: VIEW & DOWNLOAD BUTTONS -->
+        <div class="presentation-left-actions">
+          <!-- VIEW PREVIEW BUTTON -->
+          <button type="button" class="btn-circle-action" onclick="window.open('${item.fileUrl}', '_blank')" title="عرض العرض التقديمي">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+
+          <!-- DOWNLOAD FILE BUTTON -->
+          <a href="${item.fileUrl}" download class="btn-circle-action" title="تحميل الملف">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+    `;
+  });
+
+  // Toggle button label
+  if (viewAllBtn) {
+    viewAllBtn.textContent = isPresentationsExpanded ? "عرض أقل ←" : "← عرض الكل";
+  }
+}
+
+function toggleViewAllPresentations() {
+  isPresentationsExpanded = !isPresentationsExpanded;
+  renderPresentationsGrid();
+}
+
+// Remove blank/invisible screen state when navigating using browser Back/Forward buttons
+window.addEventListener('pageshow', (event) => {
+  document.body.classList.remove('fade-out');
+});
+
+// Also remove fade-out on popstate (hash changes via Back button)
+window.addEventListener('popstate', () => {
+  document.body.classList.remove('fade-out');
+});
+
 </script>
 
 </body>
