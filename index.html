@@ -252,28 +252,32 @@
 
   <script>
     // --- SUPABASE STORAGE UPLOAD HELPER ---
-    async function uploadToSupabase(file, folder = 'uploads') {
-      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-      const filePath = `${folder}/${Date.now()}_${cleanFileName}`;
+    // --- SUPABASE STORAGE UPLOAD HELPER ---
+async function uploadToSupabase(file, folder = 'uploads') {
+  // Extract file extension cleanly (e.g., .pdf, .png)
+  const fileExt = file.name.split('.').pop();
+  // Generate a clean, bulletproof alphanumeric filename
+  const cleanFileName = `\({Date.now()}_\){Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+  const filePath = `\({folder}/\){cleanFileName}`;
 
-      const { data, error } = await supabase.storage
-        .from('library_books')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+  const { data, error } = await supabase.storage
+    .from('library_books')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: true
+    });
 
-      if (error) {
-        console.error('Supabase Upload Error:', error);
-        throw new Error('فشل رفع الملف إلى Supabase Storage');
-      }
+  if (error) {
+    console.error('Supabase Detail Upload Error:', error);
+    throw error;
+  }
 
-      const { data: urlData } = supabase.storage
-        .from('library_books')
-        .getPublicUrl(filePath);
+  const { data: urlData } = supabase.storage
+    .from('library_books')
+    .getPublicUrl(filePath);
 
-      return urlData.publicUrl;
-    }
+  return urlData.publicUrl;
+}
 
     // --- DATA LOADERS ---
     async function loadBooksData() {
