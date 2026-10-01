@@ -12,30 +12,36 @@
   <link rel="stylesheet" href="dashboard.css">
 
   <!-- Firebase Compatibility SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  <!-- Supabase JS Client for Storage -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Supabase JS Client for Storage -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
-      authDomain: "haashiya-web.firebaseapp.com",
-      projectId: "haashiya-web",
-      storageBucket: "haashiya-web.firebasestorage.app",
-      messagingSenderId: "340726241497",
-      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
-    };
+<script>
+  // 1. Initialize Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+    authDomain: "haashiya-web.firebaseapp.com",
+    projectId: "haashiya-web",
+    storageBucket: "haashiya-web.firebasestorage.app",
+    messagingSenderId: "340726241497",
+    appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+  };
+  
+  if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  }
+  const db = firebase.firestore();
 
-    // Initialize Supabase Storage
-    const SUPABASE_URL = 'https://pdfripacgcbgggspxjyo.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
-    const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  </script>
+  // 2. Initialize Supabase Storage Client (ONLY DECLARE ONCE)
+  const SUPABASE_URL = 'https://pdfripacgcbgggspxjyo.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
+  
+  // Make supabase global across the app
+  window.supabaseClient = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
+
 </head>
 
 <body>
@@ -251,16 +257,16 @@
   </main>
 
   <script>
-    // --- SUPABASE STORAGE UPLOAD HELPER ---
-    // --- SUPABASE STORAGE UPLOAD HELPER ---
-async function uploadToSupabase(file, folder = 'uploads') {
-  // Extract file extension cleanly (e.g., .pdf, .png)
-  const fileExt = file.name.split('.').pop();
-  // Generate a clean, bulletproof alphanumeric filename
-  const cleanFileName = `\({Date.now()}_\){Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-  const filePath = `\({folder}/\){cleanFileName}`;
 
-  const { data, error } = await supabase.storage
+// --- SUPABASE STORAGE UPLOAD HELPER ---
+async function uploadToSupabase(file, folder = 'uploads') {
+  // Extract file extension cleanly
+  const fileExt = file.name.split('.').pop();
+  // Generate clean alphanumeric filename
+  const cleanFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+  const filePath = `${folder}/${cleanFileName}`;
+
+  const { data, error } = await window.supabaseClient.storage
     .from('library_books')
     .upload(filePath, file, {
       cacheControl: '3600',
@@ -272,12 +278,13 @@ async function uploadToSupabase(file, folder = 'uploads') {
     throw error;
   }
 
-  const { data: urlData } = supabase.storage
+  const { data: urlData } = window.supabaseClient.storage
     .from('library_books')
     .getPublicUrl(filePath);
 
   return urlData.publicUrl;
 }
+
 
     // --- DATA LOADERS ---
     async function loadBooksData() {
