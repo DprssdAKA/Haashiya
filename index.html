@@ -747,50 +747,51 @@
     }
 
     // --- SUBMIT HANDLER WITH SUPABASE STORAGE ---
-    async function handleBookSubmit(e) {
-      e.preventDefault();
+async function handleBookSubmit(e) {
+  e.preventDefault();
 
-      const title = document.getElementById('bookTitle').value.trim();
-      const author = document.getElementById('bookAuthor').value.trim();
-      const theme = document.getElementById('bookCategory').value;
-      const pdfFile = document.getElementById('pdfInput').files[0];
-      const coverFile = document.getElementById('coverInput').files[0];
+  const title = document.getElementById('bookTitle').value.trim();
+  const author = document.getElementById('bookAuthor').value.trim();
+  const theme = document.getElementById('bookCategory').value;
+  const pdfFile = document.getElementById('pdfInput').files[0];
+  const coverFile = document.getElementById('coverInput').files[0];
 
-      if (!title || !author || !pdfFile) {
-        showErrorToast('يُرجَى ملء جميع الحقول المطلوبة ورفع ملف PDF');
-        return;
-      }
+  if (!title || !author || !pdfFile) {
+    showErrorToast('يُرجَى ملء جميع الحقول المطلوبة ورفع ملف PDF');
+    return;
+  }
 
-      try {
-        showToastNotification('جاري رفع الملفات إلى الخادم...');
+  try {
+    showToastNotification('جاري رفع الملفات إلى الخادم...');
 
-        // 1. Upload PDF to Supabase Storage
-        const pdfUrl = await uploadToSupabase(pdfFile, 'pdfs');
+    // 1. Upload PDF to Supabase Storage
+    const pdfUrl = await uploadToSupabase(pdfFile, 'pdfs');
 
-        // 2. Upload Cover image if provided, else fallback
-        let coverUrl = 'assets/images/covers/badee3tareekh.png';
-        if (coverFile) {
-          coverUrl = await uploadToSupabase(coverFile, 'covers');
-        }
-
-        // 3. Save direct public URLs to Firestore
-        await db.collection('pending_books').add({
-          title,
-          author,
-          theme,
-          pdfUrl,
-          coverUrl,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        addNotification('طلب إضافة كتاب', `تم إرسال طلب إضافة كتاب "${title}" بنجاح، وهو قيد مراجعة الإدارة.`, 'pending');
-        closeUploadModal();
-        showToastNotification('تم طلب رفع الكتاب بنجاح! 🎉');
-      } catch (err) {
-        console.error('Book Submission Error:', err);
-        showErrorToast('حدث خطأ أثناء رفع الكتاب إلى الخادم');
-      }
+    // 2. Upload Cover image if provided, else fallback
+    let coverUrl = 'assets/images/covers/badee3tareekh.png';
+    if (coverFile) {
+      coverUrl = await uploadToSupabase(coverFile, 'covers');
     }
+
+    // 3. Save direct public URLs to Firestore
+    await db.collection('pending_books').add({
+      title,
+      author,
+      theme,
+      pdfUrl,
+      coverUrl,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    addNotification('طلب إضافة كتاب', `تم إرسال طلب إضافة كتاب "${title}" بنجاح، وهو قيد مراجعة الإدارة.`, 'pending');
+    closeUploadModal();
+    showToastNotification('تم طلب رفع الكتاب بنجاح! 🎉');
+  } catch (err) {
+    console.error('Book Submission Error:', err);
+    showErrorToast('حدث خطأ أثناء رفع الكتاب إلى الخادم');
+  }
+}
+
   
     let currentDeletingDocId = null;
 
