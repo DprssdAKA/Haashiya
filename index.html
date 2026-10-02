@@ -387,14 +387,13 @@ async function uploadToSupabase(file, folder = 'uploads') {
   if (!sessionData) return;
 
   const user = JSON.parse(sessionData);
-  const username = (user.username || user.email?.split('@')[0] || '').toLowerCase();
+  const username = (user.username || user.email?.split('@')[0] || '').toLowerCase().trim();
 
   if (!username) return;
 
-  // Realtime listener for current user's notifications
+  // Realtime listener filtering for current logged-in user
   db.collection('notifications')
     .where('targetUser', '==', username)
-    .orderBy('createdAt', 'desc')
     .onSnapshot((snapshot) => {
       const container = document.getElementById('notificationsList');
       const dropdownBadge = document.querySelector('.unread-badge');
@@ -409,8 +408,11 @@ async function uploadToSupabase(file, folder = 'uploads') {
         }
       }
 
-      snapshot.forEach((doc) => {
-        const n = doc.data();
+      // Sort in-memory by createdAt timestamp descending
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+      docs.forEach((n) => {
         if (n.unread) unreadCount++;
 
         if (container) {
@@ -438,7 +440,7 @@ async function uploadToSupabase(file, folder = 'uploads') {
         }
       });
 
-      // Update badge UI
+      // Update badge counts in UI
       if (unreadCount > 0) {
         if (dropdownBadge) {
           dropdownBadge.textContent = unreadCount;
@@ -449,8 +451,11 @@ async function uploadToSupabase(file, folder = 'uploads') {
         if (dropdownBadge) dropdownBadge.style.display = 'none';
         if (navRedDot) navRedDot.style.display = 'none';
       }
+    }, (error) => {
+      console.error("Error listening to user notifications:", error);
     });
 }
+
 
     const STORAGE_NOTIFS_KEY = 'userNotificationsDB';
 
@@ -720,38 +725,42 @@ async function uploadToSupabase(file, folder = 'uploads') {
     }
   
     async function approveBook(docId) {
-      try {
-        const docRef = db.collection('pending_books').doc(docId);
-        const docSnap = await docRef.get();
+  try {
+    const docRef = db.collection('pending_books').doc(docId);
+    const docSnap = await docRef.get();
 
-        if (!docSnap.exists) return;
-        const bookData = docSnap.data();
+    if (!docSnap.exists) return;
+    const bookData = docSnap.data();
 
-        // 1. Add to approved_books collection
-        await db.collection('approved_books').add({
-          ...bookData,
-          approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+    // 1. Move to approved_books
+    await db.collection('approved_books').add({
+      ...bookData,
+      approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-        // 2. Remove from pending_books collection
-        await docRef.delete();
-
-        addNotification(
-          'تم القبول بنجاح! 🎉', 
-          `تمت الموافقة على كتاب "${bookData.title}" وهو متاح الآن في المكتبة العامة.`, 
-          'success'
-        );
-
-        renderPendingQueueList();
-        updatePendingBadgeCount();
-        showToastNotification();
-      } catch (err) {
-        console.error('Approve Error:', err);
-        showErrorToast('حدث خطأ أثناء موافقة الكتاب');
-      }
+    // 2. Notify the requester specifically via Firestore
+    if (bookData.uploadedByUsername) {
+      await addNotificationToUser(
+        bookData.uploadedByUsername,
+        'تم القبول بنجاح! 🎉',
+        `تمت الموافقة على كتاب "${bookData.title}" وهو متاح الآن في المكتبة العامة.`,
+        'success'
+      );
     }
+
+    // 3. Delete from pending_books
+    await docRef.delete();
+
+    renderPendingQueueList();
+    updatePendingBadgeCount();
+    showToastNotification();
+  } catch (err) {
+    console.error('Approve Error:', err);
+    showErrorToast('حدث خطأ أثناء موافقة الكتاب');
+  }
+}
   
-    async function rejectBook(docId) {
+async function rejectBook(docId) {
   if (!confirm('هل أنت تأكد من رغبتك في رفض هذا الطلب؟')) return;
 
   try {
@@ -759,26 +768,36 @@ async function uploadToSupabase(file, folder = 'uploads') {
     const docSnap = await docRef.get();
 
     if (docSnap.exists) {
-      const book = docSnap.data();
+      const bookData = docSnap.data();
 
-      // Extract and remove files from Supabase Storage
-      const pdfPath = getStoragePathFromUrl(book.pdfUrl);
-      const coverPath = getStoragePathFromUrl(book.coverUrl);
-      const filesToDelete = [pdfPath, coverPath].filter(Boolean);
+      // Clean storage files safely
+      if (window.supabaseClient) {
+        const pdfPath = getStoragePathFromUrl(bookData.pdfUrl);
+        const coverPath = getStoragePathFromUrl(bookData.coverUrl);
+        const filesToDelete = [pdfPath, coverPath].filter(Boolean);
 
-      if (filesToDelete.length > 0) {
-        await window.supabaseClient.storage
-          .from('library_books')
-          .remove(filesToDelete);
+        if (filesToDelete.length > 0) {
+          await window.supabaseClient.storage.from('library_books').remove(filesToDelete);
+        }
       }
 
-      // Delete request document from Firestore
+      // Send rejection notification to requester
+      if (bookData.uploadedByUsername) {
+        await addNotificationToUser(
+          bookData.uploadedByUsername,
+          'تم رفض الطلب ❌',
+          `عذراً، لم تتم الموافقة على كتاب "${bookData.title}" من قبل الإدارة.`,
+          'rejected'
+        );
+      }
+
       await docRef.delete();
-      alert('تم رفض الطلب وحذف ملفاته بنجاح');
+      renderPendingQueueList();
+      updatePendingBadgeCount();
     }
   } catch (err) {
     console.error('Reject Error:', err);
-    alert('حدث خطأ أثناء رفض الطلب');
+    showErrorToast('حدث خطأ أثناء رفض الكتاب');
   }
 }
   
