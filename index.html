@@ -463,7 +463,7 @@ async function uploadToSupabase(file, folder = 'uploads') {
           </button>
         `;
   
-        if (user.role === 'admin') {
+        if (user.role === 'admin' || user.role === 'superadmin') {
           const adminBtn = document.getElementById('adminQueueBtn');
           if (adminBtn) adminBtn.style.display = 'inline-flex';
           updatePendingBadgeCount();
@@ -682,82 +682,94 @@ async function uploadToSupabase(file, folder = 'uploads') {
     }
   
     async function rejectBook(docId) {
-      try {
-        const docRef = db.collection('pending_books').doc(docId);
-        const docSnap = await docRef.get();
+  if (!confirm('هل أنت تأكد من رغبتك في رفض هذا الطلب؟')) return;
 
-        if (docSnap.exists) {
-          const bookData = docSnap.data();
-          await docRef.delete();
+  try {
+    const docRef = db.collection('pending_books').doc(docId);
+    const docSnap = await docRef.get();
 
-          addNotification(
-            'تم رفض الطلب ❌', 
-            `عذراً، لم تتم الموافقة على كتاب "${bookData.title}" من قبل الإدارة.`, 
-            'rejected'
-          );
-        }
+    if (docSnap.exists) {
+      const book = docSnap.data();
 
-        renderPendingQueueList();
-        updatePendingBadgeCount();
-      } catch (err) {
-        console.error('Reject Error:', err);
-        showErrorToast('حدث خطأ أثناء رفض الكتاب');
+      // Extract and remove files from Supabase Storage
+      const pdfPath = getStoragePathFromUrl(book.pdfUrl);
+      const coverPath = getStoragePathFromUrl(book.coverUrl);
+      const filesToDelete = [pdfPath, coverPath].filter(Boolean);
+
+      if (filesToDelete.length > 0) {
+        await window.supabaseClient.storage
+          .from('library_books')
+          .remove(filesToDelete);
       }
+
+      // Delete request document from Firestore
+      await docRef.delete();
+      alert('تم رفض الطلب وحذف ملفاته بنجاح');
     }
+  } catch (err) {
+    console.error('Reject Error:', err);
+    alert('حدث خطأ أثناء رفض الطلب');
+  }
+}
   
-    function listenToApprovedBooks() {
-      const container = document.querySelector('#general-library .book-list-container');
-      if (!container) return;
+function listenToApprovedBooks() {
+  const container = document.querySelector('#general-library .book-list-container');
+  if (!container) return;
 
-      const sessionData = localStorage.getItem('currentUser');
-      const user = sessionData ? JSON.parse(sessionData) : null;
-      const isAdmin = user && user.role === 'admin';
+  const sessionData = localStorage.getItem('currentUser');
+  const user = sessionData ? JSON.parse(sessionData) : null;
+  const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
-      db.collection('approved_books')
-        .orderBy('createdAt', 'desc')
-        .onSnapshot((snapshot) => {
-          container.innerHTML = '';
+  db.collection('approved_books')
+    .orderBy('createdAt', 'desc')
+    .onSnapshot((snapshot) => {
+      container.innerHTML = '';
 
-          snapshot.forEach((doc) => {
-            const book = doc.data();
-            const card = document.createElement('div');
-            card.className = 'book-row-card user-approved-card';
-            card.setAttribute('data-category', 'general');
+      snapshot.forEach((doc) => {
+        const book = doc.data();
+        const card = document.createElement('div');
+        card.className = 'book-row-card user-approved-card';
+        card.setAttribute('data-category', 'general');
 
-            const adminActions = isAdmin ? `
-              <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook('${doc.id}')" title="حذف الكتاب">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
-            ` : '';
+        // Uploader credit (Fallback if older records don't have uploadedBy)
+        const uploaderName = book.uploadedBy ? ` | الناشر: ${book.uploadedBy}` : '';
 
-            card.innerHTML = `
-              <div class="book-row-right">
-                <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
-                <div class="book-row-details">
-                  <h3 class="book-row-title">${book.title}</h3>
-                  <p class="book-row-author">${book.author}</p>
-                  <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}</span>
-                </div>
-              </div>
-              <div class="book-row-actions">
-                ${adminActions}
-                <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </a>
-                <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                </a>
-              </div>
-            `;
-            container.appendChild(card);
-          });
-        });
-    }
+        const adminActions = isAdmin ? `
+          <button class="action-icon-btn admin-delete-btn" onclick="removeApprovedBook('${doc.id}')" title="حذف الكتاب">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        ` : '';
+
+        card.innerHTML = `
+          <div class="book-row-right">
+            <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
+            <div class="book-row-details">
+              <h3 class="book-row-title">${book.title}</h3>
+              <p class="book-row-author">${book.author}</p>
+              <span class="book-row-meta">المكتبة العامة - الفن: ${book.theme}${uploaderName}</span>
+            </div>
+          </div>
+          <div class="book-row-actions">
+            ${adminActions}
+            <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </a>
+            <a href="${book.pdfUrl}" download="${book.title}.pdf" class="action-icon-btn" title="تحميل">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    });
+}
+
 
     // --- SUBMIT HANDLER WITH SUPABASE STORAGE ---
+// --- SUBMIT HANDLER WITH SUPABASE STORAGE & REQUESTER CREDIT ---
 async function handleBookSubmit(e) {
   e.preventDefault();
 
@@ -766,6 +778,11 @@ async function handleBookSubmit(e) {
   const theme = document.getElementById('bookCategory').value;
   const pdfFile = document.getElementById('pdfInput').files[0];
   const coverFile = document.getElementById('coverInput').files[0];
+
+  // Get current user display name from session
+  const sessionData = localStorage.getItem('currentUser');
+  const user = sessionData ? JSON.parse(sessionData) : null;
+  const uploaderName = user ? (user.name || user.username || 'مستخدم') : 'مستخدم';
 
   if (!title || !author || !pdfFile) {
     showErrorToast('يُرجَى ملء جميع الحقول المطلوبة ورفع ملف PDF');
@@ -778,19 +795,20 @@ async function handleBookSubmit(e) {
     // 1. Upload PDF to Supabase Storage
     const pdfUrl = await uploadToSupabase(pdfFile, 'pdfs');
 
-    // 2. Upload Cover image if provided, else fallback
+    // 2. Upload Cover image if provided
     let coverUrl = 'assets/images/covers/badee3tareekh.png';
     if (coverFile) {
       coverUrl = await uploadToSupabase(coverFile, 'covers');
     }
 
-    // 3. Save direct public URLs to Firestore
+    // 3. Save direct public URLs & uploader name to Firestore
     await db.collection('pending_books').add({
       title,
       author,
       theme,
       pdfUrl,
       coverUrl,
+      uploadedBy: uploaderName, // <--- Added Requester / Publisher Name
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
@@ -819,17 +837,39 @@ async function handleBookSubmit(e) {
     }
 
     async function confirmDeleteBook() {
-      if (currentDeletingDocId) {
-        try {
-          await db.collection('approved_books').doc(currentDeletingDocId).delete();
-          closeDeleteBookModal();
-          showErrorToast('تم حذف الكتاب بنجاح من المكتبة العامة');
-        } catch (err) {
-          console.error('Delete Error:', err);
-          showErrorToast('حدث خطأ أثناء حذف الكتاب');
-        }
+  if (!currentDeletingDocId) return;
+
+  try {
+    const docRef = db.collection('approved_books').doc(currentDeletingDocId);
+    const docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      const book = docSnap.data();
+      
+      // 1. Extract internal file paths
+      const pdfPath = getStoragePathFromUrl(book.pdfUrl);
+      const coverPath = getStoragePathFromUrl(book.coverUrl);
+      const filesToDelete = [pdfPath, coverPath].filter(Boolean);
+
+      // 2. Remove files from Supabase Storage
+      if (filesToDelete.length > 0) {
+        const { error } = await window.supabaseClient.storage
+          .from('library_books')
+          .remove(filesToDelete);
+
+        if (error) console.warn('Supabase storage delete warning:', error);
       }
+
+      // 3. Delete document from Firestore
+      await docRef.delete();
+      closeDeleteBookModal();
+      showErrorToast('تم حذف الكتاب وملفاته بنجاح من المكتبة العامة');
     }
+  } catch (err) {
+    console.error('Delete Error:', err);
+    showErrorToast('حدث خطأ أثناء حذف الكتاب');
+  }
+}
   
     function getNotifications() {
       return JSON.parse(localStorage.getItem(STORAGE_NOTIFS_KEY) || '[]');
@@ -995,7 +1035,13 @@ async function handleBookSubmit(e) {
         libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
       }
     }
-  
+    
+    // Helper to extract bucket file path from full Supabase public URL
+function getStoragePathFromUrl(publicUrl) {
+  if (!publicUrl || !publicUrl.includes('library_books/')) return null;
+  return publicUrl.split('library_books/')[1];
+}
+
     // --- SINGLE CONSOLIDATED DOM INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', async () => {
       await renderEducationalBooks();

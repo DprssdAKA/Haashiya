@@ -666,3 +666,184 @@
     transform: scale(1.08);
   }
   
+  /* ==========================================
+   TAB 3: PENDING APPROVALS LIST STYLES
+   ========================================== */
+
+/* Container wrapping all pending items */
+.pending-books-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  /* Individual Pending Book Row Card */
+  .pending-item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+  }
+  
+  .pending-item-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+  
+  /* Left Side: Cover Image & Text Meta */
+  .pending-item-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .pending-book-cover {
+    width: 44px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+  }
+  
+  .pending-book-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .pending-book-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .pending-book-meta {
+    font-size: 0.82rem;
+    color: #64748b;
+  }
+  
+  /* Right Side: Action Buttons */
+  .pending-action-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Action Icon Preview Button */
+  .btn-view-pending {
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-view-pending:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+  
+  /* Approve Button */
+  .btn-approve {
+    background-color: #10b981;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-approve:hover {
+    background-color: #059669;
+  }
+  
+  /* Reject Button */
+  .btn-reject {
+    background-color: #ef4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-reject:hover {
+    background-color: #dc2626;
+  }
+  
+  /* Responsive adjustment for small mobile screens */
+  @media (max-width: 576px) {
+    .pending-item-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  
+    .pending-action-btns {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  /* ==========================================
+   CUSTOM MODALS & OVERLAYS (Reject / Delete)
+   ========================================== */
+
+/* Fullscreen dimmed overlay */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  
+  /* Modal visibility trigger */
+  .admin-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Card container inside modal */
+  .admin-modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 440px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .admin-modal-overlay.show .admin-modal-card {
+    transform: translateY(0) scale(1);
+  }
+  
