@@ -390,7 +390,33 @@
     });
 }
 
+// --- FIRESTORE-BACKED NOTIFICATION HELPER ---
+async function addNotificationToUser(targetUsername, title, message, type = 'pending') {
+  if (!targetUsername) return;
 
+  const now = new Date();
+  const formattedTimestamp = now.toLocaleDateString('ar-EG', {
+    day: 'numeric',
+    month: 'short'
+  }) + ' ، ' + now.toLocaleTimeString('ar-EG', { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+
+  try {
+    await db.collection('notifications').add({
+      targetUser: targetUsername.toLowerCase().trim(),
+      title,
+      message,
+      type,
+      timestamp: formattedTimestamp,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      unread: true
+    });
+  } catch (err) {
+    console.error('Error writing notification to Firestore:', err);
+  }
+}
 
 async function approveBook(docId) {
   try {
@@ -400,12 +426,23 @@ async function approveBook(docId) {
     if (!docSnap.exists) return;
     const bookData = docSnap.data();
 
-    // Preserve uploadedBy alongside all existing fields
+    // 1. Move to approved_books
     await db.collection('approved_books').add({
       ...bookData,
       approvedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    // 2. Send notification specifically to the requester
+    if (bookData.uploadedByUsername) {
+      await addNotificationToUser(
+        bookData.uploadedByUsername,
+        'تم القبول بنجاح! 🎉',
+        `تمت الموافقة على كتاب "${bookData.title}" وهو متاح الآن في المكتبة العامة.`,
+        'success'
+      );
+    }
+
+    // 3. Remove from pending_books
     await docRef.delete();
     alert(`تمت الموافقة على كتاب "${bookData.title}" بنجاح!`);
   } catch (err) {
@@ -426,23 +463,31 @@ async function rejectBook(docId) {
     const docSnap = await docRef.get();
 
     if (docSnap.exists) {
-      const book = docSnap.data();
+      const bookData = docSnap.data();
 
-      // Safely attempt Supabase file deletion
+      // Clean up Supabase storage files safely
       if (window.supabaseClient) {
         try {
-          const pdfPath = getStoragePathFromUrl(book.pdfUrl);
-          const coverPath = getStoragePathFromUrl(book.coverUrl);
+          const pdfPath = getStoragePathFromUrl(bookData.pdfUrl);
+          const coverPath = getStoragePathFromUrl(bookData.coverUrl);
           const filesToDelete = [pdfPath, coverPath].filter(Boolean);
 
           if (filesToDelete.length > 0) {
-            await window.supabaseClient.storage
-              .from('library_books')
-              .remove(filesToDelete);
+            await window.supabaseClient.storage.from('library_books').remove(filesToDelete);
           }
-        } catch (storageErr) {
-          console.warn('Storage file deletion warning:', storageErr);
+        } catch (e) {
+          console.warn('Storage delete warning:', e);
         }
+      }
+
+      // Send rejection notification to the requester
+      if (bookData.uploadedByUsername) {
+        await addNotificationToUser(
+          bookData.uploadedByUsername,
+          'تم رفض الطلب ❌',
+          `عذراً، لم تتم الموافقة على كتاب "${bookData.title}" من قبل الإدارة.`,
+          'rejected'
+        );
       }
 
       // Delete document from Firestore
