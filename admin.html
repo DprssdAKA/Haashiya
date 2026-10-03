@@ -300,45 +300,58 @@
     }
 
     async function verifyAdminAccess() {
-      const sessionData = localStorage.getItem('currentUser');
-      if (!sessionData) {
-        window.location.href = 'login.html';
-        return;
+  const sessionData = localStorage.getItem('currentUser');
+  
+  // 1. If not logged in at all, redirect to login page
+  if (!sessionData) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  let user = JSON.parse(sessionData);
+  const username = (user.username || user.email?.split('@')[0] || '').toLowerCase().trim();
+
+  try {
+    // 2. Fetch fresh user role directly from Firestore to prevent localStorage tampering
+    if (username) {
+      const userDoc = await db.collection('users').doc(username).get();
+      if (userDoc.exists) {
+        const dbData = userDoc.data();
+        user.role = dbData.role || 'student';
+        user.name = dbData.name || user.name;
+        
+        // Sync verified role back to local storage
+        localStorage.setItem('currentUser', JSON.stringify(user));
       }
-
-      let user = JSON.parse(sessionData);
-      const username = (user.username || user.email.split('@')[0]).toLowerCase();
-
-      try {
-        const userDoc = await db.collection('users').doc(username).get();
-        if (userDoc.exists) {
-          const dbData = userDoc.data();
-          user.role = dbData.role || 'student';
-          user.name = dbData.name || user.name;
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        }
-      } catch (err) {
-        console.warn("Could not refresh role from Firestore:", err);
-      }
-
-      currentUserRole = user.role || 'student';
-
-      const nameEl = document.getElementById('adminDisplayName');
-      const badgeEl = document.getElementById('adminBadge');
-
-      if (nameEl) nameEl.textContent = user.name || user.username;
-      if (badgeEl) {
-        if (currentUserRole === 'superadmin') {
-          badgeEl.textContent = 'مشرف عام';
-        } else if (currentUserRole === 'admin') {
-          badgeEl.textContent = 'مشرف';
-        } else {
-          badgeEl.textContent = 'طالب';
-        }
-      }
-
-      await loadStudentDatabase();
     }
+  } catch (err) {
+    console.warn("Could not refresh role from Firestore:", err);
+  }
+
+  // 3. Strict Access Control Check
+  const allowedRoles = ['admin', 'superadmin'];
+  if (!allowedRoles.includes(user.role)) {
+    // Alert the unauthorized user and boot them to the homepage
+    alert('عذراً، هذه الصفحة مخصصة للمشرفين فقط!');
+    window.location.href = 'index.html';
+    return;
+  }
+
+  // 4. If authorized, render Admin details
+  currentUserRole = user.role;
+
+  const nameEl = document.getElementById('adminDisplayName');
+  const badgeEl = document.getElementById('adminBadge');
+
+  if (nameEl) nameEl.textContent = user.name || user.username;
+  if (badgeEl) {
+    badgeEl.textContent = currentUserRole === 'superadmin' ? 'مشرف عام' : 'مشرف';
+  }
+
+  // Load admin student database
+  await loadStudentDatabase();
+}
+
 
     // --- TAB 3: BOOK APPROVAL REALTIME LISTENER ---
     function listenToPendingApprovals() {
