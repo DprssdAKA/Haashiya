@@ -677,6 +677,63 @@
     flex-shrink: 0; /* Prevents action icons from compressing when text gets long */
   }
   
+  /* ==========================================
+   DEDICATED MOBILE OPTIMIZATION (< 576px)
+   ========================================== */
+
+@media (max-width: 576px) {
+    /* 1. Stack the card container cleanly */
+    .book-row-card {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      padding: 14px 16px !important;
+      gap: 12px !important;
+    }
+  
+    /* 2. Top section: Cover/Thumbnail + Details side by side */
+    .book-row-right {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+  
+    .book-row-cover {
+      width: 60px !important;
+      height: 44px !important;
+      object-fit: cover !important;
+      border-radius: 6px !important;
+      flex-shrink: 0 !important;
+    }
+  
+    .book-row-details {
+      padding-left: 0 !important;
+      width: 100% !important;
+    }
+  
+    .book-row-title {
+      font-size: 0.92rem !important;
+      line-height: 1.4 !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+    }
+  
+    /* 3. Bottom section: Action buttons on their own row, aligned nicely */
+    .book-row-actions {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: flex-end !important;
+      gap: 10px !important;
+      padding-top: 8px !important;
+      border-top: 1px dashed #f1f5f9 !important; /* Subtle separator line */
+    }
+  
+    .action-icon-btn {
+      width: 36px !important;
+      height: 36px !important;
+    }
+  }
+  
   /* --- EXTENDED ACTION BUTTONS FOR ADMIN CARDS --- */
 
 .book-row-actions.admin-row-actions {
