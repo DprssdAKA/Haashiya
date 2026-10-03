@@ -636,6 +636,47 @@
     text-align: left;
   }
   
+  /* ==========================================
+   PRESENTATION & ARCHIVE ROW CARDS FIX
+   ========================================== */
+
+/* 1. Ensure the right container shrink-wraps and handles text truncation */
+.book-row-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0; /* CRITICAL: Allows flex child text elements to wrap/truncate instead of pushing layout */
+  }
+  
+  /* 2. Constrain details text block and add padding before divider/buttons */
+  .book-row-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding-left: 12px; /* Generates physical breathing room before the action buttons */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* 3. Wrap long titles gracefully on small mobile screens */
+  .book-row-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
+    white-space: normal; /* Allows text to drop to a 2nd line instead of overlapping buttons */
+  }
+  
+  /* 4. Ensure action buttons stay anchored to the left without shrinking */
+  .book-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0; /* Prevents action icons from compressing when text gets long */
+  }
+  
   /* --- EXTENDED ACTION BUTTONS FOR ADMIN CARDS --- */
 
 .book-row-actions.admin-row-actions {
