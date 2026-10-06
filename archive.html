@@ -14,6 +14,28 @@
   <link rel="stylesheet" href="archive.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Firebase Compatibility SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Initialize Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+    authDomain: "haashiya-web.firebaseapp.com",
+    projectId: "haashiya-web",
+    storageBucket: "haashiya-web.firebasestorage.app",
+    messagingSenderId: "340726241497",
+    appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+  };
+  
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+</script>
+
 </head>
 
 <body>
@@ -161,34 +183,46 @@
       <div id="recordingsContainer" class="recordings-grid"></div>
     </section>
 
-    <!-- 2. ASSIGNMENTS SECTION -->
-    <section id="assignments" class="main-card-section">
-      <div class="section-header">
-        <h2 class="section-title">الواجبات</h2>
-        <a href="#" class="view-all-link">&rarr; عرض الكل</a>
+   <!-- ASSIGNMENTS SECTION -->
+<section id="assignments" class="main-card-section">
+  <div class="section-header">
+    <h2 class="section-title">الواجبات والتكليفات</h2>
+  </div>
+
+  <!-- BOX 1: ACTIVE ASSIGNMENTS (BLUE THEMED CARD - CLICKABLE HUB) -->
+  <div class="assignment-box active-assignments-box" onclick="navigateToAssignmentsHub('active')">
+    <div class="box-header">
+      <div class="box-title-group">
+        <span class="status-indicator-dot pulse"></span>
+        <h3>الواجبات النشطة (القائمة)</h3>
       </div>
+      <span class="active-count-badge" id="activeAssignmentsCount">0 واجبات نشطة</span>
+    </div>
 
-      <div class="archive-filter-bar">
-        <select class="level-select">
-          <option value="1">المستوى الأول</option>
-          <option value="2">المستوى الثاني</option>
-        </select>
-        <div class="category-buttons" style="margin-bottom: 0;">
-          <button class="cat-btn active" onclick="switchSubject('assignments', 'balagha', this)">البلاغة</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'qiraah', this)">القراءة</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'tawheed', this)">التوحيد</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'kitaba', this)">الكتابة</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'nahw', this)">النحو</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'adab', this)">تاريخ الأدب</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'indonesian', this)">اللغة الإندونيسية</button>
-          <button class="cat-btn" onclick="switchSubject('assignments', 'pkn', this)">الوطنية الإندونيسية</button>
+    <div id="activeAssignmentsList" class="assignment-cards-container">
+      <!-- Highlighted active assignments render dynamically here -->
+    </div>
+  </div>
 
-        </div>
-        
+  <!-- BOX 2: ARCHIVED ASSIGNMENTS (WHITE THEMED CARD - CLICKABLE HUB) -->
+  <div class="assignment-box archived-assignments-box" onclick="navigateToAssignmentsHub('archived')">
+    <div class="box-header">
+      <div class="box-title-group">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="21 8 21 21 3 21 3 8"></polyline>
+          <rect x="1" y="3" width="22" height="5"></rect>
+          <line x1="10" y1="12" x2="14" y2="12"></line>
+        </svg>
+        <h3>أرشيف التكليفات السابقة</h3>
       </div>
+      <span class="archived-count-badge" id="archivedAssignmentsCount">0 مكتملاً</span>
+    </div>
 
-      <div id="assignmentsContainer" class="book-list-container"></div>
-    </section>
+    <div id="archivedAssignmentsList" class="assignment-cards-container">
+      <!-- Archived assignments render dynamically here -->
+    </div>
+  </div>
+</section>
 
     <!-- 3. PRESENTATIONS SECTION -->
 <section id="presentations" class="main-card-section">
@@ -967,20 +1001,18 @@
     }
   }
 
-  // --- INITIALIZATION ---
-  document.addEventListener('DOMContentLoaded', async () => {
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', async () => {
     checkUserSession();
     initSidebarEvents();
     await loadPresentations();
 
     loadSubjectRecordings('tawheed');
 
-    const data = await loadArchiveData();
+    // LOAD FIRESTORE DUAL-BOX ASSIGNMENTS
+    await loadAssignments();
 
-    if (data && data.assignments) {
-      renderAssignments(data.assignments);
-      startLiveCountdowns();
-    }
+    const data = await loadArchiveData();
 
     ['whiteboards', 'photos'].forEach(key => {
       const container = document.getElementById(key + 'Container');
@@ -997,6 +1029,7 @@
       }
     });
   });
+
 
   // --- LIVE COUNTDOWN TIMER ENGINE ---
 let liveCountdownInterval = null;
@@ -1139,6 +1172,122 @@ window.addEventListener('pageshow', (event) => {
 window.addEventListener('popstate', () => {
   document.body.classList.remove('fade-out');
 });
+
+// --- NAVIGATION TO ASSIGNMENT DASHBOARD PAGE ---
+function navigateToAssignmentsHub(type, assignmentId = '') {
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    let targetUrl = `assignment-dashboard.html?tab=${type}`;
+    if (assignmentId) {
+      targetUrl += `&id=${assignmentId}`;
+    }
+    window.location.href = targetUrl;
+  }, 250);
+}
+
+// --- ASSIGNMENTS LOADER WITH CLICKABLE BOX ROUTING ---
+async function loadAssignments() {
+  const activeContainer = document.getElementById('activeAssignmentsList');
+  const archivedContainer = document.getElementById('archivedAssignmentsList');
+  
+  if (!activeContainer || !archivedContainer) return;
+
+  try {
+    let assignmentsList = [];
+
+    // 1. Fetch assignments from Firestore
+    try {
+      const snapshot = await db.collection('assignments').get();
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          assignmentsList.push({ id: doc.id, ...doc.data() });
+        });
+      }
+    } catch (e) {
+      console.warn("Firestore assignments fetch warning:", e);
+    }
+
+    // 2. Fallback to archive.json if Firestore is empty
+    if (assignmentsList.length === 0) {
+      const res = await fetch('data/archive.json');
+      const jsonData = await res.json();
+      assignmentsList = jsonData.assignments || [];
+    }
+
+    const now = new Date();
+    let activeCount = 0;
+    let archivedCount = 0;
+
+    activeContainer.innerHTML = '';
+    archivedContainer.innerHTML = '';
+
+    assignmentsList.forEach((assignment) => {
+      const assignmentId = assignment.id || `assign_${Math.random()}`;
+      
+      let dueDate;
+      if (assignment.dueDate && assignment.dueDate.toDate) {
+        dueDate = assignment.dueDate.toDate();
+      } else if (assignment.dueDate) {
+        dueDate = new Date(assignment.dueDate);
+      } else {
+        dueDate = new Date(Date.now() + 86400000);
+      }
+
+      const isActive = dueDate > now;
+
+      const card = document.createElement('div');
+      card.className = 'assignment-item-card';
+      
+      // Stop event propagation on inner card if needed, or route directly with ID
+      card.onclick = (e) => {
+        e.stopPropagation(); // Prevents double click trigger on outer box
+        navigateToAssignmentsHub(isActive ? 'active' : 'archived', assignmentId);
+      };
+
+      const formattedDate = dueDate.toLocaleDateString('ar-EG', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+
+      const subjectName = assignment.subject || assignment.author || 'المقرر';
+
+      card.innerHTML = `
+        <div class="assignment-info">
+          <h4 style="margin:0 0 4px 0; font-size:1rem;">${assignment.title}</h4>
+          <span style="font-size:0.85rem; opacity: 0.85;">المادة: ${subjectName} | تاريخ التسليم: ${formattedDate}</span>
+        </div>
+        <div class="assignment-action-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </div>
+      `;
+
+      if (isActive) {
+        activeContainer.appendChild(card);
+        activeCount++;
+      } else {
+        archivedContainer.appendChild(card);
+        archivedCount++;
+      }
+    });
+
+    document.getElementById('activeAssignmentsCount').textContent = `${activeCount} واجبات نشطة`;
+    document.getElementById('archivedAssignmentsCount').textContent = `${archivedCount} مكتملاً`;
+
+  } catch (err) {
+    console.error("Error loading assignments:", err);
+  }
+}
+
+// Redirect to assignment detail/submission page
+function openAssignmentDetails(id, isActive) {
+  document.body.classList.add('fade-out');
+  setTimeout(() => {
+    window.location.href = `assignment-detail.html?id=${id}&status=${isActive ? 'active' : 'archived'}`;
+  }, 250);
+}
 
 </script>
 

@@ -787,3 +787,135 @@
     font-size: 0.65rem !important;
   }
 }
+
+/* ==========================================
+   ASSIGNMENTS DUAL-BOX SYSTEM
+   ========================================== */
+
+/* Shared Box Base */
+.assignment-box {
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 28px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
+}
+
+.box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.box-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.box-title-group h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* --- BOX 1: ACTIVE ASSIGNMENTS (BLUE) --- */
+.active-assignments-box {
+  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 28px -6px rgba(29, 78, 216, 0.3);
+}
+
+.active-assignments-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -8px rgba(29, 78, 216, 0.4);
+}
+
+.active-assignments-box .active-count-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+/* Pulsing Status Dot */
+.status-indicator-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #38bdf8;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-indicator-dot.pulse {
+  box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7);
+  animation: pulse-animation 1.8s infinite;
+}
+
+@keyframes pulse-animation {
+  0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+
+/* --- BOX 2: ARCHIVED ASSIGNMENTS (WHITE) --- */
+.archived-assignments-box {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+}
+
+.archived-assignments-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+}
+
+.archived-assignments-box .archived-count-badge {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Inner Item Cards */
+.assignment-item-card {
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Active Inner Cards */
+.active-assignments-box .assignment-item-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.active-assignments-box .assignment-item-card:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateX(-4px);
+}
+
+/* Archived Inner Cards */
+.archived-assignments-box .assignment-item-card {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  color: #0f172a;
+}
+
+.archived-assignments-box .assignment-item-card:hover {
+  background: #f1f5f9;
+  transform: translateX(-4px);
+}

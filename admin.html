@@ -44,48 +44,40 @@
     
     <!-- WELCOME HERO BANNER -->
     <section class="admin-hero">
-      <h1 class="admin-hero-title">أهلاً وسهلاً!</h1>
-      <div class="admin-hero-meta">
-        <span class="admin-badge" id="adminBadge">مشرف</span>
-        <span class="admin-display-name" id="adminDisplayName">اسم المستخدم</span>
+      <div class="admin-hero-overlay">
+        <div class="admin-hero-content">
+          <h1 class="admin-hero-title">أهلاً وسهلاً!</h1>
+          <div class="admin-hero-meta">
+            <span class="admin-badge" id="adminBadge">مشرف</span>
+            <span class="admin-display-name" id="adminDisplayName">اسم المستخدم</span>
+          </div>
+        </div>
       </div>
     </section>
-
+  
     <!-- 4-TAB NAVIGATION GRID -->
     <nav class="admin-nav-grid">
+      <!-- TAB 1: HOME -->
       <button class="admin-tab-btn active" onclick="switchAdminTab('homeTab', this)" title="الرئيسية">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
+        <img src="assets/images/web/white_home.png" data-blue="assets/images/web/blue_home.png" data-white="assets/images/web/white_home.png" alt="الرئيسية" class="tab-icon-img">
       </button>
-
+    
+      <!-- TAB 2: UPLOAD -->
       <button class="admin-tab-btn" onclick="switchAdminTab('uploadTab', this)" title="الرفع">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
-        </svg>
+        <img src="assets/images/web/blue_upload.png" data-blue="assets/images/web/blue_upload.png" data-white="assets/images/web/white_upload.png" alt="الرفع" class="tab-icon-img">
       </button>
-
+    
+      <!-- TAB 3: APPROVAL -->
       <button class="admin-tab-btn" onclick="switchAdminTab('approvalTab', this)" title="الموافقات">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          <polyline points="9 12 11 14 15 10"></polyline>
-        </svg>
+        <img src="assets/images/web/blue_check.png" data-blue="assets/images/web/blue_check.png" data-white="assets/images/web/white_check.png" alt="الموافقات" class="tab-icon-img">
       </button>
-
+    
+      <!-- TAB 4: DATABASE -->
       <button class="admin-tab-btn" onclick="switchAdminTab('databaseTab', this)" title="قاعدة البيانات">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-          <path d="M21 19c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-          <path d="M3 5v14"></path>
-          <path d="M21 5v14"></path>
-        </svg>
+        <img src="assets/images/web/blue_data.png" data-blue="assets/images/web/blue_data.png" data-white="assets/images/web/white_data.png" alt="قاعدة البيانات" class="tab-icon-img">
       </button>
     </nav>
-
+  
     <!-- TAB 1: HOME SECTION -->
     <section id="homeTab" class="tab-section active">
       <span class="tab-header-badge">لوحة الإحصائيات العامة</span>
@@ -93,27 +85,59 @@
         <p style="color: #64748b; font-size: 0.95rem;">مرحباً بك في لوحة تحكم المشرفين. استخدم الأيقونات أعلاه لإدارة المواد التعليمية، والموافقة على الكتب المرفوعة، والاطلاع على قاعدة بيانات الطلاب.</p>
       </div>
     </section>
-
+  
     <!-- TAB 2: UPLOAD SECTION -->
     <section id="uploadTab" class="tab-section">
-      <div class="admin-section-actions">
-        <span class="tab-header-badge">المواد التعليمية</span>
-        <button class="btn-add-book" onclick="openBookModal()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          إضافة كتاب جديد
+     <!-- 1. ASSIGNMENTS BLOCK -->
+<div class="admin-section-block">
+  <button class="dashed-action-btn" type="button" onclick="openAssignmentModal()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    <span>زيادة الواجبات</span>
+  </button>
+  
+  <!-- DYNAMIC CONTAINER -->
+  <div id="adminAssignmentsContainer" class="admin-cards-list">
+    <p style="text-align: center; color: #94a3b8; padding: 20px 0;">جاري تحميل الواجبات النشطة...</p>
+  </div>
+</div>
+
+      <!-- 2. EDUCATIONAL MATERIALS BLOCK -->
+      <div class="admin-section-block">
+        <button class="dashed-action-btn" type="button" onclick="openBookModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="17 11 12 6 7 11"></polyline><line x1="12" y1="18" x2="12" y2="6"></line></svg>
+          <span>رفع المواد التعليمية</span>
         </button>
-      </div>
-    
-      <div class="tab-card-body">
+  
+        <div class="admin-filter-bar">
+          <select class="level-select-dropdown">
+            <option value="1">المستوى الأول</option>
+            <option value="2">المستوى الثاني</option>
+            <option value="3">المستوى الثالث</option>
+          </select>
+  
+          <div class="category-tabs-scroll">
+            <button class="tab-chip active">البلاغة</button>
+            <button class="tab-chip">القراءة</button>
+            <button class="tab-chip">التوحيد</button>
+            <button class="tab-chip">الكتابة</button>
+            <button class="tab-chip">النحو</button>
+            <button class="tab-chip">تاريخ الأدب</button>
+            <button class="tab-chip">اللغة الإندونيسية</button>
+          </div>
+        </div>
+  
         <div id="adminBooksContainer" class="admin-book-list">
           <p style="text-align: center; color: #94a3b8; padding: 20px 0;">جاري تحميل الكتب...</p>
         </div>
       </div>
     </section>
-
+  
     <!-- TAB 3: APPROVAL SECTION -->
     <section id="approvalTab" class="tab-section">
-      <div class="admin-section-actions">
+      <div class="admin-section-actions" style="margin-bottom: 16px;">
         <span class="tab-header-badge">طلبات المكتبة العامة المعلقة</span>
       </div>
       <div class="tab-card-body">
@@ -122,10 +146,9 @@
         </div>
       </div>
     </section>
-
+  
     <!-- TAB 4: DATABASE SECTION -->
     <section id="databaseTab" class="tab-section">
-      <!-- MALE / FEMALE TAB SWITCHER -->
       <div class="gender-db-tabs">
         <button type="button" class="gender-tab-btn male-tab active" onclick="switchGenderDatabase('male', this)">
           <span>قاعدة بيانات الطلاب</span>
@@ -136,7 +159,7 @@
             <path d="M19 5v5"></path>
           </svg>
         </button>
-    
+  
         <button type="button" class="gender-tab-btn female-tab" onclick="switchGenderDatabase('female', this)">
           <span>قاعدة بيانات الطالبات</span>
           <svg class="gender-tab-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -146,9 +169,8 @@
           </svg>
         </button>
       </div>
-    
+  
       <div class="tab-card-body">
-        <!-- SEARCH BAR -->
         <div class="database-card-header">
           <div class="fancy-search-wrapper">
             <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -165,46 +187,46 @@
             <button type="button" id="clearSearchBtn" class="clear-search-btn" onclick="clearStudentSearch()" aria-label="مسح البحث">&times;</button>
           </div>
         </div>
-    
-        <!-- CLEAN STUDENT LIST CONTAINER -->
+  
         <div id="studentListContainer" class="student-list-container">
           <!-- Dynamic student rows rendered here -->
         </div>
       </div>
     </section>
   
-    <!-- STUDENT FULL PROFILE MODAL -->
-    <div id="studentProfileModal" class="admin-modal-overlay">
-      <div class="admin-modal-card profile-preview-card">
-        <button class="modal-close-x" onclick="closeStudentProfileModal()">&times;</button>
-        
-        <div class="profile-preview-header">
-          <img id="modalUserAvatar" src="assets/images/web/default_avatar.png" alt="Avatar" class="profile-preview-avatar">
-          <span class="profile-label-top">الاسم المعروض</span>
-          <h2 id="modalDisplayName" class="profile-user-title">اسم الطالب</h2>
-          <div id="modalGenderBadgeContainer" class="gender-badge-container"></div>
-        </div>
+  </main>
+  
+  <!-- STUDENT FULL PROFILE MODAL -->
+<div id="studentProfileModal" class="admin-modal-overlay">
+  <div class="admin-modal-card profile-preview-card">
+    <button type="button" class="modal-close-x" onclick="closeStudentProfileModal()" style="position: absolute; left: 16px; top: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
     
-        <hr class="profile-divider">
-    
-        <div class="profile-details-list">
-          <div class="detail-row">
-            <span class="detail-value" id="modalStudentId">11011110001</span>
-            <span class="detail-label">الرقم الجامعي</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-value" id="modalEmail">example@domain.com</span>
-            <span class="detail-label">البريد الإلكتروني</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-value" id="modalUsername">username</span>
-            <span class="detail-label">اسم المستخدم</span>
-          </div>
-        </div>
+    <div class="profile-preview-header">
+      <img id="modalUserAvatar" src="assets/images/web/default_avatar.png" alt="Avatar" class="profile-preview-avatar">
+      <span class="profile-label-top" style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 8px;">الاسم المعروض</span>
+      <h2 id="modalDisplayName" class="profile-user-title" style="font-size: 1.3rem; margin: 4px 0 10px 0; color: #0f172a;">اسم الطالب</h2>
+      <div id="modalGenderBadgeContainer" class="gender-badge-container"></div>
+    </div>
+
+    <hr class="profile-divider" style="margin: 16px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+    <div class="profile-details-list" style="display: flex; flex-direction: column; gap: 12px;">
+      <div class="detail-row" style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span class="detail-label" style="color: #64748b;">الرقم الجامعي:</span>
+        <span class="detail-value" id="modalStudentId" style="font-weight: 700; color: #0f172a;">11011110001</span>
+      </div>
+      <div class="detail-row" style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span class="detail-label" style="color: #64748b;">البريد الإلكتروني:</span>
+        <span class="detail-value" id="modalEmail" style="font-weight: 700; color: #0f172a; direction: ltr;">example@domain.com</span>
+      </div>
+      <div class="detail-row" style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+        <span class="detail-label" style="color: #64748b;">اسم المستخدم:</span>
+        <span class="detail-value" id="modalUsername" style="font-weight: 700; color: #0f172a; direction: ltr;">username</span>
       </div>
     </div>
-  
-  </main>
+  </div>
+</div>
+
 
   <!-- ADD / EDIT BOOK MODAL -->
   <div id="bookModal" class="admin-modal-overlay">
@@ -281,646 +303,691 @@
     </div>
   </div>
   
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
-      authDomain: "haashiya-web.firebaseapp.com",
-      projectId: "haashiya-web",
-      storageBucket: "haashiya-web.firebasestorage.app",
-      messagingSenderId: "340726241497",
-      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    let currentUserRole = 'student';
-    let allEducationalBooks = [];
-    let allStudentsList = [];
-    let currentGenderFilter = 'male';
-
-    function switchAdminTab(tabId, btnElement) {
-      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
-
-      document.getElementById(tabId).classList.add('active');
-      btnElement.classList.add('active');
-
-      if (tabId === 'approvalTab') {
-        listenToPendingApprovals();
-      }
-    }
-
-    function redirectToHome() {
-  window.location.href = 'index.html';
-}
-
-async function verifyAdminAccess() {
-  const sessionData = localStorage.getItem('currentUser');
-  
-  // 1. If not logged in, show access denied modal directly
-  if (!sessionData) {
-    showAccessDeniedModal();
-    return;
-  }
-
-  let user = JSON.parse(sessionData);
-  const username = (user.username || user.email?.split('@')[0] || '').toLowerCase().trim();
-
-  try {
-    // 2. Refresh role from Firestore to prevent tampering
-    if (username) {
-      const userDoc = await db.collection('users').doc(username).get();
-      if (userDoc.exists) {
-        const dbData = userDoc.data();
-        user.role = dbData.role || 'student';
-        user.name = dbData.name || user.name;
-        localStorage.setItem('currentUser', JSON.stringify(user));
-      }
-    }
-  } catch (err) {
-    console.warn("Could not refresh role from Firestore:", err);
-  }
-
-  // 3. Strict Role Access Control
-  const allowedRoles = ['admin', 'superadmin'];
-  if (!allowedRoles.includes(user.role)) {
-    showAccessDeniedModal();
-    return;
-  }
-
-  // 4. If authorized, render Admin panel details
-  currentUserRole = user.role;
-
-  const nameEl = document.getElementById('adminDisplayName');
-  const badgeEl = document.getElementById('adminBadge');
-
-  if (nameEl) nameEl.textContent = user.name || user.username;
-  if (badgeEl) {
-    badgeEl.textContent = currentUserRole === 'superadmin' ? 'مشرف عام' : 'مشرف';
-  }
-
-  await loadStudentDatabase();
-}
-
-function showAccessDeniedModal() {
-  const modal = document.getElementById('accessDeniedModal');
-  if (modal) modal.classList.add('show');
-}
-
-
-
-    // --- TAB 3: BOOK APPROVAL REALTIME LISTENER ---
-    function listenToPendingApprovals() {
-  const container = document.getElementById('pendingApprovalsList');
-  if (!container) return;
-
-  db.collection('pending_books')
-    .orderBy('createdAt', 'desc')
-    .onSnapshot((snapshot) => {
-      container.innerHTML = '';
-
-      if (snapshot.empty) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 24px 0;">لا توجد طلبات معلقة حالياً</p>';
-        return;
-      }
-
-      snapshot.forEach((doc) => {
-        const book = doc.data();
-        const docId = doc.id;
-        const card = document.createElement('div');
-        card.className = 'pending-item-card';
-        const coverImage = book.coverUrl || 'assets/images/covers/badee3tareekh.png';
-        
-        // Publisher / Requester Fallback
-        const uploaderName = book.uploadedBy || 'غير معروف';
-
-        card.innerHTML = `
-          <div class="pending-item-left">
-            <img src="${coverImage}" alt="${book.title}" class="pending-book-cover" onError="this.src='assets/images/covers/badee3tareekh.png'">
-            <div class="pending-book-info">
-              <strong class="pending-book-title">${book.title}</strong>
-              <span class="pending-book-meta">المؤلف: ${book.author} | الفن: ${book.theme} | الناشر: ${uploaderName}</span>
-            </div>
-          </div>
-
-          <div class="pending-action-btns">
-            <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn btn-view-pending" title="معاينة الكتاب">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            </a>
-            <button class="btn-approve" onclick="approveBook('${docId}')" title="قبول الطلب">قبول</button>
-            <button class="btn-reject" onclick="promptRejectBook('${docId}')" title="رفض الطلب">رفض</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    });
-}
-
-// --- FIRESTORE-BACKED NOTIFICATION HELPER ---
-async function addNotificationToUser(targetUsername, title, message, type = 'pending') {
-  if (!targetUsername) return;
-
-  const now = new Date();
-  const formattedTimestamp = now.toLocaleDateString('ar-EG', {
-    day: 'numeric',
-    month: 'short'
-  }) + ' ، ' + now.toLocaleTimeString('ar-EG', { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
-
-  try {
-    await db.collection('notifications').add({
-      targetUser: targetUsername.toLowerCase().trim(),
-      title,
-      message,
-      type,
-      timestamp: formattedTimestamp,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      unread: true
-    });
-  } catch (err) {
-    console.error('Error writing notification to Firestore:', err);
-  }
-}
-
-async function approveBook(docId) {
-  try {
-    const docRef = db.collection('pending_books').doc(docId);
-    const docSnap = await docRef.get();
-
-    if (!docSnap.exists) return;
-    const bookData = docSnap.data();
-
-    // 1. Move to approved_books
-    await db.collection('approved_books').add({
-      ...bookData,
-      approvedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    // 2. Send notification specifically to the requester
-    if (bookData.uploadedByUsername) {
-      await addNotificationToUser(
-        bookData.uploadedByUsername,
-        'تم القبول بنجاح! 🎉',
-        `تمت الموافقة على كتاب "${bookData.title}" وهو متاح الآن في المكتبة العامة.`,
-        'success'
-      );
-    }
-
-    // 3. Remove from pending_books
-    await docRef.delete();
-    alert(`تمت الموافقة على كتاب "${bookData.title}" بنجاح!`);
-  } catch (err) {
-    console.error('Approve Error:', err);
-    alert('حدث خطأ أثناء الموافقة على الكتاب');
-  }
-}
-
-    // Helper to extract bucket file path from full Supabase public URL
-function getStoragePathFromUrl(publicUrl) {
-  if (!publicUrl || !publicUrl.includes('library_books/')) return null;
-  return publicUrl.split('library_books/')[1];
-}
-
-async function rejectBook(docId) {
-  try {
-    const docRef = db.collection('pending_books').doc(docId);
-    const docSnap = await docRef.get();
-
-    if (docSnap.exists) {
-      const bookData = docSnap.data();
-
-      // Clean up Supabase storage files safely
-      if (window.supabaseClient) {
-        try {
-          const pdfPath = getStoragePathFromUrl(bookData.pdfUrl);
-          const coverPath = getStoragePathFromUrl(bookData.coverUrl);
-          const filesToDelete = [pdfPath, coverPath].filter(Boolean);
-
-          if (filesToDelete.length > 0) {
-            await window.supabaseClient.storage.from('library_books').remove(filesToDelete);
-          }
-        } catch (e) {
-          console.warn('Storage delete warning:', e);
-        }
-      }
-
-      // Send rejection notification to the requester
-      if (bookData.uploadedByUsername) {
-        await addNotificationToUser(
-          bookData.uploadedByUsername,
-          'تم رفض الطلب ❌',
-          `عذراً، لم تتم الموافقة على كتاب "${bookData.title}" من قبل الإدارة.`,
-          'rejected'
-        );
-      }
-
-      // Delete document from Firestore
-      await docRef.delete();
-    }
-  } catch (err) {
-    console.error('Reject Error:', err);
-    alert('حدث خطأ أثناء رفض الطلب');
-  }
-}
-
-
-    // --- TAB 4: STUDENT DATABASE LOGIC ---
-    async function loadStudentDatabase() {
-      const container = document.getElementById('studentListContainer');
-      if (!container) return;
-
-      try {
-        const snapshot = await db.collection('users').get();
-        allStudentsList = [];
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          allStudentsList.push({
-            id: doc.id,
-            name: data.name || 'بدون اسم',
-            username: doc.id,
-            studentId: data.studentId || '11011110001',
-            email: data.email || 'غير مسجل',
-            gender: (data.gender || 'male').toLowerCase().trim(),
-            avatar: data.avatar || 'assets/images/web/default_avatar.png'
-          });
-        });
-
-        filterStudentDatabase();
-      } catch (err) {
-        console.error("Error loading students:", err);
-        container.innerHTML = '<p style="text-align:center; color:#ef4444; padding: 20px 0;">حدث خطأ أثناء الاتصال بالخادم</p>';
-      }
-    }
-
-    function switchGenderDatabase(gender, btnEl) {
-      currentGenderFilter = gender;
-      document.querySelectorAll('.gender-tab-btn').forEach(btn => btn.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
-
-      const searchInput = document.getElementById('studentSearchInput');
-      if (searchInput) {
-        searchInput.placeholder = gender === 'female' 
-          ? 'بحث باسم الطالبة أو اسم المستخدم...' 
-          : 'بحث باسم الطالب أو اسم المستخدم...';
-      }
-
-      filterStudentDatabase();
-    }
-
-    function filterStudentDatabase() {
-      const searchInput = document.getElementById('studentSearchInput');
-      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
-
-      const filtered = allStudentsList.filter(student => {
-        const matchesGender = student.gender === currentGenderFilter;
-        const matchesQuery = 
-          student.name.toLowerCase().includes(query) ||
-          student.id.toLowerCase().includes(query) ||
-          student.studentId.toString().includes(query);
-
-        return matchesGender && matchesQuery;
-      });
-
-      renderStudentDatabase(filtered);
-    }
-
-    function renderStudentDatabase(studentsToRender) {
-      const container = document.getElementById('studentListContainer');
-      if (!container) return;
-
-      container.innerHTML = '';
-
-      if (studentsToRender.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 24px 0;">لا توجد نتائج مطابقة للبحث</p>';
-        return;
-      }
-
-      studentsToRender.forEach(student => {
-        const canViewFull = currentUserRole === 'superadmin';
-        const studentName = student.name || 'طالب';
-        const avatarUrl = student.avatar && student.avatar.trim() !== '' 
-          ? student.avatar 
-          : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
-
-        container.innerHTML += `
-          <div class="student-row-item">
-            <div class="student-row-info">
-              <img src="${avatarUrl}" alt="${studentName}" class="student-list-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff'">
-              <h4 class="student-list-name">${studentName}</h4>
-            </div>
-            <div>
-              ${canViewFull 
-                ? `<button class="btn-view-profile-card" onclick="openStudentProfileModal('${student.id}')">عرض الملف</button>` 
-                : `<span class="text-restricted-badge">محظور</span>`}
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function handleSearchInput(inputEl) {
-      const clearBtn = document.getElementById('clearSearchBtn');
-      if (clearBtn) {
-        if (inputEl.value.length > 0) {
-          clearBtn.classList.add('show');
-        } else {
-          clearBtn.classList.remove('show');
-        }
-      }
-      filterStudentDatabase();
-    }
-
-    function clearStudentSearch() {
-      const searchInput = document.getElementById('studentSearchInput');
-      const clearBtn = document.getElementById('clearSearchBtn');
+  <!-- ADD / EDIT ASSIGNMENT MODAL -->
+<div id="assignmentModal" class="admin-modal-overlay">
+  <div class="admin-modal-card" style="max-width: 480px; text-align: right;">
+    <button type="button" class="modal-close-x" onclick="closeAssignmentModal()" style="position: absolute; left: 16px; top: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    
+    <h3 id="assignmentModalTitle" style="margin: 0 0 16px 0; color: #0f172a; font-size: 1.25rem;">زيادة واجب جديد</h3>
+    
+    <form id="assignmentForm" onsubmit="handleSaveAssignment(event)">
+      <input type="hidden" id="assignmentIdInput">
       
-      if (searchInput) {
-        searchInput.value = '';
-        searchInput.focus();
-      }
-      if (clearBtn) {
-        clearBtn.classList.remove('show');
-      }
-      filterStudentDatabase();
+      <!-- 1. Assignment Title -->
+      <div class="admin-form-group">
+        <label style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b; font-size: 0.9rem;">عنوان الواجب</label>
+        <input type="text" id="assignmentTitleInput" class="admin-input" placeholder="مثال: إعادة التركيب (التقاطية)" required autocomplete="off">
+      </div>
+
+      <!-- 2. Level Selector (مستوى 1 - 8) -->
+      <div class="admin-form-group">
+        <label style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b; font-size: 0.9rem;">المستوى الدراسي</label>
+        <select id="assignmentLevelSelect" class="admin-select" required>
+          <option value="1">المستوى الأول</option>
+          <option value="2">المستوى الثاني</option>
+          <option value="3">المستوى الثالث</option>
+          <option value="4">المستوى الرابع</option>
+          <option value="5">المستوى الخامس</option>
+          <option value="6">المستوى السادس</option>
+          <option value="7">المستوى السابع</option>
+          <option value="8">المستوى الثامن</option>
+        </select>
+      </div>
+
+      <!-- 3. Subject Selector -->
+      <div class="admin-form-group">
+        <label style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b; font-size: 0.9rem;">المادة الدراسية</label>
+        <select id="assignmentSubjectSelect" class="admin-select" required>
+          <option value="البلاغة">مادة البلاغة</option>
+          <option value="القراءة">مادة القراءة</option>
+          <option value="التوحيد">مادة التوحيد</option>
+          <option value="الكتابة">مادة الكتابة</option>
+          <option value="النحو">مادة النحو</option>
+          <option value="تاريخ الأدب">مادة تاريخ الأدب</option>
+          <option value="اللغة الإندونيسية">مادة اللغة الإندونيسية</option>
+          <option value="الوطنية الإندونيسية">مادة الوطنية الإندونيسية</option>
+        </select>
+      </div>
+
+      <!-- 4. Deadline Date & Time -->
+      <div class="admin-form-group">
+        <label style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b; font-size: 0.9rem;">تاريخ ووقت الموعد النهائي (Deadline)</label>
+        <input type="datetime-local" id="assignmentDueDateInput" class="admin-input" required>
+      </div>
+
+      <!-- 5. Assignment Description -->
+      <div class="admin-form-group">
+        <label style="display: block; font-weight: 700; margin-bottom: 6px; color: #1e293b; font-size: 0.9rem;">وصف الواجب والتفاصيل</label>
+        <textarea id="assignmentDescInput" class="admin-input" rows="3" placeholder="أدخل تفاصيل ومتطلبات التسليم للطلاب..." style="resize: vertical; min-height: 80px;" required></textarea>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 14px;">
+        <button type="submit" class="admin-btn-submit" style="flex: 1; padding: 12px; background: #1d4ed8; color: #fff; font-weight: 700; border: none; border-radius: 10px; cursor: pointer;">حفظ و نشر الواجب</button>
+        
+        <!-- Delete button only shows when editing an existing task -->
+        <button type="button" id="deleteAssignmentBtn" onclick="handleDeleteAssignmentFromModal()" style="display: none; padding: 12px 18px; background: #ef4444; color: #fff; font-weight: 700; border: none; border-radius: 10px; cursor: pointer;">حذف الواجب</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ASSIGNMENT INFO MODAL -->
+<div id="assignmentInfoModal" class="admin-modal-overlay">
+  <div class="admin-modal-card" style="max-width: 440px; text-align: right; padding: 24px;">
+    <button type="button" class="modal-close-x" onclick="closeAssignmentInfoModal()" style="position: absolute; left: 16px; top: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+      <div style="width: 40px; height: 40px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #1d4ed8;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      </div>
+      <div>
+        <h3 id="infoModalTitle" style="margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 800;">تفاصيل الواجب</h3>
+        <span id="infoModalMeta" style="font-size: 0.82rem; color: #64748b;">مادة البلاغة • المستوى الأول</span>
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+
+    <div style="margin-bottom: 16px;">
+      <label style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 4px;">وصف الواجب والتوجيهات:</label>
+      <p id="infoModalDescription" style="font-size: 0.92rem; color: #334155; line-height: 1.6; margin: 0; white-space: pre-wrap; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">لا توجد تفاصيل إضافية</p>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; background: #f1f5f9; padding: 10px 14px; border-radius: 8px;">
+      <span>الموعد النهائي:</span>
+      <strong id="infoModalDueDate" style="color: #0f172a;">--/--/----</strong>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+    authDomain: "haashiya-web.firebaseapp.com",
+    projectId: "haashiya-web",
+    storageBucket: "haashiya-web.firebasestorage.app",
+    messagingSenderId: "340726241497",
+    appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+
+  let currentUserRole = 'student';
+  let allEducationalBooks = [];
+  let allStudentsList = [];
+  let allAdminAssignments = [];
+  let currentGenderFilter = 'male';
+  let currentEditingTaskId = null;
+
+  // --- NAVIGATION & ACCESS GUARD ---
+  function switchAdminTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      const img = btn.querySelector('.tab-icon-img');
+      if (img && img.dataset.blue) img.src = img.dataset.blue;
+    });
+
+    document.getElementById(tabId).classList.add('active');
+    btnElement.classList.add('active');
+
+    const activeImg = btnElement.querySelector('.tab-icon-img');
+    if (activeImg && activeImg.dataset.white) activeImg.src = activeImg.dataset.white;
+
+    if (tabId === 'approvalTab') listenToPendingApprovals();
+  }
+
+  function redirectToHome() {
+    window.location.href = 'index.html';
+  }
+
+  function showAccessDeniedModal() {
+    const modal = document.getElementById('accessDeniedModal');
+    if (modal) modal.classList.add('show');
+  }
+
+  async function verifyAdminAccess() {
+    const sessionData = localStorage.getItem('currentUser');
+    if (!sessionData) {
+      showAccessDeniedModal();
+      return;
     }
 
-    function openStudentProfileModal(username) {
-      const student = allStudentsList.find(s => s.id === username);
-      if (!student) return;
+    let user = JSON.parse(sessionData);
+    const username = (user.username || user.email?.split('@')[0] || '').toLowerCase().trim();
 
-      const modal = document.getElementById('studentProfileModal');
-      const avatarEl = document.getElementById('modalUserAvatar');
-      const nameEl = document.getElementById('modalDisplayName');
-      const idEl = document.getElementById('modalStudentId');
-      const emailEl = document.getElementById('modalEmail');
-      const usernameEl = document.getElementById('modalUsername');
-      const badgeContainer = document.getElementById('modalGenderBadgeContainer');
+    try {
+      if (username) {
+        const userDoc = await db.collection('users').doc(username).get();
+        if (userDoc.exists) {
+          const dbData = userDoc.data();
+          user.role = dbData.role || 'student';
+          user.name = dbData.name || user.name;
+          localStorage.setItem('currentUser', JSON.stringify(user));
+        }
+      }
+    } catch (err) {
+      console.warn("Could not refresh role from Firestore:", err);
+    }
 
+    const allowedRoles = ['admin', 'superadmin'];
+    if (!allowedRoles.includes(user.role)) {
+      showAccessDeniedModal();
+      return;
+    }
+
+    currentUserRole = user.role;
+    const nameEl = document.getElementById('adminDisplayName');
+    const badgeEl = document.getElementById('adminBadge');
+
+    if (nameEl) nameEl.textContent = user.name || user.username;
+    if (badgeEl) badgeEl.textContent = currentUserRole === 'superadmin' ? 'مشرف عام' : 'مشرف';
+
+    await loadStudentDatabase();
+  }
+
+  // --- STUDENT DATABASE SYSTEM ---
+  async function loadStudentDatabase() {
+    const container = document.getElementById('studentListContainer');
+    if (!container) return;
+
+    try {
+      const snapshot = await db.collection('users').get();
+      allStudentsList = [];
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const cleanId = doc.id.trim();
+        
+        allStudentsList.push({
+          id: cleanId,
+          name: data.name || cleanId,
+          username: data.username || cleanId,
+          studentId: data.studentId || '11011110001',
+          email: data.email || 'غير مسجل',
+          gender: (data.gender || 'male').toLowerCase().trim(),
+          avatar: data.avatar || ''
+        });
+      });
+
+      filterStudentDatabase();
+    } catch (err) {
+      console.error("Error loading students:", err);
+      container.innerHTML = '<p style="text-align:center; color:#ef4444; padding: 20px 0;">حدث خطأ أثناء الاتصال بالخادم</p>';
+    }
+  }
+
+  function filterStudentDatabase() {
+    const searchInput = document.getElementById('studentSearchInput');
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+    const filtered = allStudentsList.filter(student => {
+      const matchesGender = student.gender === currentGenderFilter;
+      const matchesQuery = 
+        student.name.toLowerCase().includes(query) ||
+        student.id.toLowerCase().includes(query) ||
+        student.studentId.toString().includes(query);
+
+      return matchesGender && matchesQuery;
+    });
+
+    renderStudentDatabase(filtered);
+  }
+
+  function renderStudentDatabase(studentsToRender) {
+    const container = document.getElementById('studentListContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (studentsToRender.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 24px 0;">لا توجد نتائج مطابقة للبحث</p>';
+      return;
+    }
+
+    studentsToRender.forEach(student => {
       const studentName = student.name || 'طالب';
       const avatarUrl = student.avatar && student.avatar.trim() !== '' 
         ? student.avatar 
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
 
-      if (avatarEl) {
-        avatarEl.src = avatarUrl;
-        avatarEl.onerror = function() {
-          this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
-        };
-      }
+      const card = document.createElement('div');
+      card.className = 'student-row-item';
+      card.innerHTML = `
+        <div class="student-row-info">
+          <img src="${avatarUrl}" alt="${studentName}" class="student-list-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff'">
+          <h4 class="student-list-name">${studentName}</h4>
+        </div>
+        <div>
+          <button type="button" class="btn-view-profile-card" onclick="openStudentProfileModal('${student.id}')">عرض الملف</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
 
-      if (nameEl) nameEl.textContent = studentName;
-      if (idEl) idEl.textContent = student.studentId || '11011110001';
-      if (emailEl) emailEl.textContent = student.email || 'غير مسجل';
-      if (usernameEl) usernameEl.textContent = student.username || student.id;
+  function switchGenderDatabase(gender, btnEl) {
+    currentGenderFilter = gender;
+    document.querySelectorAll('.gender-tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
 
-      const isMale = student.gender === 'male';
-      if (badgeContainer) {
-        badgeContainer.innerHTML = isMale 
-          ? `<span class="gender-badge gender-male">
-              <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="10" cy="14" r="5"></circle>
-                <path d="M19 5L13.5 10.5"></path>
-                <path d="M19 5h-5"></path>
-                <path d="M19 5v5"></path>
-              </svg>
-              طالب ♂
-            </span>` 
-          : `<span class="gender-badge gender-female">
-              <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="10" r="5"></circle>
-                <path d="M12 15v7"></path>
-                <path d="M9 19h6"></path>
-              </svg>
-              طالبة ♀
-            </span>`;
-      }
-
-      if (modal) modal.classList.add('show');
+    const searchInput = document.getElementById('studentSearchInput');
+    if (searchInput) {
+      searchInput.placeholder = gender === 'female' 
+        ? 'بحث باسم الطالبة أو اسم المستخدم...' 
+        : 'بحث باسم الطالب أو اسم المستخدم...';
     }
 
-    function closeStudentProfileModal() {
-      const modal = document.getElementById('studentProfileModal');
-      if (modal) modal.classList.remove('show');
+    filterStudentDatabase();
+  }
+
+  function openStudentProfileModal(rawId) {
+    const student = allStudentsList.find(s => String(s.id) === String(rawId));
+    if (!student) return;
+
+    const modal = document.getElementById('studentProfileModal');
+    const avatarEl = document.getElementById('modalUserAvatar');
+    const nameEl = document.getElementById('modalDisplayName');
+    const idEl = document.getElementById('modalStudentId');
+    const emailEl = document.getElementById('modalEmail');
+    const usernameEl = document.getElementById('modalUsername');
+    const badgeContainer = document.getElementById('modalGenderBadgeContainer');
+
+    const studentName = student.name || 'طالب';
+    const avatarUrl = student.avatar && student.avatar.trim() !== '' 
+      ? student.avatar 
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}&background=1d4ed8&color=fff`;
+
+    if (avatarEl) avatarEl.src = avatarUrl;
+    if (nameEl) nameEl.textContent = studentName;
+    if (idEl) idEl.textContent = student.studentId || '11011110001';
+    if (emailEl) emailEl.textContent = student.email || 'غير مسجل';
+    if (usernameEl) usernameEl.textContent = student.username || student.id;
+
+    if (badgeContainer) {
+      badgeContainer.innerHTML = student.gender === 'male' 
+        ? `<span class="gender-badge gender-male">طالب ♂</span>` 
+        : `<span class="gender-badge gender-female">طالبة ♀</span>`;
     }
 
-    // --- TAB 2: EDUCATIONAL BOOKS MANAGEMENT ---
-    async function loadAdminEducationalBooks() {
-      const container = document.getElementById('adminBooksContainer');
-      if (!container) return;
+    if (modal) modal.classList.add('show');
+  }
 
-      try {
-        const snapshot = await db.collection('educational_materials').get();
-        if (!snapshot.empty) {
-          allEducationalBooks = snapshot.docs.map(doc => ({ 
-            id: doc.id, 
-            ...doc.data() 
-          }));
+  function closeStudentProfileModal() {
+    const modal = document.getElementById('studentProfileModal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  // --- ASSIGNMENT MANAGEMENT & AUTO-ARCHIVE ---
+  async function loadAdminAssignments() {
+    const container = document.getElementById('adminAssignmentsContainer');
+    if (!container) return;
+
+    try {
+      const snapshot = await db.collection('assignments').get();
+      const now = new Date();
+      allAdminAssignments = [];
+
+      for (const doc of snapshot.docs) {
+        const data = doc.data();
+        const task = { id: doc.id, ...data };
+        let dueDate = data.dueDate?.toDate ? data.dueDate.toDate() : new Date(data.dueDate);
+
+        if (dueDate < now) {
+          await db.collection('archive_assignments').doc(doc.id).set({
+            ...data,
+            archivedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          await db.collection('assignments').doc(doc.id).delete();
         } else {
-          const res = await fetch('data/books.json');
-          const jsonData = await res.json();
-          const booksList = Array.isArray(jsonData) ? jsonData : (jsonData.educational_materials || []);
+          allAdminAssignments.push(task);
+        }
+      }
 
-          allEducationalBooks = booksList.map((book, idx) => ({
-            id: book.id ? String(book.id) : `json_fallback_${idx}`,
-            title: book.title || 'بدون عنوان',
-            author: book.author || 'المحاضر',
-            coverUrl: book.coverUrl || book.cover || 'assets/images/web/default_cover.png',
-            pdfUrl: book.pdfUrl || book.pdf || book.fileUrl || '#',
-            meta: book.meta || book.subjectTag || 'المواد التعليمية'
-          }));
+      renderAdminAssignments();
+    } catch (err) {
+      console.error("Error loading assignments:", err);
+      container.innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px 0;">حدث خطأ أثناء تحميل الواجبات</p>';
+    }
+  }
+
+  function renderAdminAssignments() {
+    const container = document.getElementById('adminAssignmentsContainer');
+    if (!container) return;
+
+    if (allAdminAssignments.length === 0) {
+      container.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 20px 0;">لا توجد واجبات نشطة حالياً</p>';
+      return;
+    }
+
+    container.innerHTML = '';
+    const now = new Date();
+
+    allAdminAssignments.forEach(task => {
+      let dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now() + 86400000);
+      const formattedDate = dueDate.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
+      const diffTime = dueDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const timeText = diffDays > 0 ? `[${diffDays} أيام متبقية]` : '[انتهى الموعد]';
+
+      const card = document.createElement('div');
+      card.className = 'admin-assignment-card';
+      card.style.cursor = 'pointer';
+      card.onclick = () => { window.location.href = `submissions.html?taskId=${task.id}`; };
+
+      card.innerHTML = `
+        <div class="card-info-side">
+          <h3 class="card-title">${task.title}</h3>
+          <p class="card-subtitle">مادة ${task.subject || 'المقرر'} (المستوى ${task.level || '1'}) • الموعد النهائي: ${formattedDate}</p>
+        </div>
+        <div class="card-actions-side">
+          <div class="action-buttons-group">
+            <button class="circle-icon-btn" onclick="event.stopPropagation(); showAssignmentInfo('${task.id}')" title="معاينة تفاصيل الواجب">
+              <img src="assets/images/web/active_info.png" alt="info">
+            </button>
+            <button class="circle-icon-btn" onclick="event.stopPropagation(); openAssignmentModal('${task.id}')" title="تعديل الواجب">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+          </div>
+          <span class="days-remaining-pill">${timeText}</span>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function openAssignmentModal(taskId = null) {
+    const modal = document.getElementById('assignmentModal');
+    const titleEl = document.getElementById('assignmentModalTitle');
+    const deleteBtn = document.getElementById('deleteAssignmentBtn');
+    const form = document.getElementById('assignmentForm');
+    if (!modal || !form) return;
+
+    form.reset();
+    currentEditingTaskId = taskId;
+
+    if (taskId) {
+      const task = allAdminAssignments.find(t => String(t.id) === String(taskId));
+      if (task) {
+        if (titleEl) titleEl.textContent = "تعديل بيانات الواجب";
+        if (deleteBtn) deleteBtn.style.display = "block";
+
+        document.getElementById('assignmentIdInput').value = task.id;
+        document.getElementById('assignmentTitleInput').value = task.title || '';
+        document.getElementById('assignmentLevelSelect').value = task.level || '1';
+        document.getElementById('assignmentSubjectSelect').value = task.subject || 'البلاغة';
+        document.getElementById('assignmentDescInput').value = task.description || '';
+
+        if (task.dueDate) {
+          const d = task.dueDate.toDate ? task.dueDate.toDate() : new Date(task.dueDate);
+          const isoString = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+          document.getElementById('assignmentDueDateInput').value = isoString;
+        }
+      }
+    } else {
+      if (titleEl) titleEl.textContent = "زيادة واجب جديد";
+      if (deleteBtn) deleteBtn.style.display = "none";
+      document.getElementById('assignmentIdInput').value = '';
+    }
+
+    modal.classList.add('show');
+  }
+
+  function closeAssignmentModal() {
+    const modal = document.getElementById('assignmentModal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  async function handleSaveAssignment(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('assignmentIdInput').value.trim();
+    const title = document.getElementById('assignmentTitleInput').value.trim();
+    const level = document.getElementById('assignmentLevelSelect').value;
+    const subject = document.getElementById('assignmentSubjectSelect').value;
+    const rawDueDate = document.getElementById('assignmentDueDateInput').value;
+    const description = document.getElementById('assignmentDescInput').value.trim();
+
+    if (!title || !rawDueDate) {
+      showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+      return;
+    }
+
+    const dueDate = new Date(rawDueDate);
+    const taskData = {
+      title, level, subject,
+      dueDate: firebase.firestore.Timestamp.fromDate(dueDate),
+      description,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+      if (id && !id.startsWith('json_fallback_')) {
+        await db.collection('assignments').doc(id).set(taskData, { merge: true });
+        showToast('تم تحديث الواجب بنجاح! ✏️', 'success');
+      } else {
+        await db.collection('assignments').add(taskData);
+        showToast('تمت إضافة الواجب الجديد بنجاح! 🎉', 'success');
+      }
+
+      closeAssignmentModal();
+      await loadAdminAssignments();
+    } catch (err) {
+      console.error("Save assignment error:", err);
+      showToast('حدث خطأ أثناء حفظ الواجب', 'error');
+    }
+  }
+
+  async function handleDeleteAssignmentFromModal() {
+    if (!currentEditingTaskId) return;
+    if (!confirm('هل أنت تأكد من أنك تريد حذف هذا الواجب نهائياً؟')) return;
+
+    try {
+      if (!currentEditingTaskId.startsWith('json_fallback_')) {
+        await db.collection('assignments').doc(currentEditingTaskId).delete();
+      }
+      closeAssignmentModal();
+      showToast('تم حذف الواجب بنجاح! 🗑️', 'success');
+      await loadAdminAssignments();
+    } catch (err) {
+      console.error("Delete assignment error:", err);
+      showToast('حدث خطأ أثناء حذف الواجب', 'error');
+    }
+  }
+
+  function showAssignmentInfo(taskId) {
+    const task = allAdminAssignments.find(t => String(t.id) === String(taskId));
+    if (!task) return;
+
+    const modal = document.getElementById('assignmentInfoModal');
+    const dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now());
+
+    const titleEl = document.getElementById('infoModalTitle');
+    const metaEl = document.getElementById('infoModalMeta');
+    const descEl = document.getElementById('infoModalDescription');
+    const dateEl = document.getElementById('infoModalDueDate');
+
+    if (titleEl) titleEl.textContent = task.title;
+    if (metaEl) metaEl.textContent = `مادة ${task.subject || 'المقرر'} • المستوى ${task.level || 'الأول'}`;
+    if (descEl) descEl.textContent = task.description || 'لا يوجد وصف لهذا الواجب';
+    if (dateEl) {
+      dateEl.textContent = dueDate.toLocaleDateString('ar-EG', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    if (modal) modal.classList.add('show');
+  }
+
+  function closeAssignmentInfoModal() {
+    const modal = document.getElementById('assignmentInfoModal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-message toast-${type}`;
+    toast.innerHTML = `<span>${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  // --- TAB 2: EDUCATIONAL BOOKS MANAGEMENT ---
+  async function loadAdminEducationalBooks() {
+    const container = document.getElementById('adminBooksContainer');
+    if (!container) return;
+
+    try {
+      const snapshot = await db.collection('educational_materials').get();
+      if (!snapshot.empty) {
+        allEducationalBooks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } else {
+        const res = await fetch('data/books.json');
+        const jsonData = await res.json();
+        const booksList = Array.isArray(jsonData) ? jsonData : (jsonData.educational_materials || []);
+
+        allEducationalBooks = booksList.map((book, idx) => ({
+          id: book.id ? String(book.id) : `json_fallback_${idx}`,
+          title: book.title || 'بدون عنوان',
+          author: book.author || 'المحاضر',
+          coverUrl: book.coverUrl || book.cover || 'assets/images/web/default_cover.png',
+          pdfUrl: book.pdfUrl || book.pdf || book.fileUrl || '#',
+          meta: book.meta || book.subjectTag || 'المواد التعليمية'
+        }));
+      }
+
+      renderAdminBooks();
+    } catch (err) {
+      console.error("Error loading books:", err);
+      container.innerHTML = `<p style="text-align: center; color: #ef4444; padding: 20px 0;">حدث خطأ أثناء تحميل البيانات</p>`;
+    }
+  }
+
+  function renderAdminBooks() {
+    const container = document.getElementById('adminBooksContainer');
+    if (!container) return;
+
+    if (allEducationalBooks.length === 0) {
+      container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 20px 0;">لا توجد كتب مضافة حالياً.</p>`;
+      return;
+    }
+
+    container.innerHTML = '';
+    allEducationalBooks.forEach(book => {
+      const coverImage = book.coverUrl || book.cover || 'assets/images/web/default_cover.png';
+      const pdfUrl = book.pdfUrl || book.pdf || book.fileUrl || '#';
+      const authorName = book.author || 'المحاضر';
+      const metaTag = book.meta || book.subjectTag || (book.category ? `المادة - ${book.category}` : 'المرجع الرئيسي');
+
+      container.innerHTML += `
+        <div class="book-row-card">
+          <div class="book-row-right">
+            <img src="${coverImage}" alt="${book.title}" class="book-row-cover" onError="this.src='assets/images/web/default_cover.png'">
+            <div class="book-row-details">
+              <h3 class="book-row-title">${book.title}</h3>
+              <p class="book-row-author">${authorName}</p>
+              <span class="book-row-meta">${metaTag}</span>
+            </div>
+          </div>
+
+          <div class="book-row-actions admin-row-actions">
+            <a href="${pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </a>
+
+            <button class="action-icon-btn admin-btn-edit" onclick="openBookModal('${book.id}')" title="تعديل">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+
+            <button class="action-icon-btn admin-btn-delete" onclick="deleteBook('${book.id}')" title="حذف">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function listenToPendingApprovals() {
+    const container = document.getElementById('pendingApprovalsList');
+    if (!container) return;
+
+    db.collection('pending_books')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot((snapshot) => {
+        container.innerHTML = '';
+        if (snapshot.empty) {
+          container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding: 24px 0;">لا توجد طلبات معلقة حالياً</p>';
+          return;
         }
 
-        renderAdminBooks();
-      } catch (err) {
-        console.error("Error loading books:", err);
-        container.innerHTML = `<p style="text-align: center; color: #ef4444; padding: 20px 0;">حدث خطأ أثناء تحميل البيانات</p>`;
-      }
-    }
+        snapshot.forEach((doc) => {
+          const book = doc.data();
+          const docId = doc.id;
+          const card = document.createElement('div');
+          card.className = 'pending-item-card';
+          const coverImage = book.coverUrl || 'assets/images/covers/badee3tareekh.png';
+          const uploaderName = book.uploadedBy || 'غير معروف';
 
-    function renderAdminBooks() {
-      const container = document.getElementById('adminBooksContainer');
-      if (!container) return;
-
-      if (allEducationalBooks.length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 20px 0;">لا توجد كتب مضافة حالياً.</p>`;
-        return;
-      }
-
-      container.innerHTML = '';
-      allEducationalBooks.forEach(book => {
-        const coverImage = book.coverUrl || book.cover || 'assets/images/web/default_cover.png';
-        const pdfUrl = book.pdfUrl || book.pdf || book.fileUrl || '#';
-        const authorName = book.author || 'المحاضر';
-        const metaTag = book.meta || book.subjectTag || (book.category ? `المادة - ${book.category}` : 'المرجع الرئيسي');
-
-        container.innerHTML += `
-          <div class="book-row-card">
-            <div class="book-row-right">
-              <img src="${coverImage}" alt="${book.title}" class="book-row-cover" onError="this.src='assets/images/web/default_cover.png'">
-              <div class="book-row-details">
-                <h3 class="book-row-title">${book.title}</h3>
-                <p class="book-row-author">${authorName}</p>
-                <span class="book-row-meta">${metaTag}</span>
+          card.innerHTML = `
+            <div class="pending-item-left">
+              <img src="${coverImage}" alt="${book.title}" class="pending-book-cover" onError="this.src='assets/images/covers/badee3tareekh.png'">
+              <div class="pending-book-info">
+                <strong class="pending-book-title">${book.title}</strong>
+                <span class="pending-book-meta">المؤلف: ${book.author} | الفن: ${book.theme} | الناشر: ${uploaderName}</span>
               </div>
             </div>
-
-            <div class="book-row-actions admin-row-actions">
-              <a href="${pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+            <div class="pending-action-btns">
+              <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn btn-view-pending" title="معاينة الكتاب">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
               </a>
-
-              <a href="${pdfUrl}" download class="action-icon-btn" title="تحميل">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-              </a>
-
-              <span class="admin-action-divider"></span>
-
-              <button class="action-icon-btn admin-btn-edit" onclick="openBookModal('${book.id}')" title="تعديل">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-              </button>
-
-              <button class="action-icon-btn admin-btn-delete" onclick="deleteBook('${book.id}')" title="حذف">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
+              <button class="btn-approve" onclick="approveBook('${docId}')" title="قبول الطلب">قبول</button>
+              <button class="btn-reject" onclick="promptRejectBook('${docId}')" title="رفض الطلب">رفض</button>
             </div>
-          </div>
-        `;
+          `;
+          container.appendChild(card);
+        });
       });
-    }
-
-    function openBookModal(bookId = null) {
-      const modal = document.getElementById('bookModal');
-      const titleEl = document.getElementById('modalTitle');
-      const form = document.getElementById('bookForm');
-
-      if (!modal || !form) return;
-      form.reset();
-
-      if (bookId) {
-        const book = allEducationalBooks.find(b => String(b.id) === String(bookId));
-        if (book) {
-          titleEl.textContent = "تعديل بيانات الكتاب";
-          document.getElementById('bookIdInput').value = book.id;
-          document.getElementById('bookTitleInput').value = book.title || '';
-          document.getElementById('bookAuthorInput').value = book.author || '';
-          document.getElementById('bookCategorySelect').value = book.category || 'balagha';
-          document.getElementById('bookCoverInput').value = book.coverUrl || book.cover || '';
-          document.getElementById('bookPdfInput').value = book.pdfUrl || book.pdf || book.fileUrl || '';
-        }
-      } else {
-        titleEl.textContent = "إضافة كتاب جديد";
-        document.getElementById('bookIdInput').value = '';
-      }
-
-      modal.classList.add('show');
-    }
-
-    function closeBookModal() {
-      const modal = document.getElementById('bookModal');
-      if (modal) modal.classList.remove('show');
-    }
-
-    async function handleSaveBook(e) {
-      e.preventDefault();
-      
-      const bookId = document.getElementById('bookIdInput').value;
-      const bookData = {
-        title: document.getElementById('bookTitleInput').value.trim(),
-        author: document.getElementById('bookAuthorInput').value.trim(),
-        category: document.getElementById('bookCategorySelect').value,
-        coverUrl: document.getElementById('bookCoverInput').value.trim(),
-        pdfUrl: document.getElementById('bookPdfInput').value.trim(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      try {
-        if (bookId && !bookId.startsWith('json_fallback_')) {
-          await db.collection('educational_materials').doc(bookId).set(bookData, { merge: true });
-        } else {
-          await db.collection('educational_materials').add(bookData);
-        }
-        
-        closeBookModal();
-        await loadAdminEducationalBooks();
-        alert('تم حفظ البيانات بنجاح!');
-      } catch (err) {
-        console.error("Failed to save book:", err);
-        alert('حدث خطأ أثناء الحفظ');
-      }
-    }
-
-    async function deleteBook(bookId) {
-      if (!confirm('هل أنت تأكد من أنك تريد حذف هذا الكتاب؟')) return;
-
-      try {
-        if (bookId && !bookId.startsWith('json_fallback_')) {
-          await db.collection('educational_materials').doc(bookId).delete();
-        } else {
-          allEducationalBooks = allEducationalBooks.filter(b => String(b.id) !== String(bookId));
-        }
-        renderAdminBooks();
-        alert('تم حذف الكتاب بنجاح!');
-      } catch (err) {
-        console.error("Failed to delete book:", err);
-        alert('حدث خطأ أثناء الحذف');
-      }
-    }
-
-    // Helper to extract bucket file path from full Supabase public URL
-function getStoragePathFromUrl(publicUrl) {
-  if (!publicUrl || !publicUrl.includes('library_books/')) return null;
-  return publicUrl.split('library_books/')[1];
-}
-
-let currentRejectDocId = null;
-
-function promptRejectBook(docId) {
-  currentRejectDocId = docId;
-  const modal = document.getElementById('rejectModal');
-  if (modal) modal.classList.add('show');
-}
-
-function closeRejectModal() {
-  const modal = document.getElementById('rejectModal');
-  if (modal) modal.classList.remove('show');
-  currentRejectDocId = null;
-}
-
-document.getElementById('confirmRejectBtn')?.addEventListener('click', async () => {
-  if (currentRejectDocId) {
-    await rejectBook(currentRejectDocId);
-    closeRejectModal();
   }
-});
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await verifyAdminAccess();
-      loadAdminEducationalBooks();
-      listenToPendingApprovals();
-    });
-  </script>
+  // --- DOM INITIALIZATION ---
+  document.addEventListener('DOMContentLoaded', async () => {
+    await verifyAdminAccess();
+    loadAdminEducationalBooks();
+    loadAdminAssignments();
+    listenToPendingApprovals();
+  });
+</script>
+
 </body>
 </html>

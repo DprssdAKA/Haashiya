@@ -4,43 +4,92 @@
     max-width: 800px; /* Increased from 600px for card action button clearance */
     margin: 20px auto;
     padding: 0 16px;
-};
+}
 
   
   /* Welcome Hero Banner */
   .admin-hero {
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-    border-radius: 16px;
-    padding: 24px;
-    color: #ffffff;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 25px -5px rgba(29, 78, 216, 0.3);
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    background: url('./assets/images/web/admin_hero.png') center center / cover no-repeat;
+    box-shadow: 0 10px 25px -5px rgba(29, 78, 216, 0.25);
+    margin-bottom: 24px;
+    direction: rtl;
   }
+
+.admin-hero-overlay {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(29, 78, 216, 0.2) 0%, rgba(15, 23, 42, 0.45) 100%);
+    padding: 36px 28px 24px 28px;
+    box-sizing: border-box;
+}
   
-  .admin-hero-title {
-    font-size: 2rem;
-    font-weight: 800;
-    margin: 0 0 16px 0;
-  }
-  
-  .admin-hero-meta {
+  .admin-hero-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    min-height: 120px;
+  }
+
+ /* Centered Title */
+.admin-hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 28px 0;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.5px;
+}
+  
+ /* Bottom Metadata Bar */
+.admin-hero-meta {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Badge on far right, Display Name on far left */
   }
   
-  .admin-badge {
-    background: #ffffff;
+  /* White Pill Badge for Admin Role */
+.admin-badge {
+    background-color: #ffffff;
     color: #1d4ed8;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 6px 18px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  .admin-display-name {
-    font-size: 1.1rem;
-    font-weight: 600;
+  /* Mobile Responsiveness */
+@media (max-width: 576px) {
+    .admin-hero-overlay {
+      padding: 28px 18px 20px 18px;
+    }
+  
+    .admin-hero-title {
+      font-size: 1.75rem;
+      margin-bottom: 20px;
+    }
+  
+    .admin-badge {
+      font-size: 0.8rem;
+      padding: 5px 14px;
+    }
+  
+    .admin-display-name {
+      font-size: 0.92rem;
+    }
+  }
+  
+/* Display Name Text on the Left */
+.admin-display-name {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   }
   
   /* 4-Tab Top Navigation Grid */
@@ -82,6 +131,19 @@
   .admin-tab-btn svg {
     width: 22px;
     height: 22px;
+  }
+  
+  /* Custom PNG Icon Sizing inside Admin Nav Buttons */
+.admin-tab-btn .tab-icon-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+  
+  .admin-tab-btn:hover .tab-icon-img {
+    transform: scale(1.1);
   }
   
   /* Tab Sections */
@@ -208,6 +270,9 @@
   
   .admin-modal-overlay.show {
     display: flex !important; /* Shows modal only when triggered */
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 99999 !important;
   }
   
   .admin-modal-card {
@@ -1008,5 +1073,243 @@
   .btn-return-home:hover {
     background-color: #1e40af;
   }
+
+  /* --- CUSTOM TOAST NOTIFICATION STYLES --- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-message {
+  background: #0f172a;
+  color: #ffffff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  border-right: 4px solid #1d4ed8;
+}
+
+.toast-message.toast-success {
+  border-right-color: #10b981;
+}
+
+.toast-message.toast-error {
+  border-right-color: #ef4444;
+}
+
+.toast-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
   
+  /* ==========================================
+   ACCESS DENIED MODAL (CENTERED MOBILE FIX)
+   ========================================== */
+
+/* Fullscreen Centered Flex Overlay */
+.access-denied-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;     /* Vertically centers the modal */
+    justify-content: center !important; /* Horizontally centers the modal */
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    z-index: 99999 !important;
+    padding: 16px !important;            /* Safe boundary padding for small screens */
+    box-sizing: border-box !important;
+  }
   
+  /* Card Sizing and Centered Layout */
+  .access-denied-card {
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 360px !important;        /* Keeps card compact and proportional on mobile */
+    padding: 28px 20px !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid #f1f5f9 !important;
+    margin: auto !important;             /* Ensures perfect flex centering fallback */
+  }
+
+  /* ==========================================
+   MOCKUP MATCHING LAYOUT EXTENSIONS
+   ========================================== */
+
+/* Dashed Action Buttons (+ زيادة الواجبات / ↑ رفع المواد) */
+.dashed-action-btn {
+  width: 100%;
+  background: #ffffff;
+  border: 2px dashed #1d4ed8;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #1d4ed8;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 18px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+}
+
+.dashed-action-btn:hover {
+  background: #eff6ff;
+  border-color: #1e40af;
+  transform: translateY(-2px);
+}
+
+/* Section Blocks */
+.admin-section-block {
+  margin-bottom: 32px;
+}
+
+/* Blue Active Assignment Cards */
+.admin-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-assignment-card {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  border-radius: 18px;
+  padding: 18px 22px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 20px rgba(29, 78, 216, 0.2);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.card-subtitle {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.card-actions-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.action-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.circle-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: none;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.circle-icon-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.circle-icon-btn:hover {
+  transform: scale(1.1);
+}
+
+.days-remaining-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Filter Bar & Category Chips */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.level-select-dropdown {
+  background: #1d4ed8;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.category-tabs-scroll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.tab-chip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1d4ed8;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tab-chip.active {
+  background: #1d4ed8;
+  color: #ffffff;
+  border-color: #1d4ed8;
+}

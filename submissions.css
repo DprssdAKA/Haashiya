@@ -1,0 +1,564 @@
+/* ==========================================
+   SUBMISSIONS DRIVE REPOSITORY STYLES
+   ========================================== */
+
+/* Main Wrapper Alignment */
+.admin-wrapper {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 16px;
+    direction: rtl;
+  }
+  
+  /* Page Section Header */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+  }
+  
+  .view-all-link {
+    color: #1d4ed8;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .view-all-link:hover {
+    color: #1e40af;
+  }
+  
+  /* Card Body Container */
+  .tab-card-body {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    border: 1px solid #e2e8f0;
+  }
+  
+  /* ==========================================
+     SEARCH BAR STYLING
+     ========================================== */
+  
+  .database-card-header {
+    margin-bottom: 20px;
+  }
+  
+  .fancy-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .fancy-search-wrapper .search-icon {
+    position: absolute;
+    right: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+    transition: color 0.2s ease;
+  }
+  
+  .fancy-search-input {
+    width: 100%;
+    padding: 12px 44px 12px 16px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  }
+  
+  .fancy-search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+  
+  .fancy-search-input:focus {
+    background: #ffffff;
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+  }
+  
+  .fancy-search-wrapper:focus-within .search-icon {
+    color: #1d4ed8;
+  }
+  
+  /* ==========================================
+     DRIVE FILE LIST CARDS
+     ========================================== */
+  
+  .drive-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .drive-file-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: all 0.2s ease;
+    margin-bottom: 10px;
+  }
+  
+  .drive-file-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  }
+  
+  .drive-file-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .drive-file-icon {
+    width: 42px;
+    height: 42px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .drive-file-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+  }
+  
+  .drive-file-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .drive-file-meta {
+    font-size: 0.82rem;
+    color: #64748b;
+  }
+  
+  .username-tag {
+    background: #f1f5f9;
+    color: #1e293b;
+    font-family: monospace, sans-serif;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    direction: ltr;
+    display: inline-block;
+  }
+  
+  /* Download Button */
+  .btn-approve {
+    background-color: #10b981;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .btn-approve:hover {
+    background-color: #059669;
+    transform: scale(1.02);
+  }
+  
+  /* ==========================================
+     ACCESS DENIED MODAL & BLUR STYLES
+     ========================================== */
+  
+  .admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  .admin-modal-overlay.show {
+    display: flex !important;
+  }
+  
+  .access-denied-card {
+    text-align: center;
+    width: 100%;
+    max-width: 380px;
+    padding: 32px 24px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #f1f5f9;
+  }
+  
+  .access-denied-icon {
+    width: 64px;
+    height: 64px;
+    background: #fef2f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+  }
+  
+  .access-denied-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+  
+  .access-denied-text {
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  
+  .btn-return-home {
+    width: 100%;
+    background-color: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-return-home:hover {
+    background-color: #1e40af;
+  }
+  
+  /* Action Circle Icon Buttons */
+.drive-file-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.action-icon-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.08);
+}
+
+.action-icon-btn.admin-btn-delete:hover {
+  background: #dc2626;
+}
+
+  /* ==========================================
+     MOBILE RESPONSIVE (< 600px)
+     ========================================== */
+  
+  @media (max-width: 600px) {
+    .drive-file-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .drive-file-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  
+    .pending-action-btns {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+    }
+  
+    .btn-approve {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Back Navigation Button */
+.btn-back-assignments {
+  background: #ffffff;
+  color: #1d4ed8;
+  border: 1px solid #cbd5e1;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.btn-back-assignments:hover {
+  background: #f1f5f9;
+  border-color: #1d4ed8;
+}
+
+/* Gender Tabs (Male Blue / Female Pink) */
+.gender-db-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gender-tab-btn {
+  border: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 10px 18px;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.55;
+  transform: translateY(2px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gender-tab-svg {
+  flex-shrink: 0;
+}
+
+.gender-tab-btn.male-tab {
+  background-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.gender-tab-btn.female-tab {
+  background-color: #db2777;
+  color: #ffffff;
+}
+
+.gender-tab-btn.active {
+  opacity: 1;
+  transform: translateY(0);
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
+}
+  
+/* Fix for the Top Active Assignment Banner in Detail View */
+#assignmentFilesDetailView .active-assignments-box {
+  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%) !important;
+  border-radius: 16px !important;
+  padding: 18px 22px !important;
+  color: #ffffff !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 10px 25px -5px rgba(29, 78, 216, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+#assignmentFilesDetailView .box-header {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 0 !important;
+}
+
+#assignmentFilesDetailView .box-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+#assignmentFilesDetailView .box-title-group h3 {
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+}
+
+#assignmentFilesDetailView .active-count-badge {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  padding: 6px 14px !important;
+  border-radius: 99px !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* ==========================================
+   TOAST NOTIFICATION ENGINE
+   ========================================== */
+
+   #toastContainer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 99999;
+    direction: rtl;
+    pointer-events: none;
+  }
+  
+  .toast-message {
+    pointer-events: auto;
+    min-width: 280px;
+    max-width: 380px;
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .toast-message.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .toast-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.82rem;
+  }
+  
+  /* Toast Variants */
+  .toast-message.success {
+    border-right: 4px solid #10b981;
+  }
+  .toast-message.success .toast-icon {
+    background: #ecfdf5;
+    color: #10b981;
+  }
+  
+  .toast-message.error {
+    border-right: 4px solid #ef4444;
+  }
+  .toast-message.error .toast-icon {
+    background: #fef2f2;
+    color: #ef4444;
+  }
+  
+  .toast-message.info {
+    border-right: 4px solid #1d4ed8;
+  }
+  .toast-message.info .toast-icon {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+  
+  /* ==========================================
+   ADMIN & DELETE MODAL CARD STYLES
+   ========================================== */
+
+.admin-modal-card {
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  padding: 32px 24px !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  text-align: center !important;
+  position: relative !important;
+  z-index: 100000 !important;
+}
+
+  /* Disable Hover Floating Animation on Detail View Banner */
+#assignmentFilesDetailView .active-assignments-box,
+#assignmentFilesDetailView .active-assignments-box:hover {
+  transform: none !important;
+  cursor: default !important;
+}
+
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  padding: 16px;
+}
+
+.admin-modal-overlay.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}

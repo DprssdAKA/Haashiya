@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاشية | بوابة تسليمات الطلاب</title>
+
+  <link rel="icon" type="image/png" href="assets/images/web/haashiya_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="archive.css">
+  <link rel="stylesheet" href="submissions.css">
+
+  <!-- Firebase & Supabase Clients -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    const SUPABASE_URL = 'https://pdfripacgcbgggspxjyo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
+    window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <a href="index.html" class="logo-link">
+          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+        </a>
+      </div>
+      <div class="navbar-right" id="navbarRight"></div>
+    </div>
+  </header>
+
+  <main class="admin-wrapper" style="max-width: 900px;">
+    
+    <!-- HEADER TITLE & NAVIGATION BACK -->
+    <div class="section-header" style="margin-bottom: 24px;">
+      <h2 class="section-title">📂 أرشيف تسليمات الطلاب (المشرف العام)</h2>
+      <a href="admin.html" class="view-all-link">&rarr; العودة للوحة الإدارة</a>
+    </div>
+
+    <!-- VIEW 1: ASSIGNMENT BOXES LIST -->
+    <div id="assignmentBoxesView">
+      <div class="tab-card-body" style="border-radius: 16px; padding: 24px;">
+        <h3 style="margin: 0 0 16px 0; font-size: 1.1rem; color: #0f172a;">اختر الواجب لعرض ملفات التسليم:</h3>
+        <div id="activeAssignmentsContainer">
+          <p style="text-align: center; color: #94a3b8; padding: 20px 0;">جاري تحميل الواجبات...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: SUBMITTED FILES DETAIL VIEW (BOYS / GIRLS) -->
+    <div id="assignmentFilesDetailView" style="display: none;">
+      <button class="btn-back-assignments" onclick="showAssignmentBoxesView()">
+        &rarr; العودة لقائمة الواجبات
+      </button>
+
+      <!-- BANNER FIX -->
+  <div class="active-assignments-box">
+    <div class="box-header">
+      <div class="box-title-group">
+        <span class="status-indicator-dot pulse"></span>
+        <h3 id="currentSelectedTaskTitle">إعادة التركيب (التقاطية)</h3>
+      </div>
+      <span class="active-count-badge" id="currentSelectedTaskSubject">مادة البلاغة</span>
+    </div>
+  </div>
+
+      <!-- BOYS / GIRLS TAB SWITCHER -->
+      <div class="gender-db-tabs" style="margin-bottom: 16px;">
+        <button type="button" class="gender-tab-btn male-tab active" onclick="switchGenderSubmissions('male', this)">
+          <span>تسليمات الطلاب </span>
+          <svg class="gender-tab-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="10" cy="14" r="5"></circle>
+            <path d="M19 5L13.5 10.5"></path>
+            <path d="M19 5h-5"></path>
+            <path d="M19 5v5"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="gender-tab-btn female-tab" onclick="switchGenderSubmissions('female', this)">
+          <span>تسليمات الطالبات </span>
+          <svg class="gender-tab-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="10" r="5"></circle>
+            <path d="M12 15v7"></path>
+            <path d="M9 19h6"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- CARD CONTAINER FOR SUBMITTED FILES -->
+      <div class="tab-card-body" style="border-radius: 16px;">
+        <div id="submissionsDriveList" class="drive-list-container">
+          <p style="text-align: center; color: #94a3b8; padding: 24px 0;">جاري تحميل ملفات التسليم...</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ACCESS DENIED MODAL -->
+  <div id="accessDeniedModal" class="admin-modal-overlay access-denied-overlay">
+    <div class="admin-modal-card access-denied-card">
+      <div class="access-denied-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h3 class="access-denied-title">وصول غير مصرح به</h3>
+      <p class="access-denied-text">عذراً، هذه الصفحة مخصصة للمشرف العام فقط لتجميع ملفات الواجبات.</p>
+      <button class="btn-return-home" onclick="window.location.href='index.html'">العودة للرئيسية</button>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+<div id="deleteConfirmModal" class="admin-modal-overlay">
+  <div class="admin-modal-card" style="text-align: center; max-width: 400px; padding: 28px 20px;">
+    <div style="width: 56px; height: 56px; background: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+    </div>
+    <h3 style="margin: 0 0 8px 0; color: #0f172a; font-size: 1.2rem;">تأكيد حذف الملف</h3>
+    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 22px; line-height: 1.5;">هل أنت تأكد من رغبتك في حذف هذا الملف نهائياً من الخادم؟</p>
+    
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button id="confirmDeleteBtn" class="action-icon-btn admin-btn-delete" style="width: auto; height: auto; border-radius: 10px; padding: 10px 22px; font-weight: 700; font-size: 0.88rem; background: #dc2626;">نعم، أحذف</button>
+      <button onclick="closeDeleteModal()" style="padding: 10px 22px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.88rem;">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGNMENT DETAILS MODAL CARD -->
+<div id="submissionInfoModal" class="admin-modal-overlay">
+  <div class="admin-modal-card" style="max-width: 440px; text-align: right; padding: 24px; position: relative;">
+    <button type="button" class="modal-close-x" onclick="closeSubmissionInfoModal()" style="position: absolute; left: 16px; top: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">&times;</button>
+    
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <div style="width: 42px; height: 42px; background: #eff6ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #1d4ed8; flex-shrink: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+      <div>
+        <h3 id="submissionInfoTitle" style="margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 800;">تفاصيل الواجب</h3>
+        <span id="submissionInfoMeta" style="font-size: 0.82rem; color: #64748b;">المادة • المستوى</span>
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+
+    <div style="margin-bottom: 16px;">
+      <label style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 6px;">وصف الواجب والتوجيهات:</label>
+      <div id="submissionInfoDescription" style="font-size: 0.92rem; color: #334155; line-height: 1.6; white-space: pre-wrap; background: #f8fafc; padding: 12px 14px; border-radius: 10px; border: 1px solid #e2e8f0; max-height: 200px; overflow-y: auto;">
+        لا توجد تفاصيل إضافية
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; background: #f1f5f9; padding: 10px 14px; border-radius: 8px;">
+      <span>الموعد النهائي للتسليم:</span>
+      <strong id="submissionInfoDueDate" style="color: #0f172a;">--/--/----</strong>
+    </div>
+  </div>
+</div>
+
+  <script>
+        let allAssignments = [];
+    let currentSelectedAssignment = null;
+    let assignmentSubmissions = [];
+    let currentGender = 'male';
+    let usersMap = {}; // Maps username to user data (gender, etc.)
+
+    // --- SUPERADMIN ACCESS GUARD ---
+    async function verifySuperadminAccess() {
+      const sessionData = localStorage.getItem('currentUser');
+      if (!sessionData) {
+        showAccessDenied();
+        return;
+      }
+
+      let user = JSON.parse(sessionData);
+      const username = (user.username || user.email?.split('@')[0] || '').toLowerCase().trim();
+
+      try {
+        if (username) {
+          const userDoc = await db.collection('users').doc(username).get();
+          if (userDoc.exists) {
+            user.role = userDoc.data().role || 'student';
+            localStorage.setItem('currentUser', JSON.stringify(user));
+          }
+        }
+      } catch (err) {
+        console.warn("Could not verify user role:", err);
+      }
+
+      if (user.role !== 'superadmin') {
+        showAccessDenied();
+        return;
+      }
+
+      await loadUsersMap();
+      await loadAssignmentsList();
+    }
+
+    function showAccessDenied() {
+      const modal = document.getElementById('accessDeniedModal');
+      if (modal) modal.classList.add('show');
+    }
+
+    // Pre-cache users to easily map submission usernames to gender
+    async function loadUsersMap() {
+      try {
+        const snapshot = await db.collection('users').get();
+        usersMap = {};
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const cleanUsername = (data.username || doc.id).toLowerCase().trim();
+
+          usersMap[cleanUsername] = {
+            username: cleanUsername,
+            gender: (data.gender || 'male').toLowerCase().trim()
+          };
+        });
+      } catch (err) {
+        console.error("Error pre-caching users map:", err);
+      }
+    }
+
+    function openSubmissionInfoModal(taskId) {
+      const task = allAssignments.find(t => String(t.id) === String(taskId));
+      if (!task) return;
+
+      const modal = document.getElementById('submissionInfoModal');
+      const titleEl = document.getElementById('submissionInfoTitle');
+      const metaEl = document.getElementById('submissionInfoMeta');
+      const descEl = document.getElementById('submissionInfoDescription');
+      const dateEl = document.getElementById('submissionInfoDueDate');
+
+      const dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now());
+
+      if (titleEl) titleEl.textContent = task.title;
+      if (metaEl) metaEl.textContent = `مادة ${task.subject || 'المقرر'} (المستوى ${task.level || '1'})`;
+      if (descEl) descEl.textContent = task.description || 'لا يوجد وصف متاح لهذا الواجب.';
+      if (dateEl) {
+        dateEl.textContent = dueDate.toLocaleDateString('ar-EG', {
+          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+      }
+
+      if (modal) modal.classList.add('show');
+    }
+
+    function closeSubmissionInfoModal() {
+      const modal = document.getElementById('submissionInfoModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    // --- LOAD & AUTO-ARCHIVE ACTIVE ASSIGNMENTS ---
+    async function loadAssignmentsList() {
+      const container = document.getElementById('activeAssignmentsContainer');
+      if (!container) return;
+
+      try {
+        const snapshot = await db.collection('assignments').get();
+        const now = new Date();
+        allAssignments = [];
+
+        if (!snapshot.empty) {
+          for (const doc of snapshot.docs) {
+            const data = doc.data();
+            const task = { id: doc.id, ...data };
+            let dueDate = data.dueDate?.toDate ? data.dueDate.toDate() : new Date(data.dueDate);
+
+            if (dueDate < now) {
+              await db.collection('archive_assignments').doc(doc.id).set({
+                ...data,
+                archivedAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+              await db.collection('assignments').doc(doc.id).delete();
+            } else {
+              allAssignments.push(task);
+            }
+          }
+        } else {
+          const res = await fetch('data/archive.json');
+          const jsonData = await res.json();
+          allAssignments = jsonData.assignments || [];
+        }
+
+        renderAssignmentBoxes();
+      } catch (err) {
+        console.error("Error loading assignments:", err);
+        container.innerHTML = '<p style="text-align:center; color:#ef4444; padding:20px 0;">حدث خطأ في تحميل بيانات الواجبات</p>';
+      }
+    }
+
+    function renderAssignmentBoxes() {
+      const container = document.getElementById('activeAssignmentsContainer');
+      if (!container) return;
+
+      if (allAssignments.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px 0;">لا توجد واجبات متاحة</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      const now = new Date();
+
+      allAssignments.forEach(task => {
+        let dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now() + 86400000);
+        const formattedDate = dueDate.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
+        const diffTime = Math.abs(dueDate - now);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        const card = document.createElement('div');
+        card.className = 'assignment-card active-blue-card';
+        card.style.cursor = 'pointer';
+        card.onclick = () => openAssignmentSubmissions(task.id);
+
+        card.innerHTML = `
+          <div class="assignment-right-wrapper">
+            <div class="assignment-right-info">
+              <h3 class="assignment-title">${task.title}</h3>
+              <p class="assignment-meta">مادة ${task.subject || 'المقرر'} (المستوى ${task.level || '1'}) • الموعد النهائي: ${formattedDate}</p>
+            </div>
+            <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openSubmissionInfoModal('${task.id}')" title="تفاصيل الواجب">
+              <img src="assets/images/web/active_info.png" alt="info" class="info-icon-img">
+            </button>
+          </div>
+          <div class="assignment-left-whitebox">
+            <img src="assets/images/web/clock_icon.png" alt="timer" class="stopwatch-img">
+            <div class="timer-text-wrapper">
+              <span class="timer-text-simple">[${diffDays} أيام]</span>
+              <span class="timer-text-detailed" data-duedate="${dueDate.toISOString()}">00d:00h:00m:00s</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      startSubmissionsCountdowns();
+    }
+
+    let submissionsCountdownInterval = null;
+    function startSubmissionsCountdowns() {
+      if (submissionsCountdownInterval) clearInterval(submissionsCountdownInterval);
+
+      submissionsCountdownInterval = setInterval(() => {
+        const detailedElements = document.querySelectorAll('.timer-text-detailed');
+        const now = new Date().getTime();
+
+        detailedElements.forEach(el => {
+          const rawDueDate = el.getAttribute('data-duedate');
+          if (!rawDueDate) return;
+
+          const targetTime = new Date(rawDueDate).getTime();
+          const distance = targetTime - now;
+
+          if (distance < 0) {
+            el.textContent = '00d:00h:00m:00s';
+            return;
+          }
+
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          const dStr = String(days).padStart(2, '0');
+          const hStr = String(hours).padStart(2, '0');
+          const mStr = String(minutes).padStart(2, '0');
+          const sStr = String(seconds).padStart(2, '0');
+
+          el.textContent = `${dStr}d:${hStr}h:${mStr}m:${sStr}s`;
+        });
+      }, 1000);
+    }
+
+    async function openAssignmentSubmissions(taskId) {
+      currentSelectedAssignment = allAssignments.find(t => String(t.id) === String(taskId));
+      if (!currentSelectedAssignment) return;
+
+      document.getElementById('currentSelectedTaskTitle').textContent = currentSelectedAssignment.title;
+      document.getElementById('currentSelectedTaskSubject').textContent = `مادة ${currentSelectedAssignment.subject || currentSelectedAssignment.author || 'المقرر'}`;
+
+      document.getElementById('assignmentBoxesView').style.display = 'none';
+      document.getElementById('assignmentFilesDetailView').style.display = 'block';
+
+      await fetchSubmissionsForTask(taskId);
+    }
+
+    function showAssignmentBoxesView() {
+      document.getElementById('assignmentFilesDetailView').style.display = 'none';
+      document.getElementById('assignmentBoxesView').style.display = 'block';
+    }
+
+    async function fetchSubmissionsForTask(taskId) {
+      const container = document.getElementById('submissionsDriveList');
+      container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:24px 0;">جاري تحميل ملفات التسليم...</p>';
+
+      try {
+        const snapshot = await db.collection('submissions')
+          .where('assignmentId', '==', String(taskId))
+          .get();
+
+        assignmentSubmissions = [];
+        snapshot.forEach(doc => {
+          assignmentSubmissions.push({ id: doc.id, ...doc.data() });
+        });
+
+        renderFilteredSubmissions();
+      } catch (err) {
+        console.error("Error loading task submissions:", err);
+        container.innerHTML = '<p style="text-align:center; color:#ef4444; padding:24px 0;">حدث خطأ أثناء تحميل الملفات</p>';
+      }
+    }
+
+    function switchGenderSubmissions(gender, btnEl) {
+      currentGender = gender;
+      document.querySelectorAll('.gender-tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderFilteredSubmissions();
+    }
+
+    function renderFilteredSubmissions() {
+      const container = document.getElementById('submissionsDriveList');
+      if (!container) return;
+
+      const filtered = assignmentSubmissions.filter(sub => {
+        const userObj = usersMap[(sub.username || '').toLowerCase().trim()];
+        const studentGender = userObj ? userObj.gender : 'male';
+        return studentGender === currentGender;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:32px 0;">لا توجد ملفات مسلّمة لقسم ${currentGender === 'male' ? 'الطلاب (البنين)' : 'الطالبات (البنات)'} في هذا الواجب</p>`;
+        return;
+      }
+
+      container.innerHTML = '';
+
+      filtered.forEach(sub => {
+        const { data: urlData } = window.supabaseClient.storage
+          .from('library_books')
+          .getPublicUrl(sub.filePath);
+
+        const filePublicUrl = urlData?.publicUrl || '#';
+        const cleanFileName = sub.filePath ? sub.filePath.split('/').pop() : 'ملف الواجب';
+        const usernameTag = sub.username ? `@${sub.username.toLowerCase().trim()}` : '@طالب';
+        
+        const submittedDate = sub.submittedAt?.toDate ? sub.submittedAt.toDate().toLocaleDateString('ar-EG', {
+          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        }) : 'مؤخراً';
+
+        const card = document.createElement('div');
+        card.className = 'student-submission-card';
+        card.style.cssText = `
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 14px 18px;
+          margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        `;
+
+        card.onmouseover = () => { card.style.borderColor = '#1d4ed8'; card.style.boxShadow = '0 4px 12px rgba(29, 78, 216, 0.08)'; };
+        card.onmouseout = () => { card.style.borderColor = '#e2e8f0'; card.style.boxShadow = 'none'; };
+
+        card.onclick = () => {
+          if (filePublicUrl && filePublicUrl !== '#') {
+            window.open(filePublicUrl, '_blank');
+          } else {
+            showToast('عذراً، لم يتم العثور على رابط الملف', 'error');
+          }
+        };
+
+        card.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 42px; height: 42px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #1d4ed8; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h4 style="margin: 0 0 3px 0; font-size: 1rem; color: #0f172a; font-weight: 700; direction: ltr; text-align: right;">${usernameTag}</h4>
+              <span style="font-size: 0.8rem; color: #64748b;">الملف: ${cleanFileName} • تاريخ التسليم: ${submittedDate}</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.82rem; color: #1d4ed8; font-weight: 700; background: #eff6ff; padding: 6px 14px; border-radius: 8px;">معاينة الملف ↗</span>
+            <button type="button" class="action-icon-btn admin-btn-delete" onclick="event.stopPropagation(); deleteSubmissionFile('${sub.id}', '${sub.filePath}')" title="حذف الملف نهائياً">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    let pendingDeleteSubmissionId = null;
+    let pendingDeleteFilePath = null;
+
+    function deleteSubmissionFile(submissionId, filePath) {
+      pendingDeleteSubmissionId = submissionId;
+      pendingDeleteFilePath = filePath;
+      document.getElementById('deleteConfirmModal').classList.add('show');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteConfirmModal').classList.remove('show');
+      pendingDeleteSubmissionId = null;
+      pendingDeleteFilePath = null;
+    }
+
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', async () => {
+      if (!pendingDeleteSubmissionId) return;
+
+      const subId = pendingDeleteSubmissionId;
+      const path = pendingDeleteFilePath;
+      closeDeleteModal();
+
+      try {
+        showToast('جاري حذف الملف من الخادم...', 'info', 2000);
+
+        if (path && window.supabaseClient) {
+          const { error: storageError } = await window.supabaseClient.storage
+            .from('library_books')
+            .remove([path]);
+
+          if (storageError) console.warn("Supabase removal warning:", storageError);
+        }
+
+        await db.collection('submissions').doc(subId).delete();
+
+        assignmentSubmissions = assignmentSubmissions.filter(s => s.id !== subId);
+        renderFilteredSubmissions();
+
+        showToast('تم حذف الملف بنجاح! 🎉', 'success');
+      } catch (err) {
+        console.error("Delete error:", err);
+        showToast('حدث خطأ أثناء عملية الحذف', 'error');
+      }
+    });
+
+    function showToast(message, type = 'info', duration = 3500) {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        document.body.appendChild(container);
+      }
+
+      const toast = document.createElement('div');
+      toast.className = `toast-message ${type}`;
+
+      let iconSymbol = 'ℹ️';
+      if (type === 'success') iconSymbol = '✓';
+      if (type === 'error') iconSymbol = '✕';
+
+      toast.innerHTML = `
+        <div class="toast-icon">${iconSymbol}</div>
+        <span class="toast-text">${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await verifySuperadminAccess();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const taskId = urlParams.get('taskId');
+      if (taskId) {
+        openAssignmentSubmissions(taskId);
+      }
+    });
+
+
+  </script>
+
+</body>
+</html>

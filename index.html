@@ -213,16 +213,17 @@
       </div>
   
       <!-- Category Filter Tabs -->
-      <div class="category-buttons">
-        <button class="cat-btn active" onclick="filterCategory('balagha', this)">البلاغة</button>
-        <button class="cat-btn" onclick="filterCategory('qiraah', this)">القراءة</button>
-        <button class="cat-btn" onclick="filterCategory('tawheed', this)">التوحيد</button>
-        <button class="cat-btn" onclick="filterCategory('kitaba', this)">الكتابة</button>
-        <button class="cat-btn" onclick="filterCategory('nahw', this)">النحو</button>
-        <button class="cat-btn" onclick="filterCategory('adab', this)">تاريخ الأدب</button>
-        <button class="cat-btn" onclick="filterCategory('indonesian', this)">اللغة الإندونيسية</button>
-        <button class="cat-btn" onclick="filterCategory('pkn', this)">الوطنية الإندونيسية</button>
-      </div>
+<div class="category-buttons">
+  <button class="cat-btn active" onclick="filterCategory('balagha', this)">البلاغة</button>
+  <button class="cat-btn" onclick="filterCategory('qiraah', this)">القراءة</button>
+  <button class="cat-btn" onclick="filterCategory('tawheed', this)">التوحيد</button>
+  <button class="cat-btn" onclick="filterCategory('kitaba', this)">الكتابة</button>
+  <button class="cat-btn" onclick="filterCategory('nahw', this)">النحو</button>
+  <button class="cat-btn" onclick="filterCategory('adab', this)">تاريخ الأدب</button>
+  <button class="cat-btn" onclick="filterCategory('indonesian', this)">اللغة الإندونيسية</button>
+  <button class="cat-btn" onclick="filterCategory('pkn', this)">الوطنية الإندونيسية</button>
+</div>
+
   
       <!-- Horizontal Book List Container -->
       <div id="educationalBooksContainer" class="book-list-container"></div>
@@ -286,53 +287,60 @@ async function uploadToSupabase(file, folder = 'uploads') {
 }
 
 
-    // --- DATA LOADERS ---
-    async function loadBooksData() {
-      try {
-        const response = await fetch('data/books.json');
-        if (!response.ok) throw new Error('Failed to fetch books.json');
-        return await response.json();
-      } catch (error) {
-        console.error('Error loading books JSON data:', error);
-        return [];
-      }
-    }
+  // Global memory storage for loaded books
+let globalBooks = [];
+let activeCategory = 'balagha';
+
+async function loadBooksData() {
+  try {
+    const response = await fetch('data/books.json');
+    if (!response.ok) throw new Error('Failed to fetch books.json');
+    globalBooks = await response.json();
+    return globalBooks;
+  } catch (error) {
+    console.error('Error loading books JSON data:', error);
+    return [];
+  }
+}
   
-    async function renderEducationalBooks() {
-      const container = document.getElementById('educationalBooksContainer');
-      if (!container) return;
-  
-      const books = await loadBooksData();
-      container.innerHTML = '';
-  
-      books.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'book-row-card';
-        card.setAttribute('data-category', book.category);
-  
-        card.innerHTML = `
-          <div class="book-row-right">
-            <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
-            <div class="book-row-details">
-              <h3 class="book-row-title">${book.title}</h3>
-              <p class="book-row-author">${book.author}</p>
-              <span class="book-row-meta">${book.meta}</span>
-            </div>
-          </div>
-          <div class="book-row-actions">
-            <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </a>
-            <a href="${book.pdfUrl}" download class="action-icon-btn" title="تحميل">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            </a>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-  
-      filterBooks();
-    }
+async function renderEducationalBooks() {
+  const container = document.getElementById('educationalBooksContainer');
+  if (!container) return;
+
+  if (globalBooks.length === 0) {
+    await loadBooksData();
+  }
+
+  container.innerHTML = '';
+
+  globalBooks.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'book-row-card';
+    card.setAttribute('data-category', book.category || '');
+
+    card.innerHTML = `
+      <div class="book-row-right">
+        <img src="${book.coverUrl}" alt="${book.title}" class="book-row-cover">
+        <div class="book-row-details">
+          <h3 class="book-row-title">${book.title}</h3>
+          <p class="book-row-author">${book.author}</p>
+          <span class="book-row-meta">${book.meta || ''}</span>
+        </div>
+      </div>
+      <div class="book-row-actions">
+        <a href="${book.pdfUrl}" target="_blank" class="action-icon-btn" title="قراءة">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </a>
+        <a href="${book.pdfUrl}" download class="action-icon-btn" title="تحميل">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </a>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  filterBooks();
+}
   
     function smoothNavigate(event, targetUrl) {
       event.preventDefault();
@@ -351,36 +359,44 @@ async function uploadToSupabase(file, folder = 'uploads') {
         window.location.href = targetUrl;
       }, 300);
     }
-
-    let activeCategory = 'balagha';
   
     function filterCategory(categoryKey, btnElement) {
-      activeCategory = categoryKey;
-      document.querySelectorAll('.category-buttons .cat-btn').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
-      filterBooks();
-    }
+  activeCategory = categoryKey;
   
-    function filterBooks() {
-      const searchInput = document.getElementById('searchInput');
-      const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-      const bookRows = document.querySelectorAll('.book-row-card');
-  
-      bookRows.forEach(row => {
-        const rowCat = row.getAttribute('data-category');
-        const title = row.querySelector('.book-row-title')?.textContent.toLowerCase() || '';
-        const author = row.querySelector('.book-row-author')?.textContent.toLowerCase() || '';
+  // Highlight active button
+  document.querySelectorAll('.category-buttons .cat-btn').forEach(btn => btn.classList.remove('active'));
+  if (btnElement) btnElement.classList.add('active');
 
-        const matchesCategory = (activeCategory === 'all' || rowCat === activeCategory);
-        const matchesSearch = title.includes(searchTerm) || author.includes(searchTerm);
+  filterBooks();
+}
   
-        if (matchesCategory && matchesSearch) {
-          row.style.display = 'flex';
-        } else {
-          row.style.display = 'none';
-        }
-      });
+function filterBooks() {
+  const searchInput = document.getElementById('searchInput');
+  const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const bookRows = document.querySelectorAll('#educationalBooksContainer .book-row-card');
+
+  bookRows.forEach(row => {
+    const rowCat = row.getAttribute('data-category');
+    const title = row.querySelector('.book-row-title')?.textContent.toLowerCase() || '';
+    const author = row.querySelector('.book-row-author')?.textContent.toLowerCase() || '';
+
+    // Matches if category is 'all' or exact Arabic category match
+    const matchesCategory = (activeCategory === 'all' || rowCat === activeCategory);
+    const matchesSearch = title.includes(searchTerm) || author.includes(searchTerm);
+
+    if (matchesCategory && matchesSearch) {
+      row.style.display = 'flex';
+    } else {
+      row.style.display = 'none';
     }
+  });
+}
+
+// Ensure Public Library container remains untouched and visible
+const publicLibrarySection = document.getElementById('general-library');
+  if (publicLibrarySection) {
+    publicLibrarySection.style.display = 'block';
+  }
 
     function listenToUserNotifications() {
   const sessionData = localStorage.getItem('currentUser');

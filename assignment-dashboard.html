@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاشية | بوابة تسليم الواجبات</title>
+
+  <link rel="icon" type="image/png" href="assets/images/web/haashiya_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="archive.css">
+
+  <!-- Firebase & Supabase Clients -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    const SUPABASE_URL = 'https://pdfripacgcbgggspxjyo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
+    window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-left">
+        <a href="index.html" class="logo-link">
+          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+        </a>
+      </div>
+
+      <nav class="desktop-nav">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-item-link">الرئيسية</a></li>
+          <li><a href="archive.html#assignments" class="nav-item-link">&rarr; العودة للأرشيف</a></li>
+        </ul>
+      </nav>
+
+      <div class="navbar-right" id="navbarRight"></div>
+    </div>
+  </header>
+
+  <main class="library-wrapper" style="padding-top: 40px;">
+    
+    <!-- DASHBOARD HEADER -->
+    <div class="section-header" style="margin-bottom: 24px;">
+      <h2 class="section-title">بوابة تسليم الواجبات والتكليفات</h2>
+      <a href="archive.html#assignments" class="view-all-link">&rarr; العودة لمعرض الواجبات</a>
+    </div>
+
+    <!-- TAB SWITCHER (ACTIVE vs ARCHIVED) -->
+    <div class="category-buttons" style="margin-bottom: 24px;">
+      <button id="tabActiveBtn" class="cat-btn active" onclick="switchTab('active')">الواجبات القائمة (النشطة)</button>
+      <button id="tabArchivedBtn" class="cat-btn" onclick="switchTab('archived')">أرشيف التكليفات المكتملة</button>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <div id="assignmentsHubContainer" class="main-card-section" style="padding: 24px;">
+      <p style="text-align: center; color: #94a3b8;">جاري تحميل بيانات الواجبات...</p>
+    </div>
+
+  </main>
+
+  <!-- SUBMISSION UPLOAD MODAL -->
+  <div id="submitModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeSubmitModal()">&times;</button>
+      <h3 class="upload-modal-title" id="modalTaskTitle">تسليم الواجب</h3>
+      <p class="upload-modal-subtitle" id="modalTaskSub">رفع ملف التكليف الدراسي (PDF/ZIP)</p>
+
+      <form id="submissionForm" onsubmit="handleAssignmentSubmit(event)">
+        <input type="hidden" id="selectedAssignmentId">
+
+        <div class="drop-zone" onclick="document.getElementById('submissionFileInput').click()">
+          <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span class="drop-zone-text" id="fileInputText">اضغط هنا لاختيار <b>ملف الواجب</b></span>
+          <input type="file" id="submissionFileInput" style="display: none;" accept=".pdf,.zip,.docx" onchange="updateFileName(this)" required>
+        </div>
+
+        <div class="upload-modal-actions">
+          <button type="submit" class="btn-submit-upload">تأكيد تسليم الواجب</button>
+          <button type="button" class="btn-cancel-upload" onclick="closeSubmitModal()">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TASK DETAILS MODAL -->
+<div id="taskDetailsModal" class="upload-modal-overlay">
+    <div class="upload-modal-card">
+      <button class="modal-close-x" onclick="closeModal('taskDetailsModal')">&times;</button>
+      <h3 id="detailTaskTitle" class="upload-modal-title">تفاصيل الواجب</h3>
+      <p id="detailTaskMeta" class="upload-modal-subtitle">المادة والتعليمات الخاصة بالمشروع</p>
+  
+      <div class="modal-field">
+        <label>تعليمات ومتطلبات التسليم</label>
+        <pre id="detailTaskInstructions" style="white-space: pre-wrap; font-family: inherit; color: #475569; background: #f8fafc; padding: 12px; border-radius: 8px; margin-top: 6px;">جاري تحميل البيانات...</pre>
+      </div>
+  
+      <div class="upload-modal-actions">
+        <button type="button" class="btn-submit-upload" onclick="openUploadFromDetails()">رفع الملف الآن</button>
+        <button type="button" class="btn-cancel-upload" onclick="closeModal('taskDetailsModal')">إغلاق</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentTab = 'active';
+    let allAssignments = [];
+
+    // Parse URL params (e.g. ?tab=active&id=xxx)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get('tab') || 'active';
+    const targetId = urlParams.get('id') || '';
+
+    function switchTab(tabType) {
+      currentTab = tabType;
+      document.getElementById('tabActiveBtn').classList.toggle('active', tabType === 'active');
+      document.getElementById('tabArchivedBtn').classList.toggle('active', tabType === 'archived');
+      renderHubAssignments();
+    }
+
+    async function loadHubAssignments() {
+      const container = document.getElementById('assignmentsHubContainer');
+      try {
+        let snapshot = await db.collection('assignments').get();
+        if (!snapshot.empty) {
+          allAssignments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } else {
+          // Fallback to local JSON if Firestore is empty
+          const res = await fetch('data/archive.json');
+          const data = await res.json();
+          allAssignments = data.assignments || [];
+        }
+        
+        switchTab(initialTab);
+
+        // If specific assignment ID was passed in URL, auto-open submit modal for active tasks
+        if (targetId && initialTab === 'active') {
+          openSubmitModal(targetId);
+        }
+      } catch (err) {
+        console.error("Error loading hub assignments:", err);
+        container.innerHTML = '<p style="text-align:center; color:#ef4444;">حدث خطأ في تحميل بيانات الواجبات</p>';
+      }
+    }
+
+    function renderHubAssignments() {
+  const container = document.getElementById('assignmentsHubContainer');
+  if (!container) return;
+
+  const now = new Date();
+  const filtered = allAssignments.filter(item => {
+    let dueDate = item.dueDate?.toDate ? item.dueDate.toDate() : new Date(item.dueDate || Date.now() + 86400000);
+    return currentTab === 'active' ? (dueDate > now) : (dueDate <= now);
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding: 32px 0;">لا توجد واجبات في قسم ${currentTab === 'active' ? 'الواجبات النشطة' : 'الأرشيف المكتمل'} حالياً</p>`;
+    return;
+  }
+
+  container.innerHTML = '';
+  filtered.forEach(task => {
+    let dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now() + 86400000);
+    const formattedDate = dueDate.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
+    const diffTime = Math.abs(dueDate - now);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (currentTab === 'active') {
+      const card = document.createElement('div');
+      card.className = 'assignment-card active-blue-card';
+      card.onclick = () => openSubmitModal(task.id); // Clicking card triggers submission modal
+
+      card.innerHTML = `
+        <div class="assignment-right-wrapper">
+          <div class="assignment-right-info">
+            <h3 class="assignment-title">${task.title}</h3>
+            <p class="assignment-meta">مادة ${task.subject || task.author || 'المقرر'} • الموعد النهائي: ${formattedDate}</p>
+          </div>
+
+          <!-- Info Icon PNG -->
+          <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openTaskDetailsModal('${task.id}')" title="تفاصيل الواجب">
+            <img src="assets/images/web/active_info.png" alt="info" class="info-icon-img">
+          </button>
+        </div>
+
+        <!-- White Countdown Box -->
+        <div class="assignment-left-whitebox" title="انقر لتسليم الواجب">
+          <img src="assets/images/web/clock_icon.png" alt="timer" class="stopwatch-img">
+          <div class="timer-text-wrapper">
+            <span class="timer-text-simple">[${diffDays} أيام]</span>
+            <span class="timer-text-detailed" data-duedate="${dueDate.toISOString()}">00d:00h:00m:00s</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    } else {
+      const card = document.createElement('div');
+      card.className = 'assignment-card archived-white-card';
+      card.innerHTML = `
+        <div class="assignment-right-info" style="padding: 16px 20px;">
+          <h3 class="assignment-title dark-text">${task.title}</h3>
+          <p class="assignment-meta muted-text">مادة ${task.subject || task.author || 'المقرر'} • انتهى الموعد (${formattedDate})</p>
+        </div>
+        <div class="assignment-left-actions" style="padding-left: 20px;">
+          <button type="button" class="btn-info-icon" onclick="openTaskDetailsModal('${task.id}')" title="عرض التفاصيل">
+            <img src="assets/images/web/archive_info.png" alt="info" class="info-icon-img">
+          </button>
+          <span class="archived-date-stamp">مكتمل</span>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+  });
+
+  startHubCountdowns();
+}
+
+// Live Countdown Timer for Dashboard Page
+let hubCountdownInterval = null;
+function startHubCountdowns() {
+  if (hubCountdownInterval) clearInterval(hubCountdownInterval);
+
+  hubCountdownInterval = setInterval(() => {
+    const detailedElements = document.querySelectorAll('.timer-text-detailed');
+    const now = new Date().getTime();
+
+    detailedElements.forEach(el => {
+      const rawDueDate = el.getAttribute('data-duedate');
+      if (!rawDueDate) return;
+
+      const targetTime = new Date(rawDueDate).getTime();
+      const distance = targetTime - now;
+
+      if (distance < 0) {
+        el.textContent = '00d:00h:00m:00s';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      const dStr = String(days).padStart(2, '0');
+      const hStr = String(hours).padStart(2, '0');
+      const mStr = String(minutes).padStart(2, '0');
+      const sStr = String(seconds).padStart(2, '0');
+
+      el.textContent = `${dStr}d:${hStr}h:${mStr}m:${sStr}s`;
+    });
+  }, 1000);
+}
+
+let currentSelectedTask = null;
+
+function openTaskDetailsModal(taskId) {
+  const task = allAssignments.find(t => String(t.id) === String(taskId));
+  if (!task) return;
+
+  currentSelectedTask = task;
+  document.getElementById('detailTaskTitle').textContent = task.title;
+  document.getElementById('detailTaskMeta').textContent = `مادة ${task.subject || task.author || ''}`;
+  document.getElementById('detailTaskInstructions').textContent = task.instructions || task.meta || 'يرجى رفع إجابة البحث بالصيغة المطلوبة قبل انتهاء الموعد المحدد.';
+
+  document.getElementById('taskDetailsModal').classList.add('show');
+}
+
+function openUploadFromDetails() {
+  closeModal('taskDetailsModal');
+  if (currentSelectedTask) openSubmitModal(currentSelectedTask.id);
+}
+
+function closeModal(modalId) {
+  const m = document.getElementById(modalId);
+  if (m) m.classList.remove('show');
+}
+
+
+
+    function openSubmitModal(taskId) {
+      const task = allAssignments.find(t => String(t.id) === String(taskId));
+      if (!task) return;
+
+      document.getElementById('selectedAssignmentId').value = task.id;
+      document.getElementById('modalTaskTitle').textContent = `تسليم: ${task.title}`;
+      document.getElementById('modalTaskSub').textContent = `مادة ${task.subject || task.author || 'المقرر'}`;
+      document.getElementById('submitModal').classList.add('show');
+    }
+
+    function closeSubmitModal() {
+      document.getElementById('submitModal').classList.remove('show');
+      document.getElementById('submissionForm').reset();
+      document.getElementById('fileInputText').innerHTML = 'اضغط هنا لاختيار <b>ملف الواجب</b>';
+    }
+
+    function updateFileName(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('fileInputText').innerHTML = `الملف المحدد: <b>${input.files[0].name}</b>`;
+      }
+    }
+
+    async function handleAssignmentSubmit(e) {
+  e.preventDefault();
+  const file = document.getElementById('submissionFileInput').files[0];
+  const taskId = document.getElementById('selectedAssignmentId').value;
+  const sessionData = localStorage.getItem('currentUser');
+  const user = sessionData ? JSON.parse(sessionData) : null;
+
+  if (!file || !user) {
+    showToast('يُرجَى تسجيل الدخول واختيار الملف أولاً', 'error');
+    return;
+  }
+
+  try {
+    showToast('جاري رفع الواجب إلى الخادم...', 'info', 2000);
+
+    // Upload submission to Supabase Storage
+    const fileExt = file.name.split('.').pop();
+    const filePath = `submissions/${user.username}_${taskId}_${Date.now()}.${fileExt}`;
+
+    const { error } = await window.supabaseClient.storage
+      .from('library_books')
+      .upload(filePath, file);
+
+    if (error) throw error;
+
+    // Record submission record in Firestore
+    await db.collection('submissions').add({
+      assignmentId: taskId,
+      username: user.username,
+      studentName: user.name || user.username,
+      filePath,
+      submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    closeSubmitModal();
+    showToast('تم تسليم الواجب بنجاح! 🎉', 'success');
+
+    // Refresh my submissions tab if currently open
+    if (currentTab === 'mySubmissions') {
+      loadMySubmissions();
+    }
+  } catch (err) {
+    console.error('Submission error:', err);
+    showToast('حدث خطأ أثناء رفع الواجب', 'error');
+  }
+}
+
+function showToast(message, type = 'info', duration = 3500) {
+  let container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast-message ${type}`;
+
+  let iconSymbol = 'ℹ️';
+  if (type === 'success') iconSymbol = '✓';
+  if (type === 'error') iconSymbol = '✕';
+
+  toast.innerHTML = `
+    <div class="toast-icon">${iconSymbol}</div>
+    <span class="toast-text">${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  // Trigger animation frame
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  // Auto remove after duration
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHubAssignments();
+    });
+  </script>
+
+</body>
+</html>
