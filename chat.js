@@ -2,6 +2,7 @@ let chatUnsubscribe = null;
 let isChatOpen = false;
 let isInitialLoad = true;
 let adminUsersList = [];
+let activeReplyData = null;
 
 // 1. Toggle Slide-Out Drawer
 function toggleAdminChatDrawer() {
@@ -112,48 +113,75 @@ function formatArabicDateSeparator(date) {
         let lastRenderedDateStr = null; // Track date changes
   
         snapshot.forEach(doc => {
-          const msg = doc.data();
-          const dateObj = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date();
-  
-          // 1. Check if we need to insert a Date Separator
-          const dateKey = dateObj.toDateString();
-          if (dateKey !== lastRenderedDateStr) {
-            const datePill = document.createElement('div');
-            datePill.className = 'chat-date-separator';
-            datePill.textContent = formatArabicDateSeparator(dateObj);
-            container.appendChild(datePill);
-            lastRenderedDateStr = dateKey;
-          }
-  
-          // 2. Render Message Bubble
-          const msgSender = (msg.sender || 'admin').toLowerCase().replace(/\s+/g, '').trim();
-          const isMine = msgSender === cleanMyUsername;
-          const textContent = msg.text || '';
-          const cleanTextLower = textContent.toLowerCase().replace(/\s+/g, '');
-  
-          const isMentioned = !isMine && cleanMyUsername && cleanTextLower.includes(`@${cleanMyUsername}`);
-          const timeStr = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-          const formattedSenderName = formatCapitalizedUsername(msg.senderName || msg.sender);
-// Replace @username with @DisplayName inside the bubble text
-const styledText = textContent.replace(/@([a-zA-Z0-9_]+)/g, (match, username) => {
-    const cleanUser = username.toLowerCase().trim();
-    // Find matching user in adminUsersList cache
-    const foundAdmin = adminUsersList.find(a => a.username === cleanUser);
-    const displayName = foundAdmin ? foundAdmin.name : username;
-    
-    return `<span class="mention-tag-highlight">@${displayName}</span>`;
-  });  
-          const bubble = document.createElement('div');
-          bubble.className = `chat-bubble ${isMine ? 'mine' : 'other'} ${isMentioned ? 'mentioned' : ''}`;
-  
-          bubble.innerHTML = `
-            ${!isMine ? `<span class="chat-sender-tag">${formattedSenderName}</span>` : ''}
-            <div class="chat-text-content">${styledText}</div>
-            <span class="chat-time-tag">${timeStr}</span>
-          `;
-  
-          container.appendChild(bubble);
-        });
+            const msg = doc.data();
+            const msgId = doc.id;
+            const msgSender = (msg.sender || 'admin').toLowerCase().replace(/\s+/g, '').trim();
+            const isMine = msgSender === cleanMyUsername;
+            const textContent = msg.text || '';
+            const cleanTextLower = textContent.toLowerCase().replace(/\s+/g, '');
+            const isMentioned = !isMine && cleanMyUsername && cleanTextLower.includes(`@${cleanMyUsername}`);
+            const dateObj = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date();
+            const timeStr = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            const formattedSenderName = formatCapitalizedUsername(msg.senderName || msg.sender);
+          
+            // Styled mentions
+            const styledText = textContent.replace(/@([a-zA-Z0-9_]+)/g, (match, username) => {
+              const cleanUser = username.toLowerCase().trim();
+              const foundAdmin = adminUsersList.find(a => a.username === cleanUser);
+              return `<span class="mention-tag-highlight">@${foundAdmin ? foundAdmin.name : username}</span>`;
+            });
+          
+            // Quoted Reply HTML
+            let quotedHTML = '';
+            if (msg.replyTo) {
+              quotedHTML = `
+                <div class="quoted-reply-box">
+                  <span class="quoted-reply-sender">${msg.replyTo.senderName}</span>
+                  <div class="quoted-reply-text">${msg.replyTo.text}</div>
+                </div>
+              `;
+            }
+          
+            // Wrapper element
+            const wrapper = document.createElement('div');
+            wrapper.className = `chat-bubble-wrapper ${isMine ? 'mine' : 'other'}`;
+          
+            // Bubble element
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${isMine ? 'mine' : 'other'} ${isMentioned ? 'mentioned' : ''}`;
+            bubble.innerHTML = `
+              ${!isMine ? `<span class="chat-sender-tag">${formattedSenderName}</span>` : ''}
+              ${quotedHTML}
+              <div class="chat-text-content">${styledText}</div>
+              <span class="chat-time-tag">${timeStr}</span>
+            `;
+          
+            // Hover Reply Button (Desktop)
+            const replyBtn = document.createElement('button');
+            replyBtn.type = 'button';
+            replyBtn.className = 'hover-reply-btn';
+            replyBtn.title = 'رد على هذه الرسالة';
+            replyBtn.innerHTML = `
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5">
+                <polyline points="9 17 4 12 9 7"></polyline>
+                <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
+              </svg>
+            `;
+            replyBtn.onclick = () => setReplyMode(msgId, formattedSenderName, textContent);
+          
+            if (isMine) {
+              wrapper.appendChild(bubble);
+              wrapper.appendChild(replyBtn);
+            } else {
+              wrapper.appendChild(replyBtn);
+              wrapper.appendChild(bubble);
+            }
+          
+            // Attach Touch Gesture for Mobile
+            attachSwipeToReply(wrapper, bubble, msgId, formattedSenderName, textContent);
+          
+            container.appendChild(wrapper);
+          });
   
         if (isChatOpen) {
           container.scrollTop = container.scrollHeight;
@@ -167,39 +195,51 @@ const styledText = textContent.replace(/@([a-zA-Z0-9_]+)/g, (match, username) =>
 
 // 3. Send Message Handler
 async function handleSendAdminMessage(e) {
-  if (e) e.preventDefault();
-
-  const input = document.getElementById('chatTextInput');
-  const firestoreDb = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-
-  if (!input || !firestoreDb) return;
-
-  const text = input.value.trim();
-  if (!text) return;
-
-  const sessionData = localStorage.getItem('currentUser');
-  const currentUser = sessionData ? JSON.parse(sessionData) : null;
-
-  if (!currentUser) {
-    alert('يرجى تسجيل الدخول أولاً');
-    return;
+    if (e) e.preventDefault();
+  
+    const input = document.getElementById('chatTextInput');
+    const firestoreDb = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
+  
+    if (!input || !firestoreDb) return;
+  
+    const text = input.value.trim();
+    if (!text) return;
+  
+    const sessionData = localStorage.getItem('currentUser');
+    const currentUser = sessionData ? JSON.parse(sessionData) : null;
+  
+    if (!currentUser) {
+      alert('يرجى تسجيل الدخول أولاً');
+      return;
+    }
+  
+    try {
+      const payload = {
+        sender: currentUser.username || 'admin',
+        senderName: currentUser.name || currentUser.username || 'مشرف',
+        gender: currentUser.gender || 'male',
+        text: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      };
+  
+      // Attach reply reference if replying
+      if (activeReplyData) {
+        payload.replyTo = {
+          messageId: activeReplyData.id,
+          senderName: activeReplyData.senderName,
+          text: activeReplyData.text
+        };
+      }
+  
+      input.value = '';
+      cancelReplyMode(); // Reset reply state
+  
+      await firestoreDb.collection('admin_chat').add(payload);
+    } catch (err) {
+      console.error("Error sending chat message:", err);
+      alert('فشل إرسال الرسالة، يرجى المحاولة مرة أخرى');
+    }
   }
-
-  try {
-    input.value = '';
-
-    await firestoreDb.collection('admin_chat').add({
-      sender: currentUser.username || 'admin',
-      senderName: currentUser.name || currentUser.username || 'مشرف',
-      gender: currentUser.gender || 'male',
-      text: text,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  } catch (err) {
-    console.error("Error sending chat message:", err);
-    alert('فشل إرسال الرسالة، يرجى المحاولة مرة أخرى');
-  }
-}
 
 // Helper to capitalize usernames
 function formatCapitalizedUsername(username) {
@@ -305,7 +345,90 @@ async function loadAdminUsersForMentions() {
     if (popup) popup.style.display = 'none';
   }
 
-  
+// 1. Enable Reply Mode
+function setReplyMode(msgId, senderName, messageText) {
+  activeReplyData = { id: msgId, senderName, text: messageText };
+
+  const container = document.getElementById('replyPreviewContainer');
+  const senderEl = document.getElementById('replyPreviewSender');
+  const textEl = document.getElementById('replyPreviewText');
+  const input = document.getElementById('chatTextInput');
+
+  if (container && senderEl && textEl) {
+    senderEl.textContent = `الرد على: ${senderName}`;
+    textEl.textContent = messageText;
+    container.style.display = 'flex';
+  }
+
+  if (input) input.focus();
+}
+
+// 2. Cancel Reply Mode
+function cancelReplyMode() {
+  activeReplyData = null;
+  const container = document.getElementById('replyPreviewContainer');
+  if (container) container.style.display = 'none';
+}
+
+// 3. Attach Touch Swipe Listener for Mobile
+function attachSwipeToReply(wrapper, bubble, msgId, senderName, messageText) {
+  let startX = 0;
+  let currentX = 0;
+  let isSwiping = false;
+
+  // Create swipe icon element behind bubble
+  const swipeIcon = document.createElement('div');
+  swipeIcon.className = 'swipe-reply-icon';
+  swipeIcon.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="9 17 4 12 9 7"></polyline>
+      <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
+    </svg>
+  `;
+  wrapper.appendChild(swipeIcon);
+
+  bubble.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    isSwiping = true;
+  }, { passive: true });
+
+  bubble.addEventListener('touchmove', (e) => {
+    if (!isSwiping) return;
+    currentX = e.touches[0].clientX - startX;
+
+    // Only allow swipe to the right (positive X in standard layout)
+    if (currentX > 0 && currentX < 90) {
+      bubble.style.transform = `translateX(${currentX}px)`;
+      bubble.classList.add('swiping');
+
+      if (currentX > 40) {
+        swipeIcon.classList.add('visible');
+      } else {
+        swipeIcon.classList.remove('visible');
+      }
+    }
+  }, { passive: true });
+
+  bubble.addEventListener('touchend', () => {
+    if (!isSwiping) return;
+    isSwiping = false;
+
+    if (currentX > 50) {
+      // Trigger reply when swiped past threshold
+      setReplyMode(msgId, senderName, messageText);
+    }
+
+    // Spring back bubble
+    bubble.style.transition = 'transform 0.2s ease-out';
+    bubble.style.transform = 'translateX(0px)';
+    swipeIcon.classList.remove('visible');
+
+    setTimeout(() => {
+      bubble.style.transition = '';
+      bubble.classList.remove('swiping');
+    }, 200);
+  });
+}
 
 // Initialize listener when page loads
 document.addEventListener('DOMContentLoaded', () => {

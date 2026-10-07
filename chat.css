@@ -195,12 +195,20 @@
     font-size: 0.88rem;
     outline: none;
     font-family: inherit;
+    unicode-bidi: plaintext; /* Fixes punctuation placement while typing in English/Latin */
+    text-align: start;
   }
   
   .chat-input-footer input:focus {
     border-color: #1d4ed8;
   }
   
+  .chat-text-content {
+    unicode-bidi: plaintext; /* Automatically detects whether text is LTR (English) or RTL (Arabic) */
+    text-align: start;       /* Align LTR text to the left and RTL text to the right inside the bubble */
+    word-wrap: break-word;
+  }
+
   .chat-send-btn {
     width: 40px;
     height: 40px;
@@ -360,6 +368,162 @@
     text-align: center;
     user-select: none;
   }
+
+  /* --- REPLY PREVIEW BAR ABOVE INPUT --- */
+.reply-preview-bar {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background: #f1f5f9;
+    border-top: 1px solid #cbd5e1;
+    border-bottom: 2px solid #1d4ed8;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1005;
+    direction: rtl;
+  }
+  
+  .reply-preview-content {
+    flex: 1;
+    overflow: hidden;
+    padding-left: 8px;
+  }
+  
+  .reply-preview-sender {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #1d4ed8;
+  }
+  
+  .reply-preview-text {
+    margin: 2px 0 0 0;
+    font-size: 0.8rem;
+    color: #475569;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .reply-cancel-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+  }
+  
+  .reply-cancel-btn:hover {
+    color: #0f172a;
+  }
+  
+  /* --- QUOTED MESSAGE INSIDE BUBBLE --- */
+  .quoted-reply-box {
+    background: rgba(15, 23, 42, 0.06);
+    border-right: 3px solid #1d4ed8;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    direction: rtl;
+  }
+  
+  .chat-bubble.mine .quoted-reply-box {
+    background: rgba(255, 255, 255, 0.2);
+    border-right-color: #ffffff;
+  }
+  
+  .quoted-reply-sender {
+    font-weight: 800;
+    color: #1d4ed8;
+    display: block;
+    font-size: 0.72rem;
+  }
+  
+  .chat-bubble.mine .quoted-reply-sender {
+    color: #ffffff;
+  }
+  
+  .quoted-reply-text {
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+  
+  .chat-bubble.mine .quoted-reply-text {
+    color: #f1f5f9;
+  }
+  
+  /* --- HOVER REPLY BUTTON (DESKTOP) --- */
+  .chat-bubble-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .chat-bubble-wrapper.mine {
+    justify-content: flex-start;
+  }
+  
+  .chat-bubble-wrapper.other {
+    justify-content: flex-end;
+  }
+  
+  .hover-reply-btn {
+    opacity: 0;
+    pointer-events: none;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin: 0 6px;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  
+  .chat-bubble-wrapper:hover .hover-reply-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .hover-reply-btn:hover {
+    transform: scale(1.1);
+    background: #f1f5f9;
+  }
+  
+  /* --- SWIPE-TO-REPLY (MOBILE) --- */
+  .chat-bubble.swiping {
+    transition: none !important;
+  }
+  
+  .swipe-reply-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.8);
+    opacity: 0;
+    color: #1d4ed8;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+  }
+  
+  .swipe-reply-icon.visible {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+  
   /* Mobile Viewport Adjustments */
 @media screen and (max-width: 480px) {
     .admin-chat-drawer {
