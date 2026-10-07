@@ -12,6 +12,8 @@
   
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="chat.css">
+
 
   <!-- Supabase JS Client for Storage -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -399,6 +401,47 @@
   </div>
 </div>
 
+<!-- FLOATING CHAT BUTTON -->
+<button type="button" id="chatFabBtn" class="chat-fab-btn" onclick="toggleAdminChatDrawer()" title="شات المشرفين">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+  <!-- RED NOTIFICATION DOT -->
+  <span id="unreadChatBadge" class="unread-chat-dot" style="display: none;"></span>
+</button>
+
+<!-- SLIDE-OUT CHAT DRAWER -->
+<div id="adminChatDrawer" class="admin-chat-drawer">
+  <!-- CHAT HEADER -->
+  <div class="chat-drawer-header">
+    <div class="chat-header-info">
+      <span class="chat-status-dot"></span>
+      <h3>دردشة المشرفين</h3>
+    </div>
+    <button type="button" class="chat-close-btn" onclick="toggleAdminChatDrawer()">&times;</button>
+  </div>
+
+  <!-- CHAT MESSAGES BODY -->
+  <div id="chatMessagesBody" class="chat-messages-body">
+    <p class="chat-loading-text">جاري تحميل الرسائل...</p>
+  </div>
+
+  <!-- CHAT INPUT FOOTER -->
+  <form id="chatInputForm" class="chat-input-footer" onsubmit="handleSendAdminMessage(event)">
+    <div id="mentionDropdown" class="mention-dropdown-popup" style="display: none;"></div>
+    <input type="text" id="chatTextInput" placeholder="اكتب رسالتك هنا... (استخدم @ للإشارة إلى مشرف)" autocomplete="off" oninput="handleChatInput(event)" required>    <button type="submit" class="chat-send-btn" title="إرسال">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </form>
+</div>
+
+<!-- BACKDROP OVERLAY (Optional: darkens background when drawer is open) -->
+<div id="chatDrawerOverlay" class="chat-drawer-overlay" onclick="toggleAdminChatDrawer()"></div>
+
+
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -415,7 +458,8 @@
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
-  const db = firebase.firestore();
+  window.db = firebase.firestore();
+  const db = window.db;
 
   let currentUserRole = 'student';
   let allEducationalBooks = [];
@@ -988,6 +1032,8 @@
     listenToPendingApprovals();
   });
 </script>
+
+<script src="chat.js"></script>
 
 </body>
 </html>

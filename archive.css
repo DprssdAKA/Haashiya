@@ -919,3 +919,133 @@
   background: #f1f5f9;
   transform: translateX(-4px);
 }
+
+/* --- EXPANDED ARCHIVE SUBMISSION SECTION --- */
+.expanded-submissions-wrapper {
+  width: 100%;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed #cbd5e1;
+  animation: fadeInExpand 0.25s ease-in-out;
+}
+
+@keyframes fadeInExpand {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gender Filter Chips Bar */
+.submission-filter-chips {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end; /* Align chips to the right (RTL layout) */
+  margin-bottom: 16px;
+}
+
+.submission-filter-chips .chip-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+.submission-filter-chips .chip-btn.active {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.25);
+}
+
+.submission-filter-chips .chip-btn:not(.active) {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.submission-filter-chips .chip-btn:hover:not(.active) {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* Student Row Card */
+.student-submission-row {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.student-submission-row:hover {
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.08);
+}
+
+/* Left Action Circles (View & Download) */
+.student-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-circle-btn {
+  width: 38px;
+  height: 38px;
+  background: #0f172a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.action-circle-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.06);
+}
+
+/* Right Name Styling */
+.student-row-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #334155;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  text-align: right;
+  direction: ltr; /* Keeps English capitalized names properly oriented */
+}
+
+/* --- FULL-WIDTH EXPANDED SUBMISSIONS BELOW ARCHIVE CARD --- */
+.assignment-card.archived-white-card {
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.archived-card-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.expanded-submissions-wrapper {
+  width: 100% !important;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #cbd5e1;
+  box-sizing: border-box;
+}

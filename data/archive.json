@@ -19,17 +19,7 @@
         "coverUrl": "assets/images/covers/badee3_1.png"
       }
     ],
-    "assignments": [
-      {
-        "id": "hw_01",
-        "title": "إعادة التركيب (التقاطية)",
-        "author": "مادة البلاغة",
-        "category": "balagha",
-        "meta": "02/10/2026",
-        "dueDate": "2026-10-24T23:59:59Z",
-        "instructions": "قم بإعداد بحث شامل وتسليمه بصيغة PDF."
-      }
-    ],
+    "assignments": [],
     "whiteboards": [
       {
         "id": 1,

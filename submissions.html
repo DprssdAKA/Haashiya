@@ -323,51 +323,54 @@
     }
 
     function renderAssignmentBoxes() {
-      const container = document.getElementById('activeAssignmentsContainer');
-      if (!container) return;
+  const container = document.getElementById('activeAssignmentsContainer');
+  if (!container) return;
 
-      if (allAssignments.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px 0;">لا توجد واجبات متاحة</p>';
-        return;
-      }
+  if (allAssignments.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px 0;">لا توجد واجبات متاحة</p>';
+    return;
+  }
 
-      container.innerHTML = '';
-      const now = new Date();
+  container.innerHTML = '';
+  const now = new Date();
 
-      allAssignments.forEach(task => {
-        let dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now() + 86400000);
-        const formattedDate = dueDate.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
-        const diffTime = Math.abs(dueDate - now);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  allAssignments.forEach(task => {
+    let dueDate = task.dueDate?.toDate ? task.dueDate.toDate() : new Date(task.dueDate || Date.now() + 86400000);
+    const formattedDate = dueDate.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
+    const diffTime = Math.abs(dueDate - now);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        const card = document.createElement('div');
-        card.className = 'assignment-card active-blue-card';
-        card.style.cursor = 'pointer';
-        card.onclick = () => openAssignmentSubmissions(task.id);
+    const card = document.createElement('div');
+    card.className = 'assignment-card active-blue-card';
 
-        card.innerHTML = `
-          <div class="assignment-right-wrapper">
-            <div class="assignment-right-info">
-              <h3 class="assignment-title">${task.title}</h3>
-              <p class="assignment-meta">مادة ${task.subject || 'المقرر'} (المستوى ${task.level || '1'}) • الموعد النهائي: ${formattedDate}</p>
-            </div>
-            <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openSubmissionInfoModal('${task.id}')" title="تفاصيل الواجب">
-              <img src="assets/images/web/active_info.png" alt="info" class="info-icon-img">
-            </button>
-          </div>
-          <div class="assignment-left-whitebox">
-            <img src="assets/images/web/clock_icon.png" alt="timer" class="stopwatch-img">
-            <div class="timer-text-wrapper">
-              <span class="timer-text-simple">[${diffDays} أيام]</span>
-              <span class="timer-text-detailed" data-duedate="${dueDate.toISOString()}">00d:00h:00m:00s</span>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
+    card.innerHTML = `
+      <div class="assignment-right-wrapper" style="cursor: pointer;" onclick="openAssignmentSubmissions('${task.id}')">
+        <div class="assignment-right-info">
+          <h3 class="assignment-title">${task.title}</h3>
+          <p class="assignment-meta">مادة ${task.subject || 'المقرر'} (المستوى ${task.level || '1'}) • الموعد النهائي: ${formattedDate}</p>
+        </div>
 
-      startSubmissionsCountdowns();
-    }
+        <!-- Info Icon Button -->
+        <button type="button" class="btn-info-icon" onclick="event.stopPropagation(); openSubmissionInfoModal('${task.id}')" title="تفاصيل الواجب">
+          <img src="assets/images/web/active_info.png" alt="info" class="info-icon-img">
+        </button>
+      </div>
+
+      <!-- CLICKABLE WHITE ARCHIVE/COUNTDOWN BOX -->
+      <div class="assignment-left-whitebox" style="cursor: pointer;" onclick="event.stopPropagation(); openAssignmentSubmissions('${task.id}')" title="عرض تسليمات الطلاب">
+        <img src="assets/images/web/clock_icon.png" alt="timer" class="stopwatch-img">
+        <div class="timer-text-wrapper">
+          <span class="timer-text-simple">[${diffDays} أيام]</span>
+          <span class="timer-text-detailed" data-duedate="${dueDate.toISOString()}">00d:00h:00m:00s</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  startSubmissionsCountdowns();
+}
+
 
     let submissionsCountdownInterval = null;
     function startSubmissionsCountdowns() {
@@ -451,89 +454,91 @@
     }
 
     function renderFilteredSubmissions() {
-      const container = document.getElementById('submissionsDriveList');
-      if (!container) return;
+  const container = document.getElementById('submissionsDriveList');
+  if (!container) return;
 
-      const filtered = assignmentSubmissions.filter(sub => {
-        const userObj = usersMap[(sub.username || '').toLowerCase().trim()];
-        const studentGender = userObj ? userObj.gender : 'male';
-        return studentGender === currentGender;
-      });
+  const filtered = assignmentSubmissions.filter(sub => {
+    const userObj = usersMap[(sub.username || '').toLowerCase().trim()];
+    const studentGender = userObj ? userObj.gender : 'male';
+    return studentGender === currentGender;
+  });
 
-      if (filtered.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:32px 0;">لا توجد ملفات مسلّمة لقسم ${currentGender === 'male' ? 'الطلاب (البنين)' : 'الطالبات (البنات)'} في هذا الواجب</p>`;
-        return;
+  if (filtered.length === 0) {
+    container.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:32px 0;">لا توجد ملفات مسلّمة لقسم ${currentGender === 'male' ? 'الطلاب (البنين)' : 'الطالبات (البنات)'} في هذا الواجب</p>`;
+    return;
+  }
+
+  container.innerHTML = '';
+
+  filtered.forEach(sub => {
+    const { data: urlData } = window.supabaseClient.storage
+      .from('library_books')
+      .getPublicUrl(sub.filePath);
+
+    const filePublicUrl = urlData?.publicUrl || '#';
+    const cleanFileName = sub.filePath ? sub.filePath.split('/').pop() : 'ملف الواجب';
+    const usernameTag = sub.username ? `@${sub.username.toLowerCase().trim()}` : '@طالب';
+    
+    const submittedDate = sub.submittedAt?.toDate ? sub.submittedAt.toDate().toLocaleDateString('ar-EG', {
+      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    }) : 'مؤخراً';
+
+    const card = document.createElement('div');
+    card.className = 'student-submission-card';
+    card.style.cssText = `
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    `;
+
+    card.onmouseover = () => { card.style.borderColor = '#1d4ed8'; card.style.boxShadow = '0 4px 12px rgba(29, 78, 216, 0.08)'; };
+    card.onmouseout = () => { card.style.borderColor = '#e2e8f0'; card.style.boxShadow = 'none'; };
+
+    // Clicking anywhere on the student row opens their submitted document
+    card.onclick = () => {
+      if (filePublicUrl && filePublicUrl !== '#') {
+        window.open(filePublicUrl, '_blank');
+      } else {
+        showToast('عذراً، لم يتم العثور على رابط الملف', 'error');
       }
+    };
 
-      container.innerHTML = '';
+    card.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 42px; height: 42px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #1d4ed8; flex-shrink: 0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h4 style="margin: 0 0 3px 0; font-size: 1rem; color: #0f172a; font-weight: 700; direction: ltr; text-align: right;">${usernameTag}</h4>
+          <span style="font-size: 0.8rem; color: #64748b;">الملف: ${cleanFileName} • تاريخ التسليم: ${submittedDate}</span>
+        </div>
+      </div>
 
-      filtered.forEach(sub => {
-        const { data: urlData } = window.supabaseClient.storage
-          .from('library_books')
-          .getPublicUrl(sub.filePath);
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.82rem; color: #1d4ed8; font-weight: 700; background: #eff6ff; padding: 6px 14px; border-radius: 8px;">معاينة الملف ↗</span>
+        <button type="button" class="action-icon-btn admin-btn-delete" onclick="event.stopPropagation(); deleteSubmissionFile('${sub.id}', '${sub.filePath}')" title="حذف الملف نهائياً">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+      </div>
+    `;
 
-        const filePublicUrl = urlData?.publicUrl || '#';
-        const cleanFileName = sub.filePath ? sub.filePath.split('/').pop() : 'ملف الواجب';
-        const usernameTag = sub.username ? `@${sub.username.toLowerCase().trim()}` : '@طالب';
-        
-        const submittedDate = sub.submittedAt?.toDate ? sub.submittedAt.toDate().toLocaleDateString('ar-EG', {
-          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        }) : 'مؤخراً';
+    container.appendChild(card);
+  });
+}
 
-        const card = document.createElement('div');
-        card.className = 'student-submission-card';
-        card.style.cssText = `
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
-          border-radius: 12px;
-          padding: 14px 18px;
-          margin-bottom: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        `;
-
-        card.onmouseover = () => { card.style.borderColor = '#1d4ed8'; card.style.boxShadow = '0 4px 12px rgba(29, 78, 216, 0.08)'; };
-        card.onmouseout = () => { card.style.borderColor = '#e2e8f0'; card.style.boxShadow = 'none'; };
-
-        card.onclick = () => {
-          if (filePublicUrl && filePublicUrl !== '#') {
-            window.open(filePublicUrl, '_blank');
-          } else {
-            showToast('عذراً، لم يتم العثور على رابط الملف', 'error');
-          }
-        };
-
-        card.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 42px; height: 42px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #1d4ed8; flex-shrink: 0;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-            </div>
-            <div>
-              <h4 style="margin: 0 0 3px 0; font-size: 1rem; color: #0f172a; font-weight: 700; direction: ltr; text-align: right;">${usernameTag}</h4>
-              <span style="font-size: 0.8rem; color: #64748b;">الملف: ${cleanFileName} • تاريخ التسليم: ${submittedDate}</span>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 0.82rem; color: #1d4ed8; font-weight: 700; background: #eff6ff; padding: 6px 14px; border-radius: 8px;">معاينة الملف ↗</span>
-            <button type="button" class="action-icon-btn admin-btn-delete" onclick="event.stopPropagation(); deleteSubmissionFile('${sub.id}', '${sub.filePath}')" title="حذف الملف نهائياً">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-            </button>
-          </div>
-        `;
-
-        container.appendChild(card);
-      });
-    }
 
     let pendingDeleteSubmissionId = null;
     let pendingDeleteFilePath = null;

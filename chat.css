@@ -1,0 +1,362 @@
+/* --- FLOATING CHAT BUTTON --- */
+.chat-fab-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px; /* Positioned on the bottom-left */
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 8px 24px rgba(29, 78, 216, 0.35);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+  
+  .chat-fab-btn:hover {
+    transform: scale(1.08);
+    background: #1e40af;
+  }
+  
+  .unread-chat-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 99px;
+    border: 2px solid #ffffff;
+  }
+  
+  /* --- SLIDE-OUT CHAT DRAWER (LEFT SIDE) --- */
+  .admin-chat-drawer {
+    position: fixed;
+    top: 0;
+    left: -400px; /* Hidden off-screen to the left by default */
+    width: 380px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: 8px 0 24px rgba(15, 23, 42, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Slide in state */
+  .admin-chat-drawer.open {
+    left: 0;
+  }
+  
+  /* Overlay Backdrop */
+  .chat-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.3);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .chat-drawer-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* --- DRAWER HEADER --- */
+  .chat-drawer-header {
+    padding: 16px 20px;
+    background: #0f172a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .chat-header-info h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  
+  .chat-status-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e; /* Online Green */
+    border-radius: 50%;
+  }
+  
+  .chat-close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .chat-close-btn:hover {
+    color: #ffffff;
+  }
+  
+  /* --- MESSAGES BODY --- */
+  .chat-messages-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* Single Message Bubbles */
+  .chat-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    position: relative;
+    word-wrap: break-word;
+  }
+  
+  /* Sent by Me (Right side) */
+  .chat-bubble.mine {
+    align-self: flex-start; /* In RTL, flex-start is the right side */
+    background: #1d4ed8;
+    color: #ffffff;
+    border-bottom-right-radius: 2px;
+  }
+  
+  /* Sent by Other Admin (Left side) */
+  .chat-bubble.other {
+    align-self: flex-end; /* In RTL, flex-end is the left side */
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 2px;
+  }
+  
+  .chat-sender-tag {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 3px;
+  }
+  
+  .chat-time-tag {
+    display: block;
+    font-size: 0.65rem;
+    margin-top: 4px;
+    opacity: 0.75;
+    text-align: left;
+  }
+  
+  /* --- INPUT FOOTER --- */
+  .chat-input-footer {
+    padding: 12px 16px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .chat-input-footer input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    outline: none;
+    font-family: inherit;
+  }
+  
+  .chat-input-footer input:focus {
+    border-color: #1d4ed8;
+  }
+  
+  .chat-send-btn {
+    width: 40px;
+    height: 40px;
+    background: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .chat-send-btn:hover {
+    background: #1e40af;
+  }
+  
+  /* Mobile full width fallback */
+  @media screen and (max-width: 480px) {
+    .admin-chat-drawer {
+      width: 100vw;
+      left: -100vw;
+    }
+  }
+  
+  /* Red Notification Dot on Floating Button */
+.unread-chat-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 12px;
+    height: 12px;
+    background-color: #ef4444; /* Bright Red */
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    animation: pulse-red-dot 1.8s infinite;
+  }
+  
+  @keyframes pulse-red-dot {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
+
+  /* --- MENTION DROPDOWN POPUP --- */
+.mention-dropdown-popup {
+    position: absolute;
+    bottom: 56px; /* Positioned directly above the input bar */
+    right: 16px;
+    left: 16px;
+    max-height: 160px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.12);
+    z-index: 1010;
+    direction: rtl;
+  }
+  
+  .mention-item {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .mention-item:last-child {
+    border-bottom: none;
+  }
+  
+  .mention-item:hover, .mention-item.active {
+    background: #eff6ff;
+  }
+  
+  .mention-item-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .mention-item-username {
+    font-size: 0.76rem;
+    color: #64748b;
+    direction: ltr;
+  }
+  
+/* --- SENT BY OTHER ADMIN (INCOMING - LEFT SIDE) --- */
+.chat-bubble.other {
+    align-self: flex-end !important; /* Aligns to left in RTL */
+    margin-right: auto !important;   /* Pushes to left edge */
+    margin-left: 0 !important;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 2px !important;  /* Sharp corner points LEFT to sender */
+    border-bottom-right-radius: 14px !important;
+  }
+  
+  /* --- INCOMING YELLOW MENTION BUBBLE --- */
+  .chat-bubble.mentioned,
+  .chat-bubble.other.mentioned {
+    width: fit-content !important;
+    max-width: 82% !important;
+    align-self: flex-end !important; /* Aligns to left in RTL */
+    margin-right: auto !important;   /* Pushes to left edge */
+    margin-left: 0 !important;
+    background-color: #fef08a !important; /* Soft Yellow Highlight */
+    border: 1.5px solid #eab308 !important; /* Gold Border */
+    color: #854d0e !important;
+    border-radius: 14px 14px 14px 2px !important; /* Sharp corner on bottom-left pointing to sender */
+  }
+  
+  .chat-bubble.mentioned .chat-sender-tag,
+  .chat-bubble.other.mentioned .chat-sender-tag {
+    color: #a16207 !important;
+    font-weight: 800 !important;
+  }
+  
+  .chat-bubble.mentioned .chat-time-tag,
+  .chat-bubble.other.mentioned .chat-time-tag {
+    color: #854d0e !important;
+    text-align: left !important;
+  }
+  /* --- INLINE @MENTION TAG STYLING --- */
+  /* Default tag inside received messages */
+  .mention-tag-highlight {
+    font-weight: 800;
+    color: #1d4ed8;
+    background: rgba(29, 78, 216, 0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    direction: ltr;
+    display: inline-block;
+  }
+  
+  /* Tag inside your own SENT blue bubble -> BOLD WHITE */
+  .chat-bubble.mine .mention-tag-highlight {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+  }
+  
+  /* Tag inside received YELLOW block bubble */
+  .chat-bubble.mentioned .mention-tag-highlight {
+    color: #1d4ed8 !important;
+    background: rgba(29, 78, 216, 0.15) !important;
+  }
+
+  /* --- CHAT DATE SEPARATOR PILL --- */
+.chat-date-separator {
+    align-self: center !important;
+    margin: 16px auto 8px auto !important;
+    padding: 4px 14px;
+    background-color: #e2e8f0;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 99px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    user-select: none;
+  }

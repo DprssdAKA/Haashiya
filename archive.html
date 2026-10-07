@@ -1209,9 +1209,7 @@ async function loadAssignments() {
 
     // 2. Fallback to archive.json if Firestore is empty
     if (assignmentsList.length === 0) {
-      const res = await fetch('data/archive.json');
-      const jsonData = await res.json();
-      assignmentsList = jsonData.assignments || [];
+      assignmentsList = [];
     }
 
     const now = new Date();
