@@ -134,8 +134,15 @@ function formatArabicDateSeparator(date) {
           const isMentioned = !isMine && cleanMyUsername && cleanTextLower.includes(`@${cleanMyUsername}`);
           const timeStr = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
           const formattedSenderName = formatCapitalizedUsername(msg.senderName || msg.sender);
-          const styledText = textContent.replace(/@([a-zA-Z0-9_]+)/g, '<span class="mention-tag-highlight">@$1</span>');
-  
+// Replace @username with @DisplayName inside the bubble text
+const styledText = textContent.replace(/@([a-zA-Z0-9_]+)/g, (match, username) => {
+    const cleanUser = username.toLowerCase().trim();
+    // Find matching user in adminUsersList cache
+    const foundAdmin = adminUsersList.find(a => a.username === cleanUser);
+    const displayName = foundAdmin ? foundAdmin.name : username;
+    
+    return `<span class="mention-tag-highlight">@${displayName}</span>`;
+  });  
           const bubble = document.createElement('div');
           bubble.className = `chat-bubble ${isMine ? 'mine' : 'other'} ${isMentioned ? 'mentioned' : ''}`;
   
