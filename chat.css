@@ -2,7 +2,7 @@
 .chat-fab-btn {
     position: fixed;
     bottom: 24px;
-    left: 24px; /* Positioned on the bottom-left */
+    left: 24px;
     width: 56px;
     height: 56px;
     border-radius: 50%;
@@ -37,25 +37,23 @@
   }
   
   /* --- SLIDE-OUT CHAT DRAWER --- */
-.admin-chat-drawer {
+  .admin-chat-drawer {
     position: fixed;
     top: 0;
     left: -400px;
     width: 380px;
     height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile browser URL bars */
+    height: 100dvh;
     background: #ffffff;
     box-shadow: 8px 0 24px rgba(15, 23, 42, 0.15);
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Ensures header, body, and footer stay pinned */
+    justify-content: space-between;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
   }
   
-  
-  /* Slide in state */
   .admin-chat-drawer.open {
     left: 0;
   }
@@ -102,7 +100,7 @@
   .chat-status-dot {
     width: 8px;
     height: 8px;
-    background: #22c55e; /* Online Green */
+    background: #22c55e;
     border-radius: 50%;
   }
   
@@ -121,7 +119,7 @@
   /* --- MESSAGES BODY --- */
   .chat-messages-body {
     flex: 1 1 auto;
-    min-height: 0; /* Critical for scrollable flex containers on mobile */
+    min-height: 0;
     padding: 16px;
     overflow-y: auto;
     background: #f8fafc;
@@ -130,7 +128,42 @@
     gap: 12px;
   }
   
-  /* Single Message Bubbles */
+  /* Wrapper & Single Message Bubbles */
+  .chat-bubble-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .chat-bubble-wrapper.mine {
+    position: relative !important;
+    display: flex !important;
+    justify-content: flex-start !important; /* Flush right in RTL */
+    width: 100% !important;
+  }
+
+  /* Position action buttons to the LEFT of sent bubbles */
+.chat-bubble-wrapper.mine .chat-action-btns {
+    left: auto !important;
+    right: 0 !important;
+    /* Positions the buttons dynamically outside the left side of the bubble */
+    transform: translateY(-50%) translateX(-100%) !important; 
+    padding-right: 6px !important;
+  }
+  
+  .chat-bubble-wrapper.other {
+    justify-content: flex-end;
+  }
+  
+  /* Position action buttons to the RIGHT of incoming bubbles */
+.chat-bubble-wrapper.other .chat-action-btns {
+    right: auto !important;
+    left: 0 !important;
+    transform: translateY(-50%) translateX(100%) !important;
+    padding-left: 6px !important;
+  }
+  
   .chat-bubble {
     max-width: 80%;
     padding: 10px 14px;
@@ -141,21 +174,24 @@
     word-wrap: break-word;
   }
   
-  /* Sent by Me (Right side) */
   .chat-bubble.mine {
-    align-self: flex-start; /* In RTL, flex-start is the right side */
-    background: #1d4ed8;
-    color: #ffffff;
-    border-bottom-right-radius: 2px;
+    align-self: flex-start !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    background: #1d4ed8 !important;
+    color: #ffffff !important;
+    border-bottom-right-radius: 2px !important;
   }
   
-  /* Sent by Other Admin (Left side) */
   .chat-bubble.other {
-    align-self: flex-end; /* In RTL, flex-end is the left side */
+    align-self: flex-end !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
     background: #ffffff;
     color: #0f172a;
     border: 1px solid #e2e8f0;
-    border-bottom-left-radius: 2px;
+    border-bottom-left-radius: 2px !important;
+    border-bottom-right-radius: 14px !important;
   }
   
   .chat-sender-tag {
@@ -174,41 +210,110 @@
     text-align: left;
   }
   
-  /* --- INPUT FOOTER --- */
+  .chat-text-content {
+    unicode-bidi: plaintext;
+    text-align: start;
+    word-wrap: break-word;
+  }
+  
+  /* --- INCOMING YELLOW MENTION BUBBLE --- */
+  .chat-bubble.mentioned,
+  .chat-bubble.other.mentioned {
+    width: fit-content !important;
+    max-width: 82% !important;
+    align-self: flex-end !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
+    background-color: #fef08a !important;
+    border: 1.5px solid #eab308 !important;
+    color: #854d0e !important;
+    border-radius: 14px 14px 14px 2px !important;
+  }
+  
+  .chat-bubble.mentioned .chat-sender-tag,
+  .chat-bubble.other.mentioned .chat-sender-tag {
+    color: #a16207 !important;
+    font-weight: 800 !important;
+  }
+  
+  .chat-bubble.mentioned .chat-time-tag,
+  .chat-bubble.other.mentioned .chat-time-tag {
+    color: #854d0e !important;
+    text-align: left !important;
+  }
+  
+  /* Inline @Mention Highlight */
+  .mention-tag-highlight {
+    font-weight: 800;
+    color: #1d4ed8;
+    background: rgba(29, 78, 216, 0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    direction: ltr;
+    display: inline-block;
+  }
+  
+  .chat-bubble.mine .mention-tag-highlight {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+  }
+  
+  .chat-bubble.mentioned .mention-tag-highlight {
+    color: #1d4ed8 !important;
+    background: rgba(29, 78, 216, 0.15) !important;
+  }
+  
+  /* --- CHAT DATE SEPARATOR PILL --- */
+  .chat-date-separator {
+    align-self: center !important;
+    margin: 16px auto 8px auto !important;
+    padding: 4px 14px;
+    background-color: #e2e8f0;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 99px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    user-select: none;
+  }
+  
+  /* --- AUTO-EXPANDING TEXTAREA FOOTER INPUT --- */
   .chat-input-footer {
-    flex-shrink: 0; /* Prevents input bar from collapsing when keyboard opens */
-    padding: 12px 16px;
+    padding: 10px 14px;
     background: #ffffff;
     border-top: 1px solid #e2e8f0;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 10px;
     position: relative;
     z-index: 1001;
+    flex-shrink: 0;
   }
   
-  .chat-input-footer input {
+  .chat-input-footer textarea {
     flex: 1;
     padding: 10px 14px;
     border: 1px solid #cbd5e1;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 0.88rem;
     outline: none;
     font-family: inherit;
-    unicode-bidi: plaintext; /* Fixes punctuation placement while typing in English/Latin */
+    unicode-bidi: plaintext;
     text-align: start;
+    resize: none;
+    max-height: 120px;
+    min-height: 42px;
+    height: 42px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    overflow-y: hidden;
   }
   
-  .chat-input-footer input:focus {
+  .chat-input-footer textarea:focus {
     border-color: #1d4ed8;
   }
   
-  .chat-text-content {
-    unicode-bidi: plaintext; /* Automatically detects whether text is LTR (English) or RTL (Arabic) */
-    text-align: start;       /* Align LTR text to the left and RTL text to the right inside the bubble */
-    word-wrap: break-word;
-  }
-
   .chat-send-btn {
     width: 40px;
     height: 40px;
@@ -220,21 +325,22 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s ease;
+    flex-shrink: 0;
+    margin-bottom: 1px;
   }
   
   .chat-send-btn:hover {
     background: #1e40af;
   }
   
-  /* Red Notification Dot on Floating Button */
-.unread-chat-dot {
+  /* Red Notification Dot */
+  .unread-chat-dot {
     position: absolute;
     top: 4px;
     right: 4px;
     width: 12px;
     height: 12px;
-    background-color: #ef4444; /* Bright Red */
+    background-color: #ef4444;
     border: 2px solid #ffffff;
     border-radius: 50%;
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
@@ -246,11 +352,11 @@
     70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
     100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
   }
-
+  
   /* --- MENTION DROPDOWN POPUP --- */
-.mention-dropdown-popup {
+  .mention-dropdown-popup {
     position: absolute;
-    bottom: 56px; /* Positioned directly above the input bar */
+    bottom: 56px;
     right: 16px;
     left: 16px;
     max-height: 160px;
@@ -293,84 +399,8 @@
     direction: ltr;
   }
   
-/* --- SENT BY OTHER ADMIN (INCOMING - LEFT SIDE) --- */
-.chat-bubble.other {
-    align-self: flex-end !important; /* Aligns to left in RTL */
-    margin-right: auto !important;   /* Pushes to left edge */
-    margin-left: 0 !important;
-    background: #ffffff;
-    color: #0f172a;
-    border: 1px solid #e2e8f0;
-    border-bottom-left-radius: 2px !important;  /* Sharp corner points LEFT to sender */
-    border-bottom-right-radius: 14px !important;
-  }
-  
-  /* --- INCOMING YELLOW MENTION BUBBLE --- */
-  .chat-bubble.mentioned,
-  .chat-bubble.other.mentioned {
-    width: fit-content !important;
-    max-width: 82% !important;
-    align-self: flex-end !important; /* Aligns to left in RTL */
-    margin-right: auto !important;   /* Pushes to left edge */
-    margin-left: 0 !important;
-    background-color: #fef08a !important; /* Soft Yellow Highlight */
-    border: 1.5px solid #eab308 !important; /* Gold Border */
-    color: #854d0e !important;
-    border-radius: 14px 14px 14px 2px !important; /* Sharp corner on bottom-left pointing to sender */
-  }
-  
-  .chat-bubble.mentioned .chat-sender-tag,
-  .chat-bubble.other.mentioned .chat-sender-tag {
-    color: #a16207 !important;
-    font-weight: 800 !important;
-  }
-  
-  .chat-bubble.mentioned .chat-time-tag,
-  .chat-bubble.other.mentioned .chat-time-tag {
-    color: #854d0e !important;
-    text-align: left !important;
-  }
-  /* --- INLINE @MENTION TAG STYLING --- */
-  /* Default tag inside received messages */
-  .mention-tag-highlight {
-    font-weight: 800;
-    color: #1d4ed8;
-    background: rgba(29, 78, 216, 0.1);
-    padding: 1px 6px;
-    border-radius: 4px;
-    direction: ltr;
-    display: inline-block;
-  }
-  
-  /* Tag inside your own SENT blue bubble -> BOLD WHITE */
-  .chat-bubble.mine .mention-tag-highlight {
-    color: #ffffff !important;
-    background: rgba(255, 255, 255, 0.25) !important;
-  }
-  
-  /* Tag inside received YELLOW block bubble */
-  .chat-bubble.mentioned .mention-tag-highlight {
-    color: #1d4ed8 !important;
-    background: rgba(29, 78, 216, 0.15) !important;
-  }
-
-  /* --- CHAT DATE SEPARATOR PILL --- */
-.chat-date-separator {
-    align-self: center !important;
-    margin: 16px auto 8px auto !important;
-    padding: 4px 14px;
-    background-color: #e2e8f0;
-    color: #475569;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border-radius: 99px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    text-align: center;
-    user-select: none;
-  }
-
-  /* --- REPLY PREVIEW BAR ABOVE INPUT --- */
-.reply-preview-bar {
+  /* --- REPLY & EDIT PREVIEW BARS ABOVE INPUT --- */
+  .reply-preview-bar {
     position: absolute;
     bottom: 100%;
     left: 0;
@@ -384,6 +414,11 @@
     justify-content: space-between;
     z-index: 1005;
     direction: rtl;
+  }
+  
+  .reply-preview-bar.edit-mode-bar {
+    border-bottom-color: #f59e0b !important;
+    background: #fef3c7 !important;
   }
   
   .reply-preview-content {
@@ -430,6 +465,12 @@
     margin-bottom: 6px;
     font-size: 0.78rem;
     direction: rtl;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  
+  .quoted-reply-box:hover {
+    opacity: 0.85;
   }
   
   .chat-bubble.mine .quoted-reply-box {
@@ -460,23 +501,26 @@
     color: #f1f5f9;
   }
   
-  /* --- HOVER REPLY BUTTON (DESKTOP) --- */
-  .chat-bubble-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
+  /* --- EDITED TAG NEXT TO TIMESTAMP --- */
+  .chat-edited-tag {
+    font-size: 0.62rem;
+    opacity: 0.75;
+    margin-right: 4px;
+    font-weight: 600;
   }
   
-  .chat-bubble-wrapper.mine {
-    justify-content: flex-start;
+  /* --- HOVER ACTION BUTTONS (DESKTOP) --- */
+  .chat-action-btns {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    z-index: 10 !important;
   }
-  
-  .chat-bubble-wrapper.other {
-    justify-content: flex-end;
-  }
-  
-  .hover-reply-btn {
+  .hover-reply-btn,
+  .hover-edit-btn {
     opacity: 0;
     pointer-events: none;
     background: #ffffff;
@@ -489,18 +533,31 @@
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    margin: 0 6px;
+    margin: 0 3px;
     transition: opacity 0.15s ease, transform 0.15s ease;
   }
   
-  .chat-bubble-wrapper:hover .hover-reply-btn {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  .hover-reply-btn:hover {
+  .hover-reply-btn:hover,
+  .hover-edit-btn:hover {
     transform: scale(1.1);
     background: #f1f5f9;
+  }
+  
+  /* Enable hover buttons strictly on Desktop devices with fine pointers */
+  @media (hover: hover) and (pointer: fine) {
+    .chat-bubble-wrapper:hover .hover-reply-btn,
+    .chat-bubble-wrapper:hover .hover-edit-btn {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  
+  /* Hide hover buttons explicitly on Touch/Mobile devices */
+  @media (max-width: 768px), (pointer: coarse) {
+    .hover-reply-btn,
+    .hover-edit-btn {
+      display: none !important;
+    }
   }
   
   /* --- SWIPE-TO-REPLY (MOBILE) --- */
@@ -524,15 +581,146 @@
     transform: translateY(-50%) scale(1.1);
   }
   
+  /* --- SCROLL-TO-REPLY HIGHLIGHT EFFECT --- */
+  .chat-bubble-wrapper.target-highlight .chat-bubble {
+    animation: replyPulse 1.5s ease-in-out;
+  }
+  
+  @keyframes replyPulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.4);
+    }
+    30% {
+      transform: scale(1.03);
+      box-shadow: 0 0 0 6px rgba(29, 78, 216, 0.25);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(29, 78, 216, 0);
+    }
+  }
+  
+  /* --- HOVER DELETE BUTTON (DESKTOP) --- */
+.hover-delete-btn {
+    opacity: 0;
+    pointer-events: none;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin: 0 3px;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  
+  .hover-delete-btn:hover {
+    transform: scale(1.1);
+    background: #fef2f2;
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    .chat-bubble-wrapper:hover .hover-delete-btn {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  
+  @media (max-width: 768px), (pointer: coarse) {
+    .hover-delete-btn {
+      display: none !important;
+    }
+  }
+  
+  /* --- MOBILE CONTEXT MENU SHEET --- */
+  .mobile-context-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 1050;
+    display: flex;
+    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  
+  .mobile-context-menu-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .mobile-context-menu-sheet {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    padding: 12px 16px 28px 16px;
+    transform: translateY(100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    direction: rtl;
+  }
+  
+  .mobile-context-menu-overlay.show .mobile-context-menu-sheet {
+    transform: translateY(0);
+  }
+  
+  .context-menu-handle {
+    width: 36px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 99px;
+    margin: 0 auto 16px auto;
+  }
+  
+  .context-menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .context-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: #f8fafc;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+    text-align: right;
+  }
+  
+  .context-menu-btn.warning {
+    color: #d97706;
+  }
+  
+  .context-menu-btn.danger {
+    color: #ef4444;
+    background: #fef2f2;
+  }
+  
+  .context-menu-btn:active {
+    background: #e2e8f0;
+  }
+
   /* Mobile Viewport Adjustments */
-@media screen and (max-width: 480px) {
+  @media screen and (max-width: 480px) {
     .admin-chat-drawer {
       width: 100vw;
       left: -100vw;
     }
     
     .chat-input-footer {
-      padding-bottom: max(12px, env(safe-area-inset-bottom)); /* Accommodates gesture bar on iOS/Android */
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
     }
   }
-  

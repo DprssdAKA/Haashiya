@@ -3,6 +3,8 @@ let isChatOpen = false;
 let isInitialLoad = true;
 let adminUsersList = [];
 let activeReplyData = null;
+let editingMessageId = null ;
+let pendingDeleteMsgId = null;
 
 // 1. Toggle Slide-Out Drawer
 function toggleAdminChatDrawer() {
@@ -121,9 +123,14 @@ function formatArabicDateSeparator(date) {
             const cleanTextLower = textContent.toLowerCase().replace(/\s+/g, '');
             const isMentioned = !isMine && cleanMyUsername && cleanTextLower.includes(`@${cleanMyUsername}`);
             const dateObj = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date();
+            const now = new Date();
+            const diffMinutes = (now - dateObj) / (1000 * 60);
+            const isEditable = isMine && diffMinutes <= 10;
+            const editedTagHTML = msg.isEdited ? `<span class="chat-edited-tag">(معدّل) </span>` : '';
+            
             const timeStr = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
             const formattedSenderName = formatCapitalizedUsername(msg.senderName || msg.sender);
-          
+
             // Styled mentions
             const styledText = textContent.replace(/@([a-zA-Z0-9_]+)/g, (match, username) => {
               const cleanUser = username.toLowerCase().trim();
@@ -135,7 +142,7 @@ function formatArabicDateSeparator(date) {
             let quotedHTML = '';
             if (msg.replyTo) {
               quotedHTML = `
-                <div class="quoted-reply-box">
+                <div class="quoted-reply-box" onclick="event.stopPropagation(); scrollToRepliedMessage('${msg.replyTo.messageId}')" title="الانتقال إلى الرسالة الأصلية">
                   <span class="quoted-reply-sender">${msg.replyTo.senderName}</span>
                   <div class="quoted-reply-text">${msg.replyTo.text}</div>
                 </div>
@@ -144,6 +151,7 @@ function formatArabicDateSeparator(date) {
           
             // Wrapper element
             const wrapper = document.createElement('div');
+            wrapper.id = `msg-wrapper-${msgId}`;
             wrapper.className = `chat-bubble-wrapper ${isMine ? 'mine' : 'other'}`;
           
             // Bubble element
@@ -153,10 +161,10 @@ function formatArabicDateSeparator(date) {
               ${!isMine ? `<span class="chat-sender-tag">${formattedSenderName}</span>` : ''}
               ${quotedHTML}
               <div class="chat-text-content">${styledText}</div>
-              <span class="chat-time-tag">${timeStr}</span>
+              <span class="chat-time-tag">${editedTagHTML}${timeStr}</span>
             `;
-          
-            // Hover Reply Button (Desktop)
+
+            // 1. Desktop Hover Reply Button
             const replyBtn = document.createElement('button');
             replyBtn.type = 'button';
             replyBtn.className = 'hover-reply-btn';
@@ -168,16 +176,50 @@ function formatArabicDateSeparator(date) {
               </svg>
             `;
             replyBtn.onclick = () => setReplyMode(msgId, formattedSenderName, textContent);
-          
+
+            // 2. Desktop Hover Action Group
+            const actionGroup = document.createElement('div');
+            actionGroup.className = 'chat-action-btns';
+
             if (isMine) {
-              wrapper.appendChild(bubble);
-              wrapper.appendChild(replyBtn);
-            } else {
-              wrapper.appendChild(replyBtn);
-              wrapper.appendChild(bubble);
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'hover-delete-btn';
+                deleteBtn.title = 'حذف الرسالة';
+                deleteBtn.innerHTML = `
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                `;
+                deleteBtn.onclick = () => openDeleteChatModal(msgId);
+                actionGroup.appendChild(deleteBtn);
+              }
+
+            if (isEditable) {
+            const editBtn = document.createElement('button');
+            editBtn.type = 'button';
+            editBtn.className = 'hover-edit-btn';
+            editBtn.title = 'تعديل الرسالة';
+            editBtn.innerHTML = `
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+            `;
+            editBtn.onclick = () => setEditMode(msgId, textContent, dateObj);
+            actionGroup.appendChild(editBtn);
             }
-          
-            // Attach Touch Gesture for Mobile
+
+            actionGroup.appendChild(replyBtn);
+
+            // Assemble Wrapper correctly
+    // Assemble Wrapper
+wrapper.appendChild(bubble);
+wrapper.appendChild(actionGroup);
+
+            // Attach Mobile Gestures
+            
             attachSwipeToReply(wrapper, bubble, msgId, formattedSenderName, textContent);
           
             container.appendChild(wrapper);
@@ -204,40 +246,46 @@ async function handleSendAdminMessage(e) {
   
     const text = input.value.trim();
     if (!text) return;
-  
+
     const sessionData = localStorage.getItem('currentUser');
-    const currentUser = sessionData ? JSON.parse(sessionData) : null;
-  
-    if (!currentUser) {
-      alert('يرجى تسجيل الدخول أولاً');
-      return;
-    }
+    const currentUser = sessionData ? JSON.parse(sessionData) : { username: 'admin' };
   
     try {
-      const payload = {
-        sender: currentUser.username || 'admin',
-        senderName: currentUser.name || currentUser.username || 'مشرف',
-        gender: currentUser.gender || 'male',
-        text: text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      };
-  
-      // Attach reply reference if replying
-      if (activeReplyData) {
-        payload.replyTo = {
-          messageId: activeReplyData.id,
-          senderName: activeReplyData.senderName,
-          text: activeReplyData.text
+      if (editingMessageId) {
+        // Update existing Firestore document
+        await firestoreDb.collection('admin_chat').doc(editingMessageId).update({
+          text: text,
+          isEdited: true,
+          editedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        cancelEditMode();
+      } else {
+        // Send new message
+        const payload = {
+          sender: currentUser.username || 'admin',
+          senderName: currentUser.name || currentUser.username || 'مشرف',
+          gender: currentUser.gender || 'male',
+          text: text,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
+  
+        if (activeReplyData) {
+          payload.replyTo = {
+            messageId: activeReplyData.id,
+            senderName: activeReplyData.senderName,
+            text: activeReplyData.text
+          };
+        }
+  
+        await firestoreDb.collection('admin_chat').add(payload);
+        cancelReplyMode();
       }
   
       input.value = '';
-      cancelReplyMode(); // Reset reply state
-  
-      await firestoreDb.collection('admin_chat').add(payload);
+      input.style.height = '42px';
     } catch (err) {
-      console.error("Error sending chat message:", err);
-      alert('فشل إرسال الرسالة، يرجى المحاولة مرة أخرى');
+      console.error("Error sending or editing message:", err);
+      alert('حدث خطأ أثناء حفظ الرسالة');
     }
   }
 
@@ -278,7 +326,25 @@ async function loadAdminUsersForMentions() {
     }
   }
   
-
+// 1. Automatically expand/shrink textarea height based on content
+function autoExpandTextarea(textarea) {
+    textarea.style.height = '42px'; // Reset height to calculate scrollHeight correctly
+    const newHeight = Math.min(textarea.scrollHeight, 120); // Cap at 120px
+    textarea.style.height = `${newHeight}px`;
+  
+    // Toggle scrollbar when text exceeds max-height
+    textarea.style.overflowY = textarea.scrollHeight > 120 ? 'auto' : 'hidden';
+  }
+  
+  // 2. Handle Enter vs Shift+Enter behavior
+  function handleChatTextareaEnter(e) {
+    // On desktop, pressing Enter sends message; Shift+Enter inserts a new line
+    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+      e.preventDefault();
+      handleSendAdminMessage(e);
+    }
+  }
+  
   function handleChatInput(e) {
     const input = e.target;
     const value = input.value;
@@ -430,6 +496,176 @@ function attachSwipeToReply(wrapper, bubble, msgId, senderName, messageText) {
   });
 }
 
+// 1. Delete Modal Triggers
+function openDeleteChatModal(msgId) {
+  pendingDeleteMsgId = msgId;
+  const modal = document.getElementById('deleteChatModal');
+  if (modal) modal.classList.add('show');
+}
+
+function closeDeleteChatModal() {
+  pendingDeleteMsgId = null;
+  const modal = document.getElementById('deleteChatModal');
+  if (modal) modal.classList.remove('show');
+}
+
+async function confirmDeleteChatMessage() {
+  if (!pendingDeleteMsgId) return;
+
+  const firestoreDb = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
+  if (!firestoreDb) return;
+
+  try {
+    await firestoreDb.collection('admin_chat').doc(pendingDeleteMsgId).delete();
+    closeDeleteChatModal();
+  } catch (err) {
+    console.error("Error deleting chat message:", err);
+    alert('حدث خطأ أثناء حذف الرسالة');
+  }
+}
+
+// 2. Mobile Long-Press Options Sheet
+function openMobileContextMenu(msgId, senderName, textContent, timestampDate, isMine) {
+  const overlay = document.getElementById('mobileChatContextMenu');
+  const replyBtn = document.getElementById('mobileContextReplyBtn');
+  const editBtn = document.getElementById('mobileContextEditBtn');
+  const deleteBtn = document.getElementById('mobileContextDeleteBtn');
+
+  if (!overlay) return;
+
+  const now = new Date();
+  const diffMinutes = (now - timestampDate) / (1000 * 60);
+  const isEditable = isMine && diffMinutes <= 10;
+
+  // Configure Reply Option
+  if (replyBtn) {
+    replyBtn.onclick = () => {
+      closeMobileContextMenu();
+      setReplyMode(msgId, senderName, textContent);
+    };
+  }
+
+  // Configure Edit Option (Only if owned & within 10 mins)
+  if (editBtn) {
+    editBtn.style.display = isEditable ? 'flex' : 'none';
+    editBtn.onclick = () => {
+      closeMobileContextMenu();
+      setEditMode(msgId, textContent, timestampDate);
+    };
+  }
+
+  // Configure Delete Option (Only if owned)
+  if (deleteBtn) {
+    deleteBtn.style.display = isMine ? 'flex' : 'none';
+    deleteBtn.onclick = () => {
+      closeMobileContextMenu();
+      openDeleteChatModal(msgId);
+    };
+  }
+
+  overlay.classList.add('show');
+}
+
+function closeMobileContextMenu() {
+  const overlay = document.getElementById('mobileChatContextMenu');
+  if (overlay) overlay.classList.remove('show');
+}
+
+// Update Mobile Long-Press Touch Listener
+function attachLongPressToEdit(bubble, msgId, senderName, messageText, timestampDate, isMine) {
+  let pressTimer = null;
+
+  bubble.addEventListener('touchstart', (e) => {
+    pressTimer = setTimeout(() => {
+      if (navigator.vibrate) navigator.vibrate(40);
+      openMobileContextMenu(msgId, senderName, messageText, timestampDate, isMine);
+    }, 500);
+  }, { passive: true });
+
+  bubble.addEventListener('touchend', () => clearTimeout(pressTimer));
+  bubble.addEventListener('touchmove', () => clearTimeout(pressTimer));
+}
+
+// Jump & Scroll to Original Replied Message
+function scrollToRepliedMessage(targetMsgId) {
+    if (!targetMsgId) return;
+  
+    const targetWrapper = document.getElementById(`msg-wrapper-${targetMsgId}`);
+    const chatBody = document.getElementById('chatMessagesBody');
+  
+    if (targetWrapper && chatBody) {
+      // Smooth scroll to target message
+      targetWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+      // Trigger pulse animation
+      targetWrapper.classList.remove('target-highlight');
+      void targetWrapper.offsetWidth; // Force CSS reflow to restart animation
+      targetWrapper.classList.add('target-highlight');
+  
+      // Remove animation class after completion
+      setTimeout(() => {
+        targetWrapper.classList.remove('target-highlight');
+      }, 1500);
+    }
+  }
+
+// 1. Enable Edit Mode (Validates 10-Minute Window)
+function setEditMode(msgId, messageText, timestampDate) {
+  const now = new Date();
+  const diffMinutes = (now - timestampDate) / (1000 * 60);
+
+  if (diffMinutes > 10) {
+    alert('عذراً، لا يمكنك تعديل الرسالة بعد مرور 10 دقائق على إرسالها.');
+    return;
+  }
+
+  cancelReplyMode(); // Cancel reply if active
+  editingMessageId = msgId;
+
+  const container = document.getElementById('editPreviewContainer');
+  const textEl = document.getElementById('editPreviewText');
+  const input = document.getElementById('chatTextInput');
+
+  if (container && textEl) {
+    textEl.textContent = messageText;
+    container.style.display = 'flex';
+  }
+
+  if (input) {
+    input.value = messageText;
+    autoExpandTextarea(input);
+    input.focus();
+  }
+}
+
+// 2. Cancel Edit Mode
+function cancelEditMode() {
+  editingMessageId = null;
+  const container = document.getElementById('editPreviewContainer');
+  const input = document.getElementById('chatTextInput');
+
+  if (container) container.style.display = 'none';
+  if (input) {
+    input.value = '';
+    input.style.height = '42px';
+  }
+}
+
+// 3. Attach Mobile Long-Press Gesture (Hold 500ms to Edit)
+function attachLongPressToEdit(bubble, msgId, messageText, timestampDate) {
+  let pressTimer = null;
+
+  bubble.addEventListener('touchstart', (e) => {
+    pressTimer = setTimeout(() => {
+      // Trigger haptic feedback if supported on mobile
+      if (navigator.vibrate) navigator.vibrate(40);
+      setEditMode(msgId, messageText, timestampDate);
+    }, 550);
+  }, { passive: true });
+
+  bubble.addEventListener('touchend', () => clearTimeout(pressTimer));
+  bubble.addEventListener('touchmove', () => clearTimeout(pressTimer));
+}
 // Initialize listener when page loads
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
