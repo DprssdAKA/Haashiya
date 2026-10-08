@@ -6,6 +6,9 @@ let activeReplyData = null;
 let editingMessageId = null;
 let pendingDeleteMsgId = null;
 let closeActiveSwipeMenu = null; // closes the currently open swipe popup (mobile)
+let pendingAttachments = [];     // staged files waiting to be sent
+let isChatSending = false;
+let chatMessagesCache = {};      // msgId -> message data (used for edit/delete lookups)
 
 // 1. Toggle Slide-Out Drawer
 function toggleAdminChatDrawer() {
@@ -101,6 +104,7 @@ function startBackgroundChatListener() {
       }
 
       closeActiveSwipeMenu = null;
+      chatMessagesCache = {};
       container.innerHTML = '';
 
       snapshot.forEach(doc => {
@@ -109,6 +113,9 @@ function startBackgroundChatListener() {
         const msgSender = (msg.sender || 'admin').toLowerCase().replace(/\s+/g, '').trim();
         const isMine = msgSender === cleanMyUsername;
         const textContent = msg.text || '';
+        chatMessagesCache[msgId] = msg;
+        const attachments = Array.isArray(msg.attachments) ? msg.attachments : [];
+        const replyPreviewText = textContent || getAttachmentLabel(attachments);
         const cleanTextLower = textContent.toLowerCase().replace(/\s+/g, '');
         const isMentioned = !isMine && cleanMyUsername && cleanTextLower.includes(`@${cleanMyUsername}`);
         const dateObj = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date();
@@ -157,6 +164,13 @@ function startBackgroundChatListener() {
           <span class="chat-time-tag">${editedTagHTML}${timeStr}</span>
         `;
 
+        // Attachments (images / videos / files)
+        if (attachments.length) {
+          const textEl = bubble.querySelector('.chat-text-content');
+          bubble.insertBefore(buildAttachmentsElement(attachments), textEl);
+          if (!textContent) textEl.style.display = 'none';
+        }
+
         // 4. Action Buttons Group
         const actionGroup = document.createElement('div');
         actionGroup.className = 'chat-action-btns';
@@ -201,7 +215,7 @@ function startBackgroundChatListener() {
             <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
           </svg>
         `;
-        replyBtn.onclick = () => setReplyMode(msgId, formattedSenderName, textContent);
+        replyBtn.onclick = () => setReplyMode(msgId, formattedSenderName, replyPreviewText);
         actionGroup.appendChild(replyBtn);
 
         // Assemble DOM Elements in correct order
@@ -210,7 +224,7 @@ function startBackgroundChatListener() {
         wrapper.appendChild(bubbleRelative);
 
         // Touch Gestures for Mobile
-        attachSwipeGestures(wrapper, bubble, msgId, formattedSenderName, textContent, dateObj, isMine);
+        attachSwipeGestures(wrapper, bubble, msgId, formattedSenderName, textContent, dateObj, isMine, replyPreviewText);
 
         container.appendChild(wrapper);
       });
@@ -225,9 +239,10 @@ function startBackgroundChatListener() {
     });
 }
 
-// Send Message Handler
+// Send Message Handler (text + optional attachments)
 async function handleSendAdminMessage(e) {
   if (e) e.preventDefault();
+  if (isChatSending) return;
 
   const input = document.getElementById('chatTextInput');
   const firestoreDb = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
@@ -235,13 +250,23 @@ async function handleSendAdminMessage(e) {
   if (!input || !firestoreDb) return;
 
   const text = input.value.trim();
-  if (!text) return;
+  const isEditing = !!editingMessageId;
+
+  if (isEditing) {
+    // An attachment-only message may have its caption cleared
+    const hasAttachments = (chatMessagesCache[editingMessageId]?.attachments || []).length > 0;
+    if (!text && !hasAttachments) return;
+  } else if (!text && pendingAttachments.length === 0) {
+    return;
+  }
 
   const sessionData = localStorage.getItem('currentUser');
   const currentUser = sessionData ? JSON.parse(sessionData) : { username: 'admin' };
 
+  setChatSending(true);
+
   try {
-    if (editingMessageId) {
+    if (isEditing) {
       await firestoreDb.collection('admin_chat').doc(editingMessageId).update({
         text: text,
         isEdited: true,
@@ -249,6 +274,11 @@ async function handleSendAdminMessage(e) {
       });
       cancelEditMode();
     } else {
+      let attachments = [];
+      if (pendingAttachments.length) {
+        attachments = await uploadPendingAttachments();
+      }
+
       const payload = {
         sender: currentUser.username || 'admin',
         senderName: currentUser.name || currentUser.username || 'مشرف',
@@ -256,6 +286,10 @@ async function handleSendAdminMessage(e) {
         text: text,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       };
+
+      if (attachments.length) {
+        payload.attachments = attachments;
+      }
 
       if (activeReplyData) {
         payload.replyTo = {
@@ -267,13 +301,16 @@ async function handleSendAdminMessage(e) {
 
       await firestoreDb.collection('admin_chat').add(payload);
       cancelReplyMode();
+      clearPendingAttachments();
     }
 
     input.value = '';
     input.style.height = '42px';
   } catch (err) {
     console.error("Error sending or editing message:", err);
-    alert('حدث خطأ أثناء حفظ الرسالة');
+    showChatToast(pendingAttachments.length ? 'فشل رفع الملفات، حاول مرة أخرى' : 'حدث خطأ أثناء حفظ الرسالة');
+  } finally {
+    setChatSending(false);
   }
 }
 
@@ -432,7 +469,7 @@ function closeOpenSwipeMenu() {
   }
 }
 
-function attachSwipeGestures(wrapper, bubble, msgId, senderName, messageText, timestampDate, isMine) {
+function attachSwipeGestures(wrapper, bubble, msgId, senderName, messageText, timestampDate, isMine, replyText = messageText) {
   // Touch devices only (desktop uses hover buttons)
   if (window.matchMedia('(pointer: fine)').matches) return;
 
@@ -599,7 +636,7 @@ function attachSwipeGestures(wrapper, bubble, msgId, senderName, messageText, ti
 
     if (pos > SWIPE_REPLY_THRESHOLD) {
       animateTo(0);
-      setReplyMode(msgId, senderName, messageText);
+      setReplyMode(msgId, senderName, replyText);
     } else if (isMine && pos < -SWIPE_MENU_THRESHOLD) {
       openMenu();
     } else {
@@ -636,9 +673,19 @@ async function confirmDeleteChatMessage() {
   const firestoreDb = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
   if (!firestoreDb) return;
 
+  const msgId = pendingDeleteMsgId;
+  const filePaths = (chatMessagesCache[msgId]?.attachments || []).map(a => a.path).filter(Boolean);
+
   try {
-    await firestoreDb.collection('admin_chat').doc(pendingDeleteMsgId).delete();
+    await firestoreDb.collection('admin_chat').doc(msgId).delete();
     closeDeleteChatModal();
+
+    // Best-effort cleanup of the files in Supabase Storage
+    if (filePaths.length && window.supabaseClient) {
+      window.supabaseClient.storage.from(CHAT_STORAGE_BUCKET).remove(filePaths)
+        .then(({ error }) => { if (error) console.warn('Could not remove chat files:', error.message); })
+        .catch(err => console.warn('Could not remove chat files:', err));
+    }
   } catch (err) {
     console.error("Error deleting chat message:", err);
     alert('حدث خطأ أثناء حذف الرسالة');
@@ -674,6 +721,10 @@ function setEditMode(msgId, messageText, timestampDate) {
   }
 
   cancelReplyMode();
+  if (pendingAttachments.length) {
+    clearPendingAttachments();
+    showChatToast('تم إلغاء المرفقات أثناء تعديل الرسالة');
+  }
   editingMessageId = msgId;
 
   const container = document.getElementById('editPreviewContainer');
@@ -704,7 +755,445 @@ function cancelEditMode() {
   }
 }
 
+// =====================================================================
+// ATTACHMENTS (photos / videos / files) -> Supabase Storage
+// =====================================================================
+const CHAT_STORAGE_BUCKET = 'admin-chat';   // <-- change if you want to use another bucket
+const CHAT_MAX_FILE_MB = 50;                // keep <= your bucket / plan limit
+const CHAT_MAX_FILES = 5;                   // per message
+
+const CHAT_IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp'];
+const CHAT_VIDEO_EXT = ['mp4', 'mov', 'webm', 'm4v'];
+const CHAT_FILE_EXT = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'zip', 'rar', '7z', 'heic', 'heif'];
+
+function getFileExt(name) {
+  const i = (name || '').lastIndexOf('.');
+  return i >= 0 ? name.slice(i + 1).toLowerCase() : '';
+}
+
+function getAttachmentKind(ext) {
+  if (CHAT_IMAGE_EXT.includes(ext)) return 'image';
+  if (CHAT_VIDEO_EXT.includes(ext)) return 'video';
+  if (CHAT_FILE_EXT.includes(ext)) return 'file';
+  return null; // not allowed
+}
+
+function formatFileSize(bytes) {
+  if (!bytes && bytes !== 0) return '';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function isSafeHttpsUrl(url) {
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch (_) {
+    return false;
+  }
+}
+
+function getAttachmentLabel(attachments) {
+  if (!attachments || !attachments.length) return '';
+  if (attachments.length > 1) return `📎 ${attachments.length} مرفقات`;
+  const a = attachments[0];
+  if (a.kind === 'image') return '📷 صورة';
+  if (a.kind === 'video') return '🎥 فيديو';
+  return `📎 ${a.name || 'ملف'}`;
+}
+
+// --- small toast inside the drawer ---
+let chatToastTimer = null;
+function showChatToast(message) {
+  const drawer = document.getElementById('adminChatDrawer');
+  if (!drawer) return;
+
+  let toast = document.getElementById('chatToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'chatToast';
+    toast.className = 'chat-toast';
+    drawer.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(chatToastTimer);
+  chatToastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function setChatSending(flag) {
+  isChatSending = flag;
+  const sendBtn = document.querySelector('#chatInputForm .chat-send-btn');
+  const attachBtn = document.getElementById('chatAttachBtn');
+  if (sendBtn) sendBtn.disabled = flag;
+  if (attachBtn) attachBtn.disabled = flag;
+  const tray = document.getElementById('chatAttachmentTray');
+  if (tray) tray.classList.toggle('is-sending', flag);
+}
+
+function readImageSize(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => resolve({ w: 0, h: 0 });
+    img.src = url;
+  });
+}
+
+// --- staging files ---
+async function addFilesToChat(fileList) {
+  if (editingMessageId) {
+    showChatToast('لا يمكن إرفاق ملفات أثناء تعديل رسالة');
+    return;
+  }
+  if (isChatSending) return;
+
+  const files = Array.from(fileList || []);
+  const problems = [];
+
+  for (const file of files) {
+    if (pendingAttachments.length >= CHAT_MAX_FILES) {
+      problems.push(`الحد الأقصى ${CHAT_MAX_FILES} ملفات في الرسالة الواحدة`);
+      break;
+    }
+
+    const kind = getAttachmentKind(getFileExt(file.name));
+    if (!kind) {
+      problems.push(`نوع الملف غير مدعوم: ${file.name}`);
+      continue;
+    }
+    if (file.size === 0) {
+      problems.push(`الملف فارغ: ${file.name}`);
+      continue;
+    }
+    if (file.size > CHAT_MAX_FILE_MB * 1024 * 1024) {
+      problems.push(`الملف "${file.name}" أكبر من ${CHAT_MAX_FILE_MB} ميجابايت`);
+      continue;
+    }
+
+    const item = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      file,
+      kind,
+      previewUrl: kind === 'image' ? URL.createObjectURL(file) : null,
+      width: 0,
+      height: 0,
+      status: 'ready',
+      uploaded: null
+    };
+
+    if (kind === 'image') {
+      const size = await readImageSize(item.previewUrl);
+      item.width = size.w;
+      item.height = size.h;
+    }
+
+    pendingAttachments.push(item);
+  }
+
+  renderAttachmentTray();
+  if (problems.length) showChatToast(problems[0]);
+
+  const input = document.getElementById('chatTextInput');
+  if (input && pendingAttachments.length) input.focus();
+}
+
+function removePendingAttachment(id) {
+  const item = pendingAttachments.find(i => i.id === id);
+  if (item && item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+  pendingAttachments = pendingAttachments.filter(i => i.id !== id);
+  renderAttachmentTray();
+}
+
+function clearPendingAttachments() {
+  pendingAttachments.forEach(i => { if (i.previewUrl) URL.revokeObjectURL(i.previewUrl); });
+  pendingAttachments = [];
+  renderAttachmentTray();
+}
+
+function renderAttachmentTray() {
+  const tray = document.getElementById('chatAttachmentTray');
+  if (!tray) return;
+
+  tray.innerHTML = '';
+  if (!pendingAttachments.length) {
+    tray.style.display = 'none';
+    return;
+  }
+  tray.style.display = 'flex';
+
+  pendingAttachments.forEach(item => {
+    const chip = document.createElement('div');
+    chip.className = `tray-item ${item.status}`;
+
+    const thumb = document.createElement('div');
+    thumb.className = `tray-thumb ${item.kind}`;
+    if (item.previewUrl) {
+      const img = document.createElement('img');
+      img.src = item.previewUrl;
+      img.alt = '';
+      thumb.appendChild(img);
+    } else {
+      thumb.textContent = item.kind === 'video' ? '▶' : getFileExt(item.file.name).toUpperCase().slice(0, 4);
+    }
+
+    const meta = document.createElement('div');
+    meta.className = 'tray-meta';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'tray-name';
+    nameEl.setAttribute('dir', 'auto');
+    nameEl.textContent = item.file.name;
+    const sizeEl = document.createElement('span');
+    sizeEl.className = 'tray-size';
+    sizeEl.textContent = item.status === 'uploading' ? 'جاري الرفع...'
+      : item.status === 'error' ? 'فشل الرفع'
+      : formatFileSize(item.file.size);
+    meta.appendChild(nameEl);
+    meta.appendChild(sizeEl);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'tray-remove';
+    removeBtn.setAttribute('aria-label', 'إزالة المرفق');
+    removeBtn.innerHTML = '&times;';
+    removeBtn.onclick = () => removePendingAttachment(item.id);
+
+    chip.appendChild(thumb);
+    chip.appendChild(meta);
+    chip.appendChild(removeBtn);
+    tray.appendChild(chip);
+  });
+}
+
+function handleChatFilePick(e) {
+  addFilesToChat(e.target.files);
+  e.target.value = ''; // allow picking the same file again
+}
+
+function handleChatPaste(e) {
+  const files = e.clipboardData && e.clipboardData.files;
+  if (!files || !files.length) return; // plain text paste -> default behaviour
+
+  e.preventDefault();
+  const named = Array.from(files).map(f => {
+    if (f.name && getFileExt(f.name)) return f;
+    const ext = (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+    return new File([f], `pasted-${Date.now()}.${ext}`, { type: f.type });
+  });
+  addFilesToChat(named);
+}
+
+// --- drag & drop onto the drawer ---
+function initChatDragAndDrop() {
+  const drawer = document.getElementById('adminChatDrawer');
+  const overlay = document.getElementById('chatDropOverlay');
+  if (!drawer || !overlay) return;
+
+  let depth = 0;
+  const hasFiles = (e) => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+
+  drawer.addEventListener('dragenter', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    depth++;
+    overlay.classList.add('show');
+  });
+
+  drawer.addEventListener('dragover', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+
+  drawer.addEventListener('dragleave', (e) => {
+    if (!hasFiles(e)) return;
+    depth = Math.max(0, depth - 1);
+    if (!depth) overlay.classList.remove('show');
+  });
+
+  drawer.addEventListener('drop', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    depth = 0;
+    overlay.classList.remove('show');
+    addFilesToChat(e.dataTransfer.files);
+  });
+}
+
+// --- upload to Supabase Storage ---
+async function uploadPendingAttachments() {
+  const sb = window.supabaseClient;
+  if (!sb) throw new Error('Supabase client is not available');
+
+  const uploadOne = async (item) => {
+    item.status = 'uploading';
+    renderAttachmentTray();
+
+    // Storage keys must be ASCII-safe, so the original (Arabic) name is only kept in Firestore
+    const ext = getFileExt(item.file.name);
+    const d = new Date();
+    const folder = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+
+    const { error } = await sb.storage.from(CHAT_STORAGE_BUCKET).upload(path, item.file, {
+      contentType: item.file.type || 'application/octet-stream',
+      cacheControl: '31536000',
+      upsert: false
+    });
+    if (error) {
+      item.status = 'error';
+      throw error;
+    }
+
+    const { data } = sb.storage.from(CHAT_STORAGE_BUCKET).getPublicUrl(path);
+    item.status = 'done';
+    const att = {
+      url: data.publicUrl,
+      path,
+      name: item.file.name,
+      type: item.file.type || '',
+      size: item.file.size,
+      kind: item.kind
+    };
+    if (item.kind === 'image' && item.width && item.height) {
+      att.width = item.width;
+      att.height = item.height;
+    }
+    item.uploaded = att;
+    return att;
+  };
+
+  const results = await Promise.allSettled(pendingAttachments.map(uploadOne));
+  const failed = results.find(r => r.status === 'rejected');
+
+  if (failed) {
+    // Don't leave orphan files behind, and let the user retry
+    const orphanPaths = results.filter(r => r.status === 'fulfilled').map(r => r.value.path);
+    if (orphanPaths.length) sb.storage.from(CHAT_STORAGE_BUCKET).remove(orphanPaths).catch(() => {});
+    pendingAttachments.forEach(i => { if (i.status !== 'error') i.status = 'ready'; i.uploaded = null; });
+    renderAttachmentTray();
+    throw failed.reason;
+  }
+
+  return results.map(r => r.value);
+}
+
+// --- rendering attachments inside a bubble (DOM only, no innerHTML -> no XSS) ---
+function buildFileCard(att) {
+  const card = document.createElement('a');
+  card.className = 'chat-file-card';
+  card.href = isSafeHttpsUrl(att.url) ? att.url : '#';
+  card.target = '_blank';
+  card.rel = 'noopener noreferrer';
+  card.addEventListener('click', (e) => e.stopPropagation());
+
+  const badge = document.createElement('span');
+  badge.className = 'chat-file-badge';
+  badge.textContent = (getFileExt(att.name) || 'FILE').toUpperCase().slice(0, 4);
+
+  const info = document.createElement('span');
+  info.className = 'chat-file-info';
+  const nameEl = document.createElement('span');
+  nameEl.className = 'chat-file-name';
+  nameEl.setAttribute('dir', 'auto');
+  nameEl.textContent = att.name || 'ملف';
+  const sizeEl = document.createElement('span');
+  sizeEl.className = 'chat-file-size';
+  sizeEl.textContent = formatFileSize(att.size);
+  info.appendChild(nameEl);
+  info.appendChild(sizeEl);
+
+  card.appendChild(badge);
+  card.appendChild(info);
+  return card;
+}
+
+function buildAttachmentsElement(attachments) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-attachments';
+
+  attachments.forEach(att => {
+    if (!att || !isSafeHttpsUrl(att.url)) return;
+
+    let node;
+    if (att.kind === 'image') {
+      const img = document.createElement('img');
+      img.className = 'chat-att-img';
+      img.alt = att.name || '';
+      img.decoding = 'async';
+      // Reserve space up-front so the list doesn't jump while images load
+      img.style.aspectRatio = (att.width && att.height) ? `${att.width} / ${att.height}` : '4 / 3';
+      img.src = att.url;
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openChatLightbox(att.url, att.name);
+      });
+      img.addEventListener('error', () => node.replaceWith(buildFileCard(att)));
+      node = img;
+    } else if (att.kind === 'video') {
+      const video = document.createElement('video');
+      video.className = 'chat-att-video';
+      video.controls = true;
+      video.preload = 'metadata';
+      video.setAttribute('playsinline', '');
+      video.src = `${att.url}#t=0.1`;
+      video.addEventListener('click', (e) => e.stopPropagation());
+      video.addEventListener('error', () => node.replaceWith(buildFileCard(att)));
+      node = video;
+    } else {
+      node = buildFileCard(att);
+    }
+
+    wrap.appendChild(node);
+  });
+
+  return wrap;
+}
+
+function openChatLightbox(url, name) {
+  const old = document.getElementById('chatLightbox');
+  if (old) old.remove();
+
+  const box = document.createElement('div');
+  box.id = 'chatLightbox';
+  box.className = 'chat-lightbox';
+
+  const img = document.createElement('img');
+  img.src = url;
+  img.alt = name || '';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'chat-lightbox-close';
+  closeBtn.setAttribute('aria-label', 'إغلاق');
+  closeBtn.innerHTML = '&times;';
+
+  const openLink = document.createElement('a');
+  openLink.className = 'chat-lightbox-open';
+  openLink.href = url;
+  openLink.target = '_blank';
+  openLink.rel = 'noopener noreferrer';
+  openLink.textContent = 'فتح الأصل';
+
+  const close = () => {
+    box.remove();
+    document.removeEventListener('keydown', onKey);
+  };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+
+  box.addEventListener('click', (e) => { if (e.target === box || e.target === closeBtn) close(); });
+  document.addEventListener('keydown', onKey);
+
+  box.appendChild(img);
+  box.appendChild(closeBtn);
+  box.appendChild(openLink);
+  document.body.appendChild(box);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initChatDragAndDrop();
+
   // Close the swipe popup when tapping elsewhere or scrolling the list
   document.addEventListener('touchstart', (e) => {
     if (!closeActiveSwipeMenu) return;
