@@ -34,7 +34,7 @@
   <header class="navbar">
     <div class="navbar-container">
       <div class="navbar-left">
-        <a href="index.html" class="logo-link">
+        <a href="main.html" class="logo-link">
           <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
         </a>
       </div>
@@ -50,7 +50,7 @@
         <div class="admin-hero-content">
           <h1 class="admin-hero-title">أهلاً وسهلاً!</h1>
           <div class="admin-hero-meta">
-            <span class="admin-badge" id="adminBadge">مشرف</span>
+            <span class="admin-badge" id="adminBadge">Admin</span>
             <span class="admin-display-name" id="adminDisplayName">اسم المستخدم</span>
           </div>
         </div>
@@ -407,8 +407,7 @@
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
   </svg>
   <!-- RED NOTIFICATION DOT -->
-  <span id="unreadChatBadge" class="unread-chat-dot" style="display: none;"></span>
-</button>
+  <span id="unreadChatBadge" class="unread-chat-badge" style="display: none;">0</span></button>
 
 <!-- SLIDE-OUT CHAT DRAWER -->
 <div id="adminChatDrawer" class="admin-chat-drawer">
@@ -461,6 +460,7 @@
         <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
       </svg>
     </button>
+
     <input type="file" id="chatFileInput" multiple hidden
       accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.7z"
       onchange="handleChatFilePick(event)">
@@ -555,7 +555,7 @@
   }
 
   function redirectToHome() {
-    window.location.href = 'index.html';
+    window.location.href = 'main.html';
   }
 
   function showAccessDeniedModal() {
@@ -598,7 +598,7 @@
     const badgeEl = document.getElementById('adminBadge');
 
     if (nameEl) nameEl.textContent = user.name || user.username;
-    if (badgeEl) badgeEl.textContent = currentUserRole === 'superadmin' ? 'مشرف عام' : 'مشرف';
+    if (badgeEl) badgeEl.textContent = currentUserRole === 'superadmin' ? 'Superadmin' : 'Admin';
 
     await loadStudentDatabase();
   }

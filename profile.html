@@ -28,7 +28,7 @@
   <header class="navbar">
     <div class="navbar-container">
       <div class="navbar-left">
-        <a href="index.html" class="logo-link" onclick="smoothNavigate(event, 'index.html')">
+        <a href="main.html" class="logo-link" onclick="smoothNavigate(event, 'main.html')">
           <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
         </a>
       </div>
@@ -37,7 +37,7 @@
       <nav class="desktop-nav">
         <ul class="nav-links">
           <li>
-            <a href="index.html" class="nav-item-link" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+            <a href="main.html" class="nav-item-link" onclick="smoothNavigate(event, 'main.html')">الرئيسية</a>
           </li>
           <li class="nav-dropdown">
             <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
@@ -94,7 +94,7 @@
    <div class="sidebar-divider"></div>
 
    <div class="menu-items">
-     <a href="index.html" class="menu-link menu-home" onclick="smoothNavigate(event, 'index.html')">الرئيسية</a>
+     <a href="main.html" class="menu-link menu-home" onclick="smoothNavigate(event, 'main.html')">الرئيسية</a>
 
      <div class="dropdown">
        <button id="archive-btn" class="dropdown-btn">
@@ -343,14 +343,6 @@
     </div>
   </div>
   
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="footer-overlay">
-      <div class="footer-container">
-        <img src="assets/images/web/footer_preview.png" alt="footer" class="footer-logo">
-      </div>
-    </div>
-  </footer>
 
   <!-- Firebase Compatibility SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -943,7 +935,7 @@ async function handleResetPassword(e) {
 
     function logoutUser() {
       localStorage.removeItem('currentUser');
-      window.location.href = 'index.html';
+      window.location.href = 'main.html';
     }
 
     function togglePasswordVisibility() {

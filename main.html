@@ -3,29 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حاشية - الرئيسية</title>
-  <link rel="stylesheet" href="style.css">
+  <title>حاشية | بوابتنا لتعلم اللغة العربية</title>
+
+  <link rel="icon" type="image/png" href="assets/images/web/haashiya_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="chat.css">
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Supabase Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // 1. Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJWMb7l6DT1PFRUoDbi59FSs1iOZPntWI",
+      authDomain: "haashiya-web.firebaseapp.com",
+      projectId: "haashiya-web",
+      storageBucket: "haashiya-web.firebasestorage.app",
+      messagingSenderId: "340726241497",
+      appId: "1:340726241497:web:b5f62320301fc724fac6c8"
+    };
+    
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // 2. Initialize Supabase
+    const SUPABASE_URL = 'https://pdfripacgcbgggspxjyo.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkZnJpcGFjZ2NiZ2dnc3B4anlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzAzOTUsImV4cCI6MjEwNjQ0NjM5NX0.TxwwZwGQhPk60B0A_UIIlwPYI3NtcQu4N_LKOHDzmn8';
+    window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
 </head>
 <body>
 
-  <!-- Sidebar Overlay -->
-  <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+  <!-- TOP NAVIGATION BAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      
+      <!-- LEFT: LOGO -->
+      <div class="navbar-left">
+        <a href="main.html" class="logo-link" onclick="smoothNavigate(event, 'main.html')">
+          <img src="assets/images/web/navbar_logo.png" alt="حاشية" class="navbar-logo">
+        </a>
+      </div>
 
-  <!-- Sidebar Container -->
+      <!-- CENTER: DESKTOP HORIZONTAL MENU -->
+      <nav class="desktop-nav">
+        <ul class="nav-links">
+          <li>
+            <a href="main.html" class="nav-item-link" onclick="smoothNavigate(event, 'main.html')">الرئيسية</a>
+          </li>
+
+          <!-- DROPDOWN: معرض الأرشيف -->
+          <li class="nav-dropdown">
+            <a href="archive.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'archive.html')">
+              <span>معرض الأرشيف</span>
+              <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="archive.html#recordings" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a></li>
+              <li><a href="archive.html#assignments" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a></li>
+              <li><a href="archive.html#whiteboards" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a></li>
+              <li><a href="archive.html#photos" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a></li>
+              <li><a href="archive.html#presentations" onclick="smoothNavigate(event, 'archive.html#presentations')">العرض التقديمي</a></li>
+            </ul>
+          </li>
+
+          <!-- DROPDOWN: المكتبة الرقمية -->
+          <li class="nav-dropdown">
+            <a href="index.html" class="nav-item-link dropdown-trigger" onclick="smoothNavigate(event, 'index.html')">
+              <span>المكتبة الرقمية</span>
+              <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="index.html#educational-materials" onclick="smoothNavigate(event, 'index.html#educational-materials')">المواد التعليمية</a></li>
+              <li><a href="index.html#general-library" onclick="smoothNavigate(event, 'index.html#general-library')">المكتبة العامة</a></li>
+            </ul>
+          </li>
+
+          <li><a href="#glossary" class="nav-item-link">معجم المصطلحات</a></li>
+          <li><a href="#calendar" class="nav-item-link">التقويم الأكاديمي</a></li>
+          <li><a href="#coming-soon" class="nav-item-link">التعلم بالذكاء الاصطناعي</a></li>
+        </ul>
+      </nav>
+
+      <!-- RIGHT: LOGIN / USER PROFILE BADGE & MOBILE HAMBURGER -->
+      <div class="navbar-right">
+        <a href="login.html" class="btn-login" onclick="smoothNavigate(event, 'login.html')">تسجيل الدخول</a>
+        
+        <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
+          <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+            <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
+            <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
+            <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MOBILE SIDEBAR OVERLAY & DRAWER -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
   <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-      <button class="btn-close" onclick="toggleSidebar()" aria-label="Tutup">
-        <img src="images/sidebar_icon.png" alt="Logo" class="sidebar-logo-img">
+      <button id="close-sidebar-btn" class="btn-close" aria-label="Tutup">
+        <img src="assets/images/web/sidebar_icon.png" alt="Logo" class="sidebar-logo-img">
       </button>
     </div>
 
     <div class="sidebar-divider"></div>
 
     <div class="menu-items">
-      <a href="#" class="menu-link menu-home">الرئيسية</a>
+      <a href="main.html" class="menu-link menu-home">الرئيسية</a>
 
       <div class="dropdown">
         <button id="archive-btn" class="dropdown-btn active">
@@ -34,11 +138,13 @@
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
+        
         <div id="archive-submenu" class="submenu open">
-          <a href="#" class="submenu-link">التسجيلات</a>
-          <a href="#" class="submenu-link">السبورات</a>
-          <a href="#" class="submenu-link">الواجبات</a>
-          <a href="#" class="submenu-link">الصور</a>
+          <a href="archive.html#recordings" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#recordings')">التسجيلات</a>
+          <a href="archive.html#whiteboards" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#whiteboards')">السبورات</a>
+          <a href="archive.html#assignments" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#assignments')">الواجبات</a>
+          <a href="archive.html#photos" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#photos')">الصور</a>
+          <a href="archive.html#presentations" class="submenu-link" onclick="smoothNavigate(event, 'archive.html#presentations')">العرض التقديمي</a>
         </div>
       </div>
 
@@ -50,186 +156,425 @@
           </svg>
         </button>
         <div id="library-submenu" class="submenu">
-          <a href="#" class="submenu-link">المواد التعليمية</a>
-          <a href="#" class="submenu-link">المكتبة العامة</a>
+          <a href="index.html#educational-materials" class="submenu-link" onclick="toggleSidebar()">المواد التعليمية</a>
+          <a href="index.html#general-library" class="submenu-link" onclick="toggleSidebar()">المكتبة العامة</a>
         </div>
       </div>
 
-      <a href="#" class="menu-link">معجم المصطلحات</a>
-      <a href="#" class="menu-link">التقويم الأكاديمي</a>
-      <a href="#" class="menu-link">التعلم المدعوم بالذكاء الاصطناعي</a>
+      <a href="#glossary" class="menu-link" onclick="toggleSidebar()">معجم المصطلحات</a>
+      <a href="#calendar" class="menu-link" onclick="toggleSidebar()">التقويم الأكاديمي</a>
+      <a href="#coming-soon" class="menu-link" onclick="toggleSidebar()">التعلم المدعوم بالذكاء الاصطناعي</a>
     </div>
   </aside>
 
-  <!-- Top Navbar -->
-  <nav class="navbar">
-    <div class="navbar-logo">
-      <a href="#">
-        <img src="images/navbar_logo.png" alt="حاشية (Haashiya)" class="logo-img">
-      </a>
+  <main class="page-wrapper">
+
+    <!-- HERO BANNER SECTION -->
+    <section class="hero-banner" style="background-image: url('assets/images/web/hero_bg.png');">
+      <div class="hero-container">
+        <div class="hero-text-content">
+          <h1 class="hero-title">
+            <span class="hero-highlight">بوابتنا</span> لتعلم اللغة العربية
+          </h1>
+          <p class="hero-subtitle">الانخراط في أجواء التعلم في أي وقت ومكان</p>
+        </div>
+
+        <a href="index.html" class="hero-cta-btn">
+          <span>ادرس الآن</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="11 19 4 12 11 5"></polyline>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION 1: SERVICES -->
+    <section id="services" class="home-section">
+      <div class="section-container">
+        <h2 class="section-title-heading">خدمات التعلم</h2>
+        <div class="services-grid">
+          
+          <a href="archive.html" class="service-card">
+            <div class="service-card-banner" style="background-image: url('assets/images/web/card_archives.png');"></div>
+            <div class="service-card-content">
+              <h3>معرض الأرشيف</h3>
+              <span class="service-card-link">انظر التفاصيل &rarr;</span>
+            </div>
+          </a>
+
+          <a href="index.html" class="service-card">
+            <div class="service-card-banner" style="background-image: url('assets/images/web/card_digitalLibrary.png');"></div>
+            <div class="service-card-content">
+              <h3>المكتبة الرقمية</h3>
+              <span class="service-card-link">انظر التفاصيل &rarr;</span>
+            </div>
+          </a>
+
+          <a href="index.html#educational-materials" class="service-card">
+            <div class="service-card-banner" style="background-image: url('assets/images/web/card_bahanajar.png');"></div>
+            <div class="service-card-content">
+              <h3>المواد التعليمية</h3>
+              <span class="service-card-link">انظر التفاصيل &rarr;</span>
+            </div>
+          </a>
+
+          <a href="#coming-soon" class="service-card">
+            <div class="service-card-banner" style="background-image: url('assets/images/web/card_ailearning.png');"></div>
+            <div class="service-card-content">
+              <h3>التعلم المدعوم بالذكاء الاصطناعي</h3>
+              <span class="service-card-link">انظر التفاصيل &rarr;</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: GLOSSARY SEARCH -->
+    <section id="glossary" class="home-section">
+      <div class="section-container">
+        <h2 class="section-title-heading">معجم المصطلحات</h2>
+        
+        <div class="glossary-card">
+          <div class="glossary-search-wrapper">
+            <input 
+              type="text" 
+              id="glossarySearchInput" 
+              placeholder="بحث عن مصطلح..." 
+              oninput="handleGlossarySearch(this.value)"
+            >
+            <button 
+              type="button" 
+              class="glossary-add-btn" 
+              onclick="openAddTermModal()" 
+              title="إضافة مصطلح جديد"
+            >+</button>
+          </div>
+
+          <div id="glossaryResultsContainer" class="glossary-results-box">
+            <div class="glossary-empty-line"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADD TERM MODAL -->
+    <div id="addTermModal" class="upload-modal-overlay">
+      <div class="upload-modal-card" style="max-width: 440px;">
+        <button type="button" class="modal-close-x" onclick="closeAddTermModal()">&times;</button>
+        <h3 class="upload-modal-title">إضافة مصطلح جديد</h3>
+        <p class="upload-modal-subtitle">أدخل المصطلح العلمي وتعريفه لإضافته إلى المعجم</p>
+
+        <form onsubmit="handleSaveNewTerm(event)">
+          <div class="modal-field">
+            <label>المصطلح</label>
+            <input type="text" id="newTermInput" class="modal-input" placeholder="مثال: التورية" required>
+          </div>
+
+          <div class="modal-field">
+            <label>المادة / الفن</label>
+            <select id="newTermSubjectSelect" class="modal-select" required>
+              <option value="البلاغة">البلاغة</option>
+              <option value="النحو">النحو</option>
+              <option value="الأدب">الأدب</option>
+              <option value="عام">عام</option>
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label>التعريف / الشرح</label>
+            <textarea id="newTermDescInput" class="modal-input" rows="3" placeholder="أدخل الشرح أو التعريف البلاغي..." style="resize: vertical; min-height: 80px;" required></textarea>
+          </div>
+
+          <div class="upload-modal-actions">
+            <button type="submit" class="btn-submit-upload">حفظ المصطلح</button>
+            <button type="button" class="btn-cancel-upload" onclick="closeAddTermModal()">إلغاء</button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <div class="navbar-controls">
-      <button class="btn-login">تسجيل الدخول</button>
-      <button id="open-sidebar-btn" class="btn-menu" aria-label="القائمة" onclick="toggleSidebar()">
-        <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z" />
-          <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)" />
-          <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)" />
-        </svg>
-      </button>
-    </div>
-  </nav>
+    <!-- SECTION 3: ACADEMIC CALENDAR -->
+    <section id="calendar" class="home-section tint-bg">
+      <div class="section-container">
+        <h2 class="section-title-heading">التقويم الأكاديمي</h2>
+        <div class="calendar-list">
+          
+          <!-- Item 1 -->
+          <div class="calendar-item-wrapper">
+            <a href="#" class="calendar-slanted-card">
+              <div class="calendar-content">
+                <h3 class="calendar-title">ورقة بحثية في تاريخ اللغة الإندونيسية</h3>
+                <p class="calendar-meta">
+                  <bdi>مادة Bahasa Indonesia</bdi>
+                  <span class="meta-dot">•</span>
+                  <bdi>15 Desember 2026</bdi>
+                </p>
+              </div>
+              <div class="calendar-blue-pill"></div>
+            </a>
+          </div>
 
-  <main class="mobile-container">
-    
-    <!-- Hero Banner Section -->
-    <section class="hero-banner">
-      <div class="hero-content">
-        <h1 class="hero-title">بوابتنا لتعلم اللغة العربية</h1>
-        <p class="hero-subtitle">الانخراط في أجواء التعلم في أي وقت ومكان</p>
-        <a href="#" class="hero-btn">ادرس الآن &larr;</a>
-      </div>
-    </section>
+          <!-- Item 2 -->
+          <div class="calendar-item-wrapper">
+            <a href="#" class="calendar-slanted-card">
+              <div class="calendar-content">
+                <h3 class="calendar-title">ورقة بحثية حول التنمية الذاتية</h3>
+                <p class="calendar-meta">
+                  <bdi>مادة PKN</bdi>
+                  <span class="meta-dot">•</span>
+                  <bdi>15 Desember 2026</bdi>
+                </p>
+              </div>
+              <div class="calendar-blue-pill"></div>
+            </a>
+          </div>
 
-    <!-- Section: خدمات التعلم -->
-    <section class="section-container">
-      <h2 class="section-title">خدمات التعلم</h2>
-      <div class="service-grid">
-        
-        <a href="#" class="service-card">
-          <div class="card-image-wrapper">
-            <img src="images/card_galeriarsip.png" alt="معرض الأرشيف">
+          <!-- Item 3 -->
+          <div class="calendar-item-wrapper">
+            <a href="#" class="calendar-slanted-card">
+              <div class="calendar-content">
+                <h3 class="calendar-title">عطلة عيد الميلاد</h3>
+                <p class="calendar-meta">
+                  <bdi>عطلة</bdi>
+                  <span class="meta-dot">•</span>
+                  <bdi>25 Desember 2026</bdi>
+                </p>
+              </div>
+              <div class="calendar-blue-pill"></div>
+            </a>
           </div>
-          <div class="card-content">
-            <h3>معرض الأرشيف</h3>
-            <span class="card-link-text">انظر التفاصيل &larr;</span>
-          </div>
-        </a>
 
-        <a href="#" class="service-card">
-          <div class="card-image-wrapper">
-            <img src="images/card_perpustakaandigital.png" alt="المكتبة الرقمية">
-          </div>
-          <div class="card-content">
-            <h3>المكتبة الرقمية</h3>
-            <span class="card-link-text">انظر التفاصيل &larr;</span>
-          </div>
-        </a>
-
-        <a href="#" class="service-card">
-          <div class="card-image-wrapper">
-            <img src="images/card_bahanajar.png" alt="المواد التعليمية">
-          </div>
-          <div class="card-content">
-            <h3>المواد التعليمية</h3>
-            <span class="card-link-text">انظر التفاصيل &larr;</span>
-          </div>
-        </a>
-
-        <a href="#" class="service-card">
-          <div class="card-image-wrapper">
-            <img src="images/card_ailearning.png" alt="التعلم المدعوم بالذكاء الاصطناعي">
-          </div>
-          <div class="card-content">
-            <h3>التعلم المدعوم بالذكاء الاصطناعي</h3>
-            <span class="card-link-text">انظر التفاصيل &larr;</span>
-          </div>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- Section: المواد التعليمية -->
-    <section class="section-container section-tint">
-      <h2 class="section-title">المواد التعليمية</h2>
-      <div class="resource-list">
-        
-        <div class="resource-item">
-          <div class="resource-info">
-            <h3 class="resource-title">البديع في ضوء أساليب القرآن</h3>
-            <p class="resource-meta">المرجع الرئيس • مادة البلاغة</p>
-          </div>
-          <span class="badge badge-pdf">PDF</span>
         </div>
-
-        <div class="resource-item">
-          <div class="resource-info">
-            <h3 class="resource-title">مهارات القراءة والاستماع</h3>
-            <p class="resource-meta">المرجع المساند • مادة القراءة</p>
-          </div>
-          <span class="badge badge-docx">DOCX</span>
-        </div>
-
-        <div class="resource-item">
-          <div class="resource-info">
-            <h3 class="resource-title">BAHASA INDONESIA AKADEMIK</h3>
-            <p class="resource-meta">المرجع الرئيس • مادة اللغة الإندونيسية</p>
-          </div>
-          <span class="badge badge-pdf">PDF</span>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Section: معجم المصطلحات -->
-    <section class="section-container">
-      <h2 class="section-title">معجم المصطلحات</h2>
-      <div class="glossary-box">
-        <div class="glossary-search-bar">
-          <button class="glossary-add-btn">+</button>
-          <input type="text" placeholder="بحث" class="glossary-input">
-        </div>
-        <div class="glossary-divider"></div>
-      </div>
-    </section>
-
-    <!-- Section: التقويم الأكاديمي -->
-    <section class="section-container section-tint">
-      <h2 class="section-title">التقويم الأكاديمي</h2>
-      <div class="resource-list">
-        
-        <div class="resource-item">
-          <div class="resource-info">
-            <h3 class="resource-title">ورقة بحثية في تاريخ اللغة الإندونيسية</h3>
-            <p class="resource-meta">مادة Bahasa Indonesia • 15 Desember 2026</p>
-          </div>
-          <span class="badge badge-calendar"></span>
-        </div>
-
-        <div class="resource-item">
-          <div class="resource-info">
-            <h3 class="resource-title">ورقة بحثية حول التنمية الذاتية</h3>
-            <p class="resource-meta">مادة PKN • 15 Desember 2026</p>
-          </div>
-          <span class="badge badge-calendar"></span>
-        </div>
-
-        <div class="resource-item">
-          <div class="resource-info">
-            <h3 class="resource-title">عطلة عيد الميلاد</h3>
-            <p class="resource-meta">عطلة • 25 Desember 2026</p>
-          </div>
-          <span class="badge badge-calendar"></span>
-        </div>
-
       </div>
     </section>
 
   </main>
 
-  <!-- Footer Section -->
-  <footer class="footer">
-    <div class="footer-content">
-      <img src="images/footer_logo.png" alt="حاشية Logo" class="footer-logo">
-      <p class="footer-desc">موقع إلكتروني غير ربحي يهدف إلى تلبية احتياجات التعلم لطلاب برنامج الأدب العربي في LIPIA (الدفعة التاسعة عشرة)</p>
-      <div class="footer-credits">
-        <span>من تطوير: @iqbalbaihaqi</span>
-        <span>من تصميم: @angga.reksa_</span>
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <div id="logoutModal" class="logout-modal-overlay">
+    <div class="logout-modal-card">
+      <div class="logout-modal-icon">⚠️</div>
+      <h3 class="logout-modal-title">تسجيل الخروج</h3>
+      <p class="logout-modal-text">هل أنت تأكد من أنك تريد تسجيل الخروج؟</p>
+      <div class="logout-modal-actions">
+        <button class="logout-confirm-btn" onclick="confirmLogout()">نعم، تسجيل الخروج</button>
+        <button class="logout-cancel-btn" onclick="closeLogoutModal()">إلغاء</button>
       </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS MODAL -->
+  <div id="notificationsModal" class="upload-modal-overlay">
+    <div class="upload-modal-card notifications-modal-card">
+      <button class="modal-close-x" onclick="closeNotificationsModal()">&times;</button>
+
+      <div class="notifications-header">
+        <h3 class="upload-modal-title">الإشعارات</h3>
+        <button class="btn-clear-notifications" onclick="clearAllNotifications()">مسح الكل</button>
+      </div>
+      <p class="upload-modal-subtitle">سجل التحديثات وحالة طلبات إضافة الكتب</p>
+
+      <div id="notificationsList" class="notifications-list-container"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER BANNER -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <img src="assets/images/web/footer_preview.png" alt="حاشية" class="footer-logo">
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- SCRIPT INITIALIZATION -->
+  <script src="glossary.js"></script>
+  <script>
+    // --- SIDEBAR DRAWER TOGGLE & NAVIGATION ---
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      }
+    }
+
+    function initSidebarEvents() {
+      const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      const archiveBtn = document.getElementById('archive-btn');
+      const archiveSubmenu = document.getElementById('archive-submenu');
+      const libraryBtn = document.getElementById('library-btn');
+      const librarySubmenu = document.getElementById('library-submenu');
+
+      const closeSidebar = () => {
+        if (sidebar && overlay) {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        }
+      };
+
+      if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+      if (overlay) overlay.addEventListener('click', closeSidebar);
+
+      const toggleDropdown = (button, submenu) => {
+        if (!button || !submenu) return;
+        const isOpen = submenu.classList.contains('open');
+        const arrow = button.querySelector('.arrow-icon');
+
+        if (isOpen) {
+          submenu.classList.remove('open');
+          button.classList.remove('active');
+          if (arrow) arrow.classList.remove('open');
+        } else {
+          submenu.classList.add('open');
+          button.classList.add('active');
+          if (arrow) arrow.classList.add('open');
+        }
+      };
+
+      if (archiveBtn && archiveSubmenu) {
+        archiveBtn.addEventListener('click', (e) => {
+          if (e.target.tagName === 'SPAN') {
+            smoothNavigate(e, 'archive.html');
+          } else {
+            toggleDropdown(archiveBtn, archiveSubmenu);
+          }
+        });
+      }
+      if (libraryBtn && librarySubmenu) {
+        libraryBtn.addEventListener('click', () => toggleDropdown(libraryBtn, librarySubmenu));
+      }
+    }
+
+    function smoothNavigate(event, targetUrl) {
+      event.preventDefault();
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 250);
+    }
+
+    // --- USER SESSION & PROFILE BADGE ---
+    function checkUserSession() {
+      const sessionData = localStorage.getItem('currentUser');
+      const navbarRight = document.querySelector('.navbar-right');
+
+      if (sessionData && navbarRight) {
+        const user = JSON.parse(sessionData);
+        const isMale = user.gender === 'male';
+
+        const genderBadgeHTML = isMale ? `
+          <span class="gender-badge gender-male">
+            <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="14" r="5"></circle>
+              <path d="M19 5L13.5 10.5"></path>
+              <path d="M19 5h-5"></path>
+              <path d="M19 5v5"></path>
+            </svg>
+            طالب
+          </span>` : `
+          <span class="gender-badge gender-female">
+            <svg class="gender-svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="10" r="5"></circle>
+              <path d="M12 15v7"></path>
+              <path d="M9 19h6"></path>
+            </svg>
+            طالبة
+          </span>`;
+
+        navbarRight.innerHTML = `
+          <div class="user-profile-wrapper">
+            <button class="user-profile-badge" onclick="toggleProfileDropdown(event)">
+              <img src="${user.avatar}" alt="${user.name}" class="profile-avatar" onError="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1565c0&color=fff'">
+              <div class="profile-info-group">
+                <span class="profile-name">${user.name}</span>
+                ${genderBadgeHTML}
+              </div>
+              <span class="nav-unread-dot" style="display: none;"></span>
+              <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            <div id="profileDropdown" class="profile-dropdown-menu">
+              <a href="profile.html" class="dropdown-item" onclick="smoothNavigate(event, 'profile.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                الملف الشخصي
+              </a>
+
+              <a href="#" class="dropdown-item" onclick="openNotificationsModal(event)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                الإشعارات
+                <span class="unread-badge" style="display: none;">0</span>
+              </a>
+              
+              <div class="dropdown-divider"></div>
+              
+              <button class="dropdown-item logout-item" onclick="logoutUser()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                تسجيل الخروج
+              </button>
+            </div>
+          </div>
+
+          <button id="open-sidebar-btn" class="btn-menu mobile-only-btn" aria-label="القائمة" onclick="toggleSidebar()">
+            <svg width="22" height="22" viewBox="0 0 16 18" fill="currentColor">
+              <path d="M8 1L11.5 4.5L8 8L4.5 4.5Z"/>
+              <path d="M8 4.5L11.5 8L8 11.5L4.5 8Z" transform="translate(0, 2)"/>
+              <path d="M8 8L11.5 11.5L8 15L4.5 11.5Z" transform="translate(0, 4)"/>
+            </svg>
+          </button>
+        `;
+      }
+    }
+
+    function toggleProfileDropdown(e) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown) dropdown.classList.toggle('show');
+    }
+
+    document.addEventListener('click', () => {
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    function logoutUser() {
+      const modal = document.getElementById('logoutModal');
+      if (modal) modal.classList.add('show');
+    }
+
+    function closeLogoutModal() {
+      const modal = document.getElementById('logoutModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function confirmLogout() {
+      localStorage.removeItem('currentUser');
+      location.reload();
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      initSidebarEvents();
+      checkUserSession();
+    });
+  </script>
+
 </body>
 </html>

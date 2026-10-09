@@ -1,0 +1,370 @@
+/* --- DESKTOP LAYOUT RESPONSIVENESS --- */
+.page-wrapper {
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .home-section {
+    padding: 45px 24px;
+  }
+  
+  .home-section.tint-bg {
+    background-color: #f0f6ff;
+  }
+  
+  .section-container {
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+  
+  .section-title-heading {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 20px 0;
+  }
+  
+  /* --- HERO BANNER SECTION --- */
+.hero-banner {
+    width: 100%;
+    min-height: 220px;
+    background-image: url('assets/images/web/hero_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    direction: rtl;
+    display: flex;
+    align-items: center;
+    padding: 36px 20px;
+    box-sizing: border-box;
+    position: relative;
+  }
+  
+  .hero-container {
+    max-width: 1140px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .hero-text-content {
+    margin-bottom: 16px;
+    text-align: right;
+  }
+  
+  .hero-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    line-height: 1.25;
+  }
+  
+  .hero-title .hero-highlight {
+    color: #0b132b; /* Dark contrast text for "بوابتنا" */
+  }
+  
+  .hero-subtitle {
+    font-size: clamp(0.9rem, 2vw, 1.15rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  /* CTA BUTTON ("ادرس الآن") */
+  .hero-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ffffff;
+    color: #1d4ed8;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .hero-cta-btn:hover {
+    background-color: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  }
+  
+  .hero-cta-btn svg {
+    transition: transform 0.2s ease;
+  }
+  
+  .hero-cta-btn:hover svg {
+    transform: translateX(-4px); /* Moves arrow slightly left on hover in RTL */
+  }
+  
+  /* --- MOBILE OPTIMIZATION --- */
+  @media screen and (max-width: 600px) {
+    .hero-banner {
+      min-height: 190px;
+      padding: 28px 16px;
+    }
+  
+    .hero-cta-btn {
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      border-radius: 10px;
+    }
+  }
+
+  /* SERVICES GRID (2 Columns Mobile, 4 Columns Desktop) */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  @media (min-width: 992px) {
+    .services-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+  }
+  
+  .service-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .service-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  }
+  
+  .service-card-banner {
+    height: 90px;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .service-card-content {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+  }
+  
+  .service-card-content h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+  }
+  
+  .service-card-link {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+  
+  /* FILE TYPE BADGES */
+  .file-badge {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #ffffff;
+  }
+  
+  .file-badge.pdf {
+    background-color: #1d4ed8;
+  }
+  
+  .file-badge.docx {
+    background-color: #0284c7;
+  }
+  
+  /* --- GLOSSARY COMPONENT STYLES --- */
+.glossary-card {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    border-radius: 16px;
+    padding: 16px;
+    min-height: 180px;
+    box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2);
+    direction: rtl;
+  }
+  
+  .glossary-search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  #glossarySearchInput {
+    flex: 1;
+    height: 42px;
+    border: none;
+    outline: none;
+    text-align: right;
+    color: #1d4ed8;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-sizing: border-box;
+  }
+  
+  #glossarySearchInput::placeholder {
+    color: #93c5fd;
+    font-weight: 600;
+  }
+  
+  .glossary-add-btn {
+    width: 42px;
+    height: 42px;
+    background-color: #0f172a;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .glossary-add-btn:hover {
+    background-color: #1e293b;
+    transform: scale(1.05);
+  }
+  
+  /* DECORATIVE LINE / RESULTS BOX */
+  .glossary-results-box {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  
+  .glossary-empty-line {
+    width: 1.5px;
+    height: 90px;
+    background-color: rgba(255, 255, 255, 0.25);
+    margin: 20px auto 0;
+    border-radius: 2px;
+  }
+  
+  /* TERM ITEM CARD */
+  .glossary-term-item {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #ffffff;
+  }
+  
+  .glossary-term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  
+  .glossary-term-title {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0;
+  }
+  
+  .glossary-term-badge {
+    font-size: 0.72rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  
+  .glossary-term-desc {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    line-height: 1.5;
+    margin: 0;
+  }
+  /* --- SLANTED ACADEMIC CALENDAR CARDS --- */
+.calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calendar-item-wrapper {
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.12));
+}
+
+.calendar-slanted-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px 16px;
+  clip-path: polygon(35px 0, 100% 0, 100% 100%, 0 100%);
+  position: relative;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.calendar-slanted-card:hover {
+  transform: translateX(-4px);
+}
+
+.calendar-content {
+  flex-grow: 1;
+  text-align: right;
+  padding-right: 15px;
+}
+
+.calendar-title {
+  color: #0f172a;
+  font-size: clamp(14px, 3.5vw, 17px);
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.calendar-meta {
+  color: #64748b;
+  font-size: clamp(10px, 2.8vw, 12px);
+  margin: 0;
+}
+
+.meta-dot {
+  font-size: 9px;
+  opacity: 0.6;
+  margin: 0 8px;
+}
+
+.calendar-blue-pill {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  border-radius: 6px;
+}

@@ -9,6 +9,7 @@ let closeActiveSwipeMenu = null; // closes the currently open swipe popup (mobil
 let pendingAttachments = [];     // staged files waiting to be sent
 let isChatSending = false;
 let chatMessagesCache = {};      // msgId -> message data (used for edit/delete lookups)
+let unreadChatCount = 0;
 
 // 1. Toggle Slide-Out Drawer
 function toggleAdminChatDrawer() {
@@ -37,9 +38,23 @@ function toggleAdminChatDrawer() {
 }
 
 function clearUnreadNotification() {
-  const badge = document.getElementById('unreadChatBadge');
-  if (badge) badge.style.display = 'none';
-}
+    unreadChatCount = 0;
+    const badge = document.getElementById('unreadChatBadge');
+    if (badge) {
+      badge.textContent = '0';
+      badge.style.display = 'none';
+    }
+  }
+
+  function incrementUnreadNotification() {
+    unreadChatCount++;
+    const badge = document.getElementById('unreadChatBadge');
+    if (badge) {
+      // Show 99+ if more than 99 unread messages
+      badge.textContent = unreadChatCount > 99 ? '99+' : unreadChatCount.toString();
+      badge.style.display = 'inline-flex';
+    }
+  }
 
 function showUnreadNotification() {
   const badge = document.getElementById('unreadChatBadge');
@@ -92,16 +107,16 @@ function startBackgroundChatListener() {
       }
 
       if (!isInitialLoad && !isChatOpen) {
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') {
-            const newMsg = change.doc.data();
-            const sender = (newMsg.sender || '').toLowerCase().replace(/\s+/g, '').trim();
-            if (sender !== cleanMyUsername) {
-              showUnreadNotification();
-            }
-          }
-        });
+  snapshot.docChanges().forEach(change => {
+    if (change.type === 'added') {
+      const newMsg = change.doc.data();
+      const sender = (newMsg.sender || '').toLowerCase().replace(/\s+/g, '').trim();
+      if (sender !== cleanMyUsername) {
+        incrementUnreadNotification(); // Increments count for every incoming message
       }
+    }
+  });
+}
 
       closeActiveSwipeMenu = null;
       chatMessagesCache = {};
